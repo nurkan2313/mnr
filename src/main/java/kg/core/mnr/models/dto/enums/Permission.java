@@ -6,7 +6,8 @@ public enum Permission {
     ADMIN_ACCESS("admin:access"),
     CUSTOMS_ACCESS("customs:access"),
     BORDER_ACCESS("border:access"),
-    PROSECUTOR_ACCESS("prosecutor:access");
+    POLICE_ACCESS("prosecutor:access"),
+    AGENCY_ACCESS("agency:access");
 
     private final String permission;
 

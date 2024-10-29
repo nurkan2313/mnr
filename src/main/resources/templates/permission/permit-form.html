@@ -69,12 +69,16 @@
 
                                 <div class="form-group">
                                     <label for="importerCountry">Страна импортера</label>
-                                    <input name="importerCountry" type="text" class="form-control" id="importerCountry">
+                                    <select id="importerCountry" name="importerCountry" class="form-control" required>
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="exporterCountry">Страна экспортера</label>
-                                    <input name="exporterCountry" type="text" class="form-control" id="exporterCountry">
+                                    <label for="exporterCountry">Страна импортера</label>
+                                    <select id="exporterCountry" name="exporterCountry" class="form-control" required>
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">
@@ -117,6 +121,83 @@
 </div>
 
 <script>
+    //поиск стран
+    document.addEventListener('DOMContentLoaded', function() {
+        const suspectedOriginCountry = document.getElementById('importerCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(suspectedOriginCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        suspectedOriginCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+
+    //эскпортер
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const exporter = document.getElementById('exporterCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(exporter, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        exporter.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+
     // Поиск видов
     document.addEventListener('DOMContentLoaded', function() {
         const speciesSelect = document.getElementById('speciesSelect');

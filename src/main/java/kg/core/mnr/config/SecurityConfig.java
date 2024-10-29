@@ -1,5 +1,7 @@
 package kg.core.mnr.config;
 
+import kg.core.mnr.service.CustomUserDetailsService;
+import kg.core.mnr.service.UserService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,12 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
 
+    private final CustomUserDetailsService userService;
+
+    public SecurityConfig(CustomUserDetailsService userService) {
+        this.userService = userService;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -29,7 +37,16 @@ public class SecurityConfig {
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                );
+                )
+                .formLogin(form -> form
+                        .loginPage("/auth")
+                        .loginProcessingUrl("/auth") // URL, который обрабатывает запрос на вход
+                        .usernameParameter("email") // Указываем, что поле для username — это email
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/dashboard", true)
+                        .permitAll()
+                )
+                .userDetailsService(userService);
         return http.build();
     }
 
@@ -38,8 +55,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
-        return http.getSharedObject(AuthenticationManager.class);
-    }
 }

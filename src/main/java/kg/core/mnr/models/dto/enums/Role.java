@@ -19,7 +19,9 @@ public enum Role {
     ADMIN(Set.of(Permission.USER_READ, Permission.USER_WRITE, Permission.ADMIN_ACCESS)),
     CUSTOMS(Set.of(Permission.USER_READ, Permission.CUSTOMS_ACCESS)),
     BORDER(Set.of(Permission.USER_READ, Permission.BORDER_ACCESS)),
-    PROSECUTOR(Set.of(Permission.USER_READ, Permission.PROSECUTOR_ACCESS));
+    POLICE(Set.of(Permission.USER_READ, Permission.POLICE_ACCESS)),
+    AGENCY(Set.of(Permission.USER_READ, Permission.AGENCY_ACCESS));
+
 
     private final Set<Permission> permissions;
 

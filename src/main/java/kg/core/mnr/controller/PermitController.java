@@ -62,7 +62,7 @@ public class PermitController {
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/lists", "разрешения"));
+        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "форма для создания разрешения");
@@ -99,7 +99,7 @@ public class PermitController {
 
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/lists", "разрешения"));
+        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "просмотр разрешения");
@@ -123,7 +123,7 @@ public class PermitController {
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/lists", "разрешения"));
+        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "форма для создания разрешения");

@@ -8,13 +8,14 @@ import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.DictionaryService;
 import kg.core.mnr.service.ProductService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +34,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static kg.core.mnr.utils.ImageCompressor.compressImage;
 
 @AllArgsConstructor
 @Controller
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'BORDER')")
 @RequestMapping("dictionary")
 public class DictionaryController {
     private final DictionaryService dictionaryService;
@@ -60,6 +60,13 @@ public class DictionaryController {
             @RequestParam(required = false) String description,
             @RequestParam(required = false) String code,
             Model model) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        authentication.getAuthorities().forEach(
+                it-> System.out.println(it.getAuthority())
+        );
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage = dictionaryService.getFilteredProducts(description, code, pageable);
