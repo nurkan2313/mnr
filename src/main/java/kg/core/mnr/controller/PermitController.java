@@ -44,9 +44,8 @@ import java.util.stream.IntStream;
 
 import static kg.core.mnr.utils.ImageCompressor.compressImage;
 
-
-@Controller
 @AllArgsConstructor
+@Controller
 public class PermitController {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private final CitesPermitService citesPermitService;
@@ -113,7 +112,7 @@ public class PermitController {
         return "permission/detail";
     }
 
-    @GetMapping("permission/list")
+    @GetMapping("/permission/list")
     public String index(@RequestParam(required = false) String permitNumber,
                               @RequestParam(required = false) String companyName,
                               @RequestParam(required = false) String protectionNumber,
@@ -179,7 +178,7 @@ public class PermitController {
             model.addAttribute("nextDisabled", (page == totalPages - 1));
             model.addAttribute("pageNumbers", pageNumbers);
 
-            return "/permission/list.html"; // Возвращаем список с пагинацией
+            return "/permission/list"; // Возвращаем список с пагинацией
         }
     }
 
@@ -238,7 +237,7 @@ public class PermitController {
 
 
     private String savePdfFile(MultipartFile pdfFile) throws IOException {
-        String fileName = UUID.randomUUID().toString() + "_" + pdfFile.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "_" + pdfFile.getOriginalFilename();
         Path filePath = Paths.get("uploads", fileName);
         Files.createDirectories(filePath.getParent()); // создаем директории, если не существует
         Files.copy(pdfFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // сохраняем файл
