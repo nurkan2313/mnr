@@ -31,10 +31,12 @@ spring:
     suffix: .html
     servlet:
       cache: false
+
+server:
+  port: 10000
 #logging:
 #  level:
 #    org.springframework: DEBUG
 #  file:
-#server:
-#  port: 8080
+
 #    name: app.log
