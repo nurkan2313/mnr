@@ -9,7 +9,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
 #    url: jdbc:postgresql://db:5432/wild
-    url: postgresql://nurkan:ei72X63L9b0q8hccoYzJHD6V2Grq0CaW@dpg-csfrkblds78s7390i840-a/wild_p7mm
+    url: jdbc:postgresql://dpg-csfrkblds78s7390i840-a.oregon-postgres.render.com:5432/wild_p7mm
     username: nurkan
     password: ei72X63L9b0q8hccoYzJHD6V2Grq0CaW
   jpa:
