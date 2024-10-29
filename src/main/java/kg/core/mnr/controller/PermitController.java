@@ -42,8 +42,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static kg.core.mnr.utils.ImageCompressor.compressImage;
-
 @AllArgsConstructor
 @Controller
 public class PermitController {
@@ -83,7 +81,7 @@ public class PermitController {
                     endDate);
 
             model.addAttribute("permits", filteredPermits);
-            return new ModelAndView("permission/list"); // Возвращаем список отфильтрованных данных
+            return new ModelAndView("lists"); // Возвращаем список отфильтрованных данных
         }
 
         return new ModelAndView("permission/permit-form"); // Возвращаем форму для создания разрешения
@@ -127,7 +125,7 @@ public class PermitController {
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
+        breadcrumbs.add(new Breadcrumb("/permission/lists", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "форма для создания разрешения");
@@ -151,7 +149,7 @@ public class PermitController {
 
 
             model.addAttribute("permits", filteredPermits);
-            return "permission/list"; // Возвращаем список отфильтрованных данных
+            return "permission/lists"; // Возвращаем список отфильтрованных данных
         } else {
             // Если параметры фильтрации отсутствуют, выполняем пагинацию
             Pageable pageable = PageRequest.of(page, size);
@@ -178,7 +176,7 @@ public class PermitController {
             model.addAttribute("nextDisabled", (page == totalPages - 1));
             model.addAttribute("pageNumbers", pageNumbers);
 
-            return "/permission/list"; // Возвращаем список с пагинацией
+            return "permission/lists"; // Возвращаем список с пагинацией
         }
     }
 
