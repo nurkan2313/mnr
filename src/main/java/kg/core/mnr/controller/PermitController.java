@@ -114,7 +114,7 @@ public class PermitController {
     }
 
     @GetMapping("permission/list")
-    public ModelAndView index(@RequestParam(required = false) String permitNumber,
+    public String index(@RequestParam(required = false) String permitNumber,
                               @RequestParam(required = false) String companyName,
                               @RequestParam(required = false) String protectionNumber,
                               @RequestParam(required = false) String object,
@@ -152,7 +152,7 @@ public class PermitController {
 
 
             model.addAttribute("permits", filteredPermits);
-            return new ModelAndView("permission/list"); // Возвращаем список отфильтрованных данных
+            return "permission/list"; // Возвращаем список отфильтрованных данных
         } else {
             // Если параметры фильтрации отсутствуют, выполняем пагинацию
             Pageable pageable = PageRequest.of(page, size);
@@ -179,7 +179,7 @@ public class PermitController {
             model.addAttribute("nextDisabled", (page == totalPages - 1));
             model.addAttribute("pageNumbers", pageNumbers);
 
-            return new ModelAndView("/permission/list"); // Возвращаем список с пагинацией
+            return "/permission/list.html"; // Возвращаем список с пагинацией
         }
     }
 
@@ -192,7 +192,7 @@ public class PermitController {
     }
 
     @PostMapping("permission")
-    public ModelAndView post(@Valid @ModelAttribute CitesPermitFormRequest form,
+    public String post(@Valid @ModelAttribute CitesPermitFormRequest form,
                              BindingResult bindingResult,
                              @RequestParam("pdfFile") MultipartFile pdfFile) {
         try {
@@ -210,12 +210,12 @@ public class PermitController {
                 permit.setPdfFileName(fileName); // Устанавливаем имя файла в модель
             } catch (IOException e) {
                 bindingResult.rejectValue("pdfFile", "error.pdfFile", "Error saving file");
-                return new ModelAndView("/permission/permit-form");
+                return "/permission/permit-form";
             }
         }
 
         citesPermitService.createPermit(permit);
-        return new ModelAndView("redirect:/permission");
+        return "redirect:/permission";
     }
 
     @GetMapping("/download/{fileName:.+}")
