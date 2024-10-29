@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head-incident }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    {{> partials/breadcrumbs}}
+                    <!-- Ошибки валидации -->
+                    {{#errors}}
+                    <div class="error-message">
+                        {{defaultMessage}}
+                    </div>
+                    {{/errors}}
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Запись инцидента</h4>
+                            </div>
+                            <div class="header-action">
+                                <i data-toggle="collapse" data-target="#form-element-14" aria-expanded="false">
+                                    <svg width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                    </svg>
+                                </i>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <form action="/incidents" method="post">
+
+                                <div class="form-group">
+                                    <label for="registeredAtString">Дата изъятия</label>
+                                    <input name="registeredAtString" required type="datetime-local" class="form-control" id="registeredAtString"
+                                           placeholder="...">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="speciesSelect">Виды</label>
+                                    <select id="speciesSelect" name="species" class="form-control" required>
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="description">Описание образца</label>
+                                    <input name="description" type="text" class="form-control" id="description" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="count">Количество</label>
+                                    <input name="count" type="number" step="0.01" class="form-control" id="count" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="unitOfMeasurement">Единица измерения</label>
+                                    <select name="unitOfMeasurementId" class="form-control" id="unitOfMeasurement" required>
+                                        <option value="">Выберите единицу измерения</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Выявивший орган</label>
+                                    <select name="authorityId" class="form-control mb-3" required>
+                                        <option selected="">выберите</option>
+                                        {{#authorities}}
+                                        <option value="{{id}}">{{name}}</option>
+                                        {{/authorities}}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Способ обнаружения</label>
+                                    <select name="discoveryMethodId" class="form-control mb-3" required>
+                                        <option selected="">выберите</option>
+                                        {{#discoveryMethods}}
+                                        <option value="{{id}}">{{method}}</option>
+                                        {{/discoveryMethods}}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Причина изъятия</label>
+                                    <select name="reasonForSeizureId" class="form-control mb-3" required>
+                                        <option selected="">выберите</option>
+                                        {{#reasonForSeizures}}
+                                        <option value="{{id}}">{{reason}}</option>
+                                        {{/reasonForSeizures}}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Способ транспортировки</label>
+                                    <select name="transportMethodId" class="form-control mb-3" required>
+                                        <option selected="">выберите</option>
+                                        {{#transportMethods}}
+                                        <option value="{{id}}">{{method}}</option>
+                                        {{/transportMethods}}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Направление торговли</label>
+                                    <select name="tradeDirectionId" class="form-control mb-3" required>
+                                        <option selected="">выберите</option>
+                                        {{#tradeDirections}}
+                                        <option value="{{id}}">{{direction}}</option>
+                                        {{/tradeDirections}}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="hidingMethod">Способ сокрытия </label>
+                                    <input name="hidingMethod" type="text" class="form-control" id="hidingMethod" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="suspectedOriginCountry">Предполагаемая страна происхождения</label>
+                                    <select id="suspectedOriginCountry" name="suspectedOriginCountry" class="form-control" required>
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
+                                </div>
+
+                                <div class="card">
+                                    <div id="country-search">
+                                        <div class="form-group">
+                                            <label for="transitCountries">Страна(ы) транзита</label>
+                                            <input type="text" class="form-control" id="transitCountries" placeholder="Введите страну" autocomplete="off">
+                                            <ul id="transitCountrySuggestions" class="list-group mt-2" style="display: none;"></ul>
+
+                                            <!-- Список выбранных стран -->
+                                            <div class="card-body">
+                                                <div id="selectedCountries" class="mt-3">
+                                                    <!-- Выбранные страны будут отображаться здесь -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="finalDestination">Конечный пункт назначения</label>
+                                    <input name="finalDestination" type="text" class="form-control" id="finalDestination" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="additionalInfo">Дополнительная информация</label>
+                                    <input name="additionalInfo" type="text" class="form-control" id="additionalInfo" required>
+                                </div>
+
+                                <!-- Контейнер для скрытых полей -->
+                                <div id="hiddenCountryInputs"></div>
+
+                                <button type="submit" class="btn btn-primary mr-2">отправить</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Поиск видов
+    document.addEventListener('DOMContentLoaded', function() {
+        const speciesSelect = document.getElementById('speciesSelect');
+
+        // Инициализация Choices.js
+        const speciesChoices = new Choices(speciesSelect, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        speciesSelect.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-species?species=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    speciesChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        speciesChoices.setChoices([{
+                            value: item.id,
+                            label: item.description,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+    // Поиск стран
+    document.addEventListener('DOMContentLoaded', function() {
+        const suspectedOriginCountry = document.getElementById('suspectedOriginCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(suspectedOriginCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        suspectedOriginCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const unitSelect = document.getElementById('unitOfMeasurement');
+        const choices = new Choices(unitSelect, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        unitSelect.addEventListener('search', function(event) {
+            const searchTerm = event.detail.value;
+
+            if (searchTerm.length < 2) {
+                return; // Не начинать поиск, если запрос короче 2 символов
+            }
+
+            fetch(`/incidents/search-units?unit=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(data => {
+                    choices.clearChoices();  // Очистить старые результаты
+
+                    data.forEach(item => {
+                        choices.setChoices([{
+                            value: item.id,
+                            label: item.unit,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+
+</script>
+
+<script>
+    const transitInput = document.getElementById('transitCountries');
+    const suggestionsList = document.getElementById('transitCountrySuggestions');
+    const selectedCountriesContainer = document.getElementById('selectedCountries');
+    const hiddenCountryInputs = document.getElementById('hiddenCountryInputs'); // Контейнер для скрытых полей
+
+    transitInput.oninput = function() {
+        const query = this.value;
+
+        if (query.length > 1) {
+            // Отправка запроса на сервер для получения списка стран
+            fetch(`/incidents/searchCountries?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsList.innerHTML = '';  // Очистить предыдущие результаты
+
+                    data.forEach(country => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = country.name;
+
+                        // Добавление страны в список выбранных
+                        li.onclick = function() {
+                            addSelectedCountry(country.name);
+                            suggestionsList.style.display = 'none'; // Скрыть предложения
+                            transitInput.value = ''; // Очистить поле ввода
+                        };
+
+                        suggestionsList.appendChild(li);
+                    });
+
+                    suggestionsList.style.display = 'block';  // Показать предложения
+                });
+        } else {
+            suggestionsList.style.display = 'none';
+        }
+    };
+
+    function addSelectedCountry(countryName) {
+        // Проверка, что страна еще не добавлена
+        if (!document.querySelector(`#selectedCountries .country[data-name="${countryName}"]`)) {
+            const div = document.createElement('div');
+            div.className = 'country';
+            div.dataset.name = countryName;
+            div.textContent = countryName;
+
+            // Добавление кнопки для удаления
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn btn-danger btn-sm ml-2';
+            removeBtn.textContent = 'Удалить';
+            removeBtn.onclick = function() {
+                div.remove(); // Удаление страны из списка
+                document.querySelector(`input[name="transitCountries[]"][value="${countryName}"]`).remove(); // Удаление скрытого поля
+            };
+
+            div.appendChild(removeBtn);
+            selectedCountriesContainer.appendChild(div);
+
+            // Создание скрытого поля для отправки выбранной страны
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'transitCountries[]'; // Использование массива для передачи нескольких стран
+            hiddenInput.value = countryName;
+            hiddenCountryInputs.appendChild(hiddenInput);
+        }
+    }
+</script>
+<!-- Подключаем jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Wrapper End-->
+{{> partials/footer }}
+</body>
+</html>

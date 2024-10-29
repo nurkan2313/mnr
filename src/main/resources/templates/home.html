@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Zoofari - Zoo & Safari Park Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+
+    <!-- Favicon -->
+    <link href="/images/icon/icon-10.png" rel="icon" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Quicksand:wght@600;700&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Icon Font Stylesheet -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+            rel="stylesheet"
+    />
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+            rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="/lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="/lib/lightbox/css/lightbox.min.css" rel="stylesheet" />
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="/home/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+<!-- Spinner Start -->
+<div
+        id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
+>
+    <div
+            class="spinner-border text-primary"
+            style="width: 3rem; height: 3rem"
+            role="status"
+    >
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<!-- Spinner End -->
+
+<!-- Navbar Start -->
+<nav
+        class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn"
+        data-wow-delay="0.1s"
+>
+    <a href="index.html" class="navbar-brand p-0">
+        <img class="img-fluid me-3" src="/images/icon/icon-10.png" alt="Icon" style="margin: 7px;"/>
+        <h3 class="m-0 text-primary">Министерство природных ресурсов</h3>
+    </a>
+    <button
+            type="button"
+            class="navbar-toggler"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+        <div class="navbar-nav ms-auto">
+            <!-- <a href="index.html" class="nav-item nav-link active">Home</a> -->
+            <!-- <a href="about.html" class="nav-item nav-link">About</a>
+            <a href="service.html" class="nav-item nav-link">Services</a> -->
+
+            <div class="nav-item dropdown">
+                <a
+                        href="#"
+                        class="nav-link dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                >Авторизуйтесь</a
+                >
+                <div class="dropdown-menu rounded-0 rounded-bottom m-0">
+                    <a href="/auth" class="dropdown-item">Войти</a>
+                    <a href="/registration" class="dropdown-item">Зарегистрироваться</a>
+                </div>
+            </div>
+
+            <!-- <a href="contact.html" class="nav-item nav-link">Contact</a> -->
+        </div>
+        <a href="" class="btn btn-primary">
+            Панель управления
+            <i class="fa fa-arrow-right ms-3"></i>
+        </a>
+    </div>
+</nav>
+<!-- Navbar End -->
+
+<!-- Header Start -->
+<div class="container-fluid bg-dark p-0 mb-5">
+    <div class="row g-0 flex-column-reverse flex-lg-row">
+
+        <div class="col-lg-4 p-0 wow fadeIn" data-wow-delay="0.1s">
+            <div
+                    class="header-bg h-100 d-flex flex-column justify-content-center p-5"
+            >
+                <h4 class="display-8 text-light mb-5">
+                    Данная база данных была разработана на средства гранта Бюро по борьбе с международным оборотом наркотиков и правоохранительной деятельности государственного департамента США.
+                </h4>
+                <div class="d-flex align-items-center pt-4 animated slideInDown">
+                    <a href="/dashboard" class="btn btn-primary py-sm-3 px-3 px-sm-5 me-5"
+                    >подробнее</a
+                    >
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 wow fadeIn" data-wow-delay="0.5s">
+            <div class="owl-carousel header-carousel">
+                <div class="owl-carousel-item">
+                    <img class="img-fluid" src="/images/1045.jpg" alt="" />
+                </div>
+                <div class="owl-carousel-item">
+                    <img class="img-fluid" src="/images/4085.jpg" alt="" />
+                </div>
+                <div class="owl-carousel-item">
+                    <img class="img-fluid" src="/images/4173.jpg" alt="" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Header End -->
+
+<!-- Animal Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div
+                class="row g-5 mb-5 align-items-end wow fadeInUp"
+                data-wow-delay="0.1s"
+        >
+            <div class="col-lg-6">
+                <p><span class="text-primary me-2">#</span>Виды животных</p>
+                <h1 class="display-5 mb-0">
+                    Животные из <span class="text-primary">Базы данных</span>
+                </h1>
+            </div>
+            <div class="col-lg-6 text-lg-end">
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <a
+                                class="animal-item"
+                                href="/images/animal-md-1.jpg"
+                                data-lightbox="Животные"
+                        >
+                            <div class="position-relative">
+                                <img class="img-fluid" src="/images/animal-md-1.jpg" alt="" />
+                                <div class="animal-text p-4">
+                                    <p class="text-white small text-uppercase mb-0">Животные</p>
+                                    <h5 class="text-white mb-0">Лось</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <a
+                                class="animal-item"
+                                href="/images/animal-lg-1.jpg"
+                                data-lightbox="animal"
+                        >
+                            <div class="position-relative">
+                                <img class="img-fluid" src="/images/animal-lg-1.jpg" alt="" />
+                                <div class="animal-text p-4">
+                                    <p class="text-white small text-uppercase mb-0">Animal</p>
+                                    <h5 class="text-white mb-0">Elephant</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <a
+                                class="animal-item"
+                                href="/images/animal-lg-2.jpg"
+                                data-lightbox="animal"
+                        >
+                            <div class="position-relative">
+                                <img class="img-fluid" src="/images/animal-lg-2.jpg" alt="" />
+                                <div class="animal-text p-4">
+                                    <p class="text-white small text-uppercase mb-0">Animal</p>
+                                    <h5 class="text-white mb-0">Elephant</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <a
+                                class="animal-item"
+                                href="/images/animal-md-2.jpg"
+                                data-lightbox="animal"
+                        >
+                            <div class="position-relative">
+                                <img class="img-fluid" src="/images/animal-md-2.jpg" alt="" />
+                                <div class="animal-text p-4">
+                                    <p class="text-white small text-uppercase mb-0">Animal</p>
+                                    <h5 class="text-white mb-0">Elephant</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <a
+                                class="animal-item"
+                                href="/images/animal-md-3.jpg"
+                                data-lightbox="animal"
+                        >
+                            <div class="position-relative">
+                                <img class="img-fluid" src="/images/animal-md-3.jpg" alt="" />
+                                <div class="animal-text p-4">
+                                    <p class="text-white small text-uppercase mb-0">Animal</p>
+                                    <h5 class="text-white mb-0">Elephant</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <a
+                                class="animal-item"
+                                href="/images/animal-lg-3.jpg"
+                                data-lightbox="animal"
+                        >
+                            <div class="position-relative">
+                                <img class="img-fluid" src="/images/animal-lg-3.jpg" alt="" />
+                                <div class="animal-text p-4">
+                                    <p class="text-white small text-uppercase mb-0">Animal</p>
+                                    <h5 class="text-white mb-0">Elephant</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Animal End -->
+
+<!-- Доноры Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <h1
+                class="display-5 text-center mb-5 wow fadeInUp"
+                data-wow-delay="0.1s"
+        >
+            Наши доноры
+        </h1>
+        <div
+                class="owl-carousel testimonial-carousel wow fadeInUp"
+                data-wow-delay="0.1s"
+        >
+            <!-- class="img-fluid  border border-2 p-2 mx-auto mb-4" -->
+
+            <div class="testimonial-item text-center">
+                <img
+                        class="img-fluid mx-auto mb-4"
+                        src="/images/donors/ff.png"
+                        style="width: 350px; height: 140px; object-fit: cover;"
+                />
+                <!-- <div class="testimonial-text rounded text-center p-4">
+                  <p>
+                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo
+                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed
+                    clita erat magna elitr erat sit sit erat at rebum justo sea
+                    clita.
+                  </p>
+                  <h5 class="mb-1">Patient Name</h5>
+                  <span class="fst-italic">Profession</span>
+                </div> -->
+            </div>
+            <div class="testimonial-item text-center">
+                <img
+                        class="img-fluid mx-auto mb-4"
+                        src="/images/donors/traffic.jpg"
+                        style="width: 350px; height: 120px; object-fit: cover;"
+                />
+                <!-- <div class="testimonial-text rounded text-center p-4">
+                  <p>
+                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo
+                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed
+                    clita erat magna elitr erat sit sit erat at rebum justo sea
+                    clita.
+                  </p>
+                  <h5 class="mb-1">Patient Name</h5>
+                  <span class="fst-italic">Profession</span>
+                </div> -->
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Доноры End -->
+
+<!-- Facts Start -->
+<div
+        class="container-xxl bg-primary facts my-5 py-5 wow fadeInUp"
+        data-wow-delay="0.1s"
+>
+    <div class="container py-5">
+        <div class="row g-4">
+            <div
+                    class="col-md-6 col-lg-3 text-center wow fadeIn"
+                    data-wow-delay="0.1s"
+            >
+                <i class="fa fa-paw fa-3x text-primary mb-3"></i>
+                <h1 class="text-white mb-2" data-toggle="counter-up">12345</h1>
+                <p class="text-white mb-0">выдано разрешений</p>
+            </div>
+            <div
+                    class="col-md-6 col-lg-3 text-center wow fadeIn"
+                    data-wow-delay="0.3s"
+            >
+                <i class="fa fa-users fa-3x text-primary mb-3"></i>
+                <h1 class="text-white mb-2" data-toggle="counter-up">12345</h1>
+                <p class="text-white mb-0">экспорт животных</p>
+            </div>
+            <div
+                    class="col-md-6 col-lg-3 text-center wow fadeIn"
+                    data-wow-delay="0.5s"
+            >
+                <i class="fa fa-certificate fa-3x text-primary mb-3"></i>
+                <h1 class="text-white mb-2" data-toggle="counter-up">12345</h1>
+                <p class="text-white mb-0">импорт животных</p>
+            </div>
+            <div
+                    class="col-md-6 col-lg-3 text-center wow fadeIn"
+                    data-wow-delay="0.7s"
+            >
+                <i class="fa fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h1 class="text-white mb-2" data-toggle="counter-up">12345</h1>
+                <p class="text-white mb-0">инциденты</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Facts End -->
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"
+><i class="bi bi-arrow-up"></i
+></a>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/lib/wow/wow.min.js"></script>
+<script src="/lib/easing/easing.min.js"></script>
+<script src="/lib/waypoints/waypoints.min.js"></script>
+<script src="/lib/counterup/counterup.min.js"></script>
+<script src="/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="/lib/lightbox/js/lightbox.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="/home/js/main.js"></script>
+</body>
+</html>

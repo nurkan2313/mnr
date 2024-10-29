@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    {{> partials/breadcrumbs}}
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Описание образцов и единиц количества</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="table" class="table-editable">
+                                <table class="table table-bordered table-responsive-md table-striped text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>Описание</th>
+                                            <th>Код</th>
+                                            <th>Предпочитаемая единица измерения</th>
+                                            <th>Альтернативный блок</th>
+                                            <th>Объяснение</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="editable" contenteditable="true">{{product.description}}</td>
+                                            <td class="editable" contenteditable="true">{{product.code}}</td>
+                                            <td class="editable" contenteditable="true">{{product.preferredUnit}}</td>
+                                            <td class="editable" contenteditable="true">{{product.alternativeBlock}}</td>
+                                            <td class="editable" contenteditable="true">{{product.explanation}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Wrapper End-->
+{{> partials/footer }}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateProduct(productId) {
+        // Collect the editable data from the table
+        const updatedProduct = {
+            description: $('td.editable:eq(0)').text(),
+            code: $('td.editable:eq(1)').text(),
+            preferredUnit: $('td.editable:eq(2)').text(),
+            alternativeBlock: $('td.editable:eq(3)').text(),
+            explanation: $('td.editable:eq(4)').text(),
+        };
+
+        // Send the data to the server via AJAX
+        $.ajax({
+            url: '/dictionary/products/' + productId,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedProduct),
+            success: function(response) {
+                alert('Product updated successfully!');
+            },
+            error: function(err) {
+
+            }
+        });
+    }
+</script>
+</body>
+</html>

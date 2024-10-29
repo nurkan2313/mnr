@@ -1,0 +1,63 @@
+package kg.core.mnr.service;
+
+import kg.core.mnr.models.entity.Incident;
+import kg.core.mnr.models.entity.dict.UnitOfMeasurement;
+import kg.core.mnr.repository.IncidentRepository;
+import kg.core.mnr.repository.em.IncidentRepositoryImpl;
+import kg.core.mnr.repository.UnitOfMeasurementRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class IncidentService {
+
+    @Autowired
+    private IncidentRepository incidentRepository;
+    @Autowired
+    private IncidentRepositoryImpl incidentRepositoryImpl;
+    @Autowired
+    private UnitOfMeasurementRepository unitOfMeasurementRepository;
+
+
+    public Page<Incident> getAllIncidents(Pageable pageable) {
+        return incidentRepository.findAll(pageable);
+    }
+
+    public Page<Incident> filterIncidents(String species,
+                                          String authority,
+                                          String transportMethod,
+                                          String suspectedOriginCountry,
+                                          String finalDestination,
+                                          LocalDateTime registeredAt,
+                                          Pageable pageable) {
+        return incidentRepositoryImpl.filterByCriteria(species, authority, transportMethod, suspectedOriginCountry, finalDestination, registeredAt, pageable);
+    }
+
+    public Incident getIncidentById(String id) {
+        return incidentRepository.findById(UUID.fromString(id)).orElse(null);
+    }
+
+    public Incident createIncident(Incident incident) {
+        incident.setId(UUID.randomUUID());
+        UnitOfMeasurement unitOfMeasurement = incident.getUnitOfMeasurement();
+        System.out.println("incident: " +incident.getUnitOfMeasurement().getUnit());
+
+        unitOfMeasurementRepository.findById(unitOfMeasurement.getId()).orElse(null);
+        if (unitOfMeasurement.getId() == null) {
+            unitOfMeasurementRepository.save(unitOfMeasurement);
+        }
+        incidentRepository.save(incident);
+        return incidentRepository.save(incident);
+    }
+
+    public void deleteIncident(UUID id) {
+        incidentRepository.deleteById(id);
+    }
+
+}

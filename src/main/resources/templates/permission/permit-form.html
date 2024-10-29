@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    {{> partials/breadcrumbs}}
+                    <!-- Ошибки валидации -->
+                    {{#errors}}
+                    <div class="error-message">
+                        {{defaultMessage}}
+                    </div>
+                    {{/errors}}
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Новое разрешение</h4>
+                            </div>
+                            <div class="header-action">
+                                <i data-toggle="collapse" data-target="#form-element-14" aria-expanded="false">
+                                    <svg width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                    </svg>
+                                </i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form action="permission" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="exampleInputPlaceholder">Дата выдачи</label>
+                                    <input name="issueDateString" type="datetime-local" class="form-control" id="exampleInputPlaceholder"
+                                           placeholder="...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputReadonly">Дата окончания</label>
+                                    <input name="expiryDateString" type="datetime-local" class="form-control" id="exampleInputReadonly" value="...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputcolor">Физ/Юр лицо</label>
+                                    <input name="companyName" type="text" class="form-control" id="exampleInputcolor">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="speciesSelect">объект пользования</label>
+                                    <select id="speciesSelect" name="object" class="form-control" required>
+                                        <option value="" id="">Начните ввод для поиска</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="quantity">Количество</label>
+                                    <input name="quantity" type="number" step="0.01" class="form-control" id="quantity">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="limiter">Лимит</label>
+                                    <input name="limiter" type="number" step="0.1" class="form-control" id="limiter">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="importerCountry">Страна импортера</label>
+                                    <input name="importerCountry" type="text" class="form-control" id="importerCountry">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exporterCountry">Страна экспортера</label>
+                                    <input name="exporterCountry" type="text" class="form-control" id="exporterCountry">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="purpose">Цель</label>
+                                    <input name="purpose" type="text" class="form-control" id="purpose">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="remarks">Примечания</label>
+                                    <input name="remarks" type="text" class="form-control" id="remarks">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="protectionMarkNumber">Номер защитной марки</label>
+                                    <input name="protectionMarkNumber" type="text" class="form-control" id="protectionMarkNumber">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Статус документа</label>
+                                    <select name="status" class="form-control form-control mb-3">
+                                        <option selected="">Выьерите один из вариантов</option>
+                                        <option value="USED">использован</option>
+                                        <option value="UNUSED">не спользован</option>
+                                        <option value="CANCELED">отменен</option>
+                                    </select>
+                                </div>
+                                <div class="form-group custom-file" style="margin-bottom: 1rem;">
+                                    <label class="custom-file-label" for="customFile">Прикрепить PDF</label>
+                                    <input name="pdfFile" type="file" accept="application/pdf" class="form-control" onchange="validateFileSize(this)" id="customFile">
+                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">отправить</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Поиск видов
+    document.addEventListener('DOMContentLoaded', function() {
+        const speciesSelect = document.getElementById('speciesSelect');
+
+        // Инициализация Choices.js
+        const speciesChoices = new Choices(speciesSelect, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        speciesSelect.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-species?species=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    speciesChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        speciesChoices.setChoices([{
+                            value: item.id,
+                            label: item.description,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+</script>
+<script>
+    function validateFileSize(fileInput) {
+        const file = fileInput.files[0];
+        if (file.size > 10 * 1024 * 1024) { // 10MB
+            alert("Размер файла превышает допустимый предел 10MB.");
+            fileInput.value = ""; // Сбросить поле файла
+        }
+    }
+</script>
+
+<script>
+    function previewImage(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imagePreview = document.getElementById("imagePreview");
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function validateFileSize(input) {
+        const file = input.files[0];
+        if (file && file.size > 2 * 1024 * 1024) { // Ограничение 2MB
+            alert("Размер файла не должен превышать 2MB.");
+            input.value = ""; // Сбрасываем выбранный файл
+        }
+    }
+</script>
+
+<!-- Wrapper End-->
+{{> partials/footer }}
+</body>
+</html>

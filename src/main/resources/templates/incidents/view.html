@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    {{> partials/breadcrumbs}}
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Деталь</h4>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="shadow-showcase text-center">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" >
+                                        <thead>
+                                            <tr>
+                                                <th>Регистрационный номер</th>
+                                                <th>Дата изъятия</th>
+                                                <th>Виды</th>
+                                                <th>Описание образца</th>
+                                                <th>Количество</th>
+                                                <th>Единица измерения</th>
+                                                <th>Выявивший орган</th>
+                                                <th>Способ обнаружения</th>
+                                                <th>Причина изъятия</th>
+                                                <th>Способ транспортировки</th>
+                                                <th>Направление торговли</th>
+                                                <th>Способ сокрытия</th>
+                                                <th>Предполагаемая страна происхождения</th>
+                                                <th>Страна(ы) транзита</th>
+                                                <th>Предполагаемый конечный пункт назначения</th>
+
+                                                <th class="text-right">Дополнительная информация</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr>
+                                            <td>{{incident.id}}</td>
+                                            <td>{{incident.registeredAt}}</td>
+                                            <td>{{incident.species}}</td>
+                                            <td>{{incident.description}}</td>
+                                            <td>{{incident.count}}</td>
+                                            <td>{{incident.unitOfMeasurement.unit}}</td>
+                                            <td>{{incident.authority.name}}</td>
+                                            <td>{{incident.discoveryMethod.method}}</td>
+                                            <td>{{incident.reasonForSeizure.reason }}</td>
+                                            <td>{{incident.transportMethod.method }}</td>
+                                            <td>{{incident.tradeDirection.direction }}</td>
+                                            <td>{{incident.hidingMethod }}</td>
+                                            <td>{{incident.suspectedOriginCountry }}</td>
+                                            <td>{{incident.transitCountries }}</td>
+                                            <td>{{incident.finalDestination }}</td>
+
+                                            <td class="text-right">{{incident.additionalInfo}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Wrapper End-->
+{{> partials/footer }}
+</body>
+</html>

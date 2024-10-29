@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    {{> partials/breadcrumbs}}
+                    <!-- Ошибки валидации -->
+                    {{#errors}}
+                    <div class="error-message">
+                        {{defaultMessage}}
+                    </div>
+                    {{/errors}}
+
+                    <!-- Форма для фильтров -->
+                    <form action="/permission/list" method="get">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <div class="header-title">
+                                    <h4 class="card-title">Фильтрация разрешений</h4>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="permitNumber">Номер разрешения</label>
+                                            <input type="text" name="permitNumber" class="form-control" id="permitNumber" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="protectionNumber">Номер защитной марки</label>
+                                            <input type="text" name="protectionNumber" class="form-control" id="protectionNumber" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="companyName">Наименование пользователя</label>
+                                            <input type="text" name="companyName" class="form-control" id="companyName">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="object">Наименование товара</label>
+                                            <input type="text" name="object" class="form-control" id="object">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="quantity">Количество товара</label>
+                                            <input type="text" name="quantity" class="form-control" id="quantity">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="startDate">Дата начала</label>
+                                            <input type="date" name="startDate" class="form-control" id="startDate">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="endDate">Дата окончания</label>
+                                            <input type="date" name="endDate" class="form-control" id="endDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Фильтр</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Разрешения</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="shadow-showcase text-center">
+                                <span class="table-add float-right mb-3 mr-2">
+                                   <button class="btn btn-sm bg-primary" type="button" onclick="location.href='/permission'">
+                                        <i class="ri-add-fill"></i><span class="pl-1">Добавить</span>
+                                    </button>
+                                </span>
+                                <div class="table-responsive">
+                                    <table class="table table-striped" >
+                                        <thead>
+                                            <tr>
+                                                <th>Отметка о пересечении</th>
+                                                <th>Номер разрешения</th>
+<!--                                                <th>Дата выдачи</th>-->
+<!--                                                <th>Дата окончания</th>-->
+                                                <th>Физ/Юр лица</th>
+                                                <th>объект пользования</th>
+<!--                                                <th>Количество</th>-->
+<!--                                                <th>Лимит</th>-->
+<!--                                                <th>Страна импортера</th>-->
+<!--                                                <th>Страна экспортера</th>-->
+<!--                                                <th>Цель</th>-->
+<!--                                                <th>Примечания</th>-->
+                                                <th>Номер защитной марки</th>
+                                                <th>Статус документа</th>
+                                                <th>Просмотр</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        {{#permits}}
+                                            <tr>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-primary mt-2" data-toggle="modal" data-target="#exampleModal-{{id}}">
+                                                        Сделать отметку
+                                                    </button>
+                                                </td>
+                                                <td>{{ id }}</td>
+<!--                                                <td>{{ issueDate }}</td>-->
+<!--                                                <td>{{ expiryDate }}</td>-->
+                                                <td>{{ companyName }}</td>
+                                                <td>{{ object }}</td>
+<!--                                                <td>{{ quantity }}</td>-->
+<!--                                                <td>{{ limiter }}</td>-->
+<!--                                                <td>{{ importerCountry }}</td>-->
+<!--                                                <td>{{ exporterCountry }}</td>-->
+<!--                                                <td>{{ purpose }}</td>-->
+<!--                                                <td>{{ remarks }}</td>-->
+                                                <td>{{protectionMarkNumber}}</td>
+                                                <td>{{statusDescription}}</td>
+                                                <td><a href="/permission/{{id}}">посмотреть</a></td>
+                                            </tr>
+                                        <!-- Уникальное модальное окно для каждого разрешения -->
+                                        <div class="modal fade" id="exampleModal-{{id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Отметка о пересечении для {{ id }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="borderCrossForm-{{id}}" action="/api/crossings/{{id}}" method="POST">
+                                                            <div class="form-group">
+                                                                <label for="checkpoint-{{id}}">Пункт пропуска</label>
+                                                                <input type="text" class="form-control" id="checkpoint-{{id}}" name="checkpoint" required>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                                        <button type="button" class="btn btn-primary" onclick="submitBorderCrossForm('{{id}}')">Сохранить отметку</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{/permits}}
+                                        </tbody>
+                                    </table>
+
+
+                                    <!-- Пагинация -->
+                                    {{#totalPages}}
+                                    <nav aria-label="Page navigation" {{^totalPages}}style="display:none;"{{/totalPages}}>
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                            <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+
+                                        {{#pageNumbers}}
+                                        <li class="page-item {{#isActive}}active{{/isActive}}">
+                                            <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
+                                        </li>
+                                        {{/pageNumbers}}
+
+                                        <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
+                                            <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    </nav>
+                                    {{/totalPages}}
+
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    function submitBorderCrossForm(id) {
+        const form = document.getElementById(`borderCrossForm-${id}`);
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("Отметка успешно сохранена");
+                    // Закрытие модального окна
+                    $(`#exampleModal-${id}`).modal('hide');
+                } else {
+                    alert("Ошибка при сохранении отметки");
+                }
+            })
+            .catch(error => console.error('Ошибка:', error));
+    }
+</script>
+
+<script>
+    // Поиск стран
+    document.addEventListener('DOMContentLoaded', function() {
+        const suspectedOriginCountry = document.getElementById('importerCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(suspectedOriginCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        suspectedOriginCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+</script>
+
+<script>
+    // Поиск стран
+    document.addEventListener('DOMContentLoaded', function() {
+        const exporterCountry = document.getElementById('exporterCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(exporterCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        exporterCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+</script>
+    <!-- Wrapper End-->
+    {{> partials/footer }}
+</body>
+</html>

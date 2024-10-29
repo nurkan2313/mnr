@@ -1,0 +1,248 @@
+<div class="content-page">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 mb-4 mt-1">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Обзор</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="get" action="/dashboard" class="form-inline">
+                            <div class="form-group mb-2 mr-2">
+                                <label for="startDate" class="mr-2">с даты</label>
+                                <input name="start" type="date" class="form-control" id="startDate">
+                            </div>
+                            <div class="form-group mb-2 mr-2">
+                                <label for="endDate" class="mr-2">по дату</label>
+                                <input name="end" type="date" class="form-control" id="endDate">
+                            </div>
+                            <button type="submit" class="btn btn-primary mb-2">поиск</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Разрешения</h4>
+                        </div>
+                        <div class="card-header-toolbar d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="#" class="text-muted pl-3" id="dropdownMenuButton-customer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" xmlns:xlink="http://www.w3.org/1999/xlink" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                        <g fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="1"/>
+                                            <circle cx="19" cy="12" r="1"/>
+                                            <circle cx="5" cy="12" r="1"/></g>
+                                    </svg>
+                                </a>
+<!--                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-customer">-->
+<!--                                    <a class="dropdown-item" href="#">-->
+<!--                                        <svg class="svg-icon text-secondary" width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />-->
+<!--                                        </svg>-->
+<!--                                        Edit-->
+<!--                                    </a>-->
+<!--                                    <a class="dropdown-item" href="#">-->
+<!--                                        <svg class="svg-icon text-secondary" width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />-->
+<!--                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />-->
+<!--                                        </svg>-->
+<!--                                        View-->
+<!--                                    </a>-->
+<!--                                    <a class="dropdown-item" href="#">-->
+<!--                                        <svg class="svg-icon text-secondary" width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">-->
+<!--                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />-->
+<!--                                        </svg>-->
+<!--                                        Delete-->
+<!--                                    </a>-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead class="table-color-heading">
+                                <tr class="text-secondary">
+                                    <th scope="col">Дата</th>
+                                    <th scope="col">Компания</th>
+                                    <th scope="col">Статус</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{#permits}}
+                                <tr class="white-space-no-wrap">
+                                    <td>{{issueDate}}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div>{{companyName}}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{#status}}
+                                            {{#used}}
+                                            <p class="mb-0 text-warning d-flex justify-content-start align-items-center">
+                                                <small><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 24 24" fill="none">
+                                                    <circle cx="12" cy="12" r="8" fill="#db7e06"></circle></svg>
+                                                </small>Использован
+                                            </p>
+                                            {{/used}}
+
+                                            {{#unused}}
+                                            <p class="mb-0 text-success d-flex justify-content-start align-items-center">
+                                                <small><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 24 24" fill="none">
+                                                    <circle cx="12" cy="12" r="8" fill="#3cb72c"></circle></svg>
+                                                </small>Не использован
+                                            </p>
+                                            {{/unused}}
+                                        {{/status}}
+                                    </td>
+                                </tr>
+                                {{/permits}}
+                                </tbody>
+                            </table>
+                            <!-- Пагинация -->
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                        <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    {{#pageNumbers}}
+                                    <li class="page-item {{#isActive}}active{{/isActive}}">
+                                        <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
+                                    </li>
+                                    {{/pageNumbers}}
+
+                                    <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
+                                        <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="">
+                                        <p class="mb-2 text-secondary">Выдано разрешений</p>
+                                        <div class="d-flex flex-wrap justify-content-start align-items-center">
+                                            <h5 class="mb-0 font-weight-bold">{{totalPermits}}</h5>
+                                            <!--                                            <p class="mb-0 ml-3 text-success font-weight-bold">+3.55%</p>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="">
+                                        <p class="mb-2 text-secondary">Количество инцидентов</p>
+                                        <div class="d-flex flex-wrap justify-content-start align-items-center">
+                                            <h5 class="mb-0 font-weight-bold">{{totalIncidents}}</h5>
+                                            <!--                                            <p class="mb-0 ml-3 text-success font-weight-bold">+2.67%</p>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="">
+                                        <p class="mb-2 text-secondary">Количество импорта</p>
+                                        <div class="d-flex flex-wrap justify-content-start align-items-center">
+                                            <h5 class="mb-0 font-weight-bold">{{importReportByCountry}}</h5>
+                                            <!--                                            <p class="mb-0 ml-3 text-danger font-weight-bold">-9.98%</p>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12">
+                <div class="card card-block card-stretch card-height">
+                    <div class="card-header card-header-border d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">Топ вывезенных видов</h4>
+                        </div>
+                    </div>
+                    <div class="card-body-list">
+                        <ul class="list-style-3 mb-0">
+                            {{#topExportedSpecies}}
+                            <li class="p-3 list-item d-flex justify-content-start align-items-center">
+                                <div class="list-style-detail ml-3 mr-2">
+                                    <p class="mb-0">{{species}}</p>
+                                </div>
+                                <div class="list-style-action d-flex justify-content-end ml-auto">
+                                    <h6 class="font-weight-bold">{{totalcount}}</h6>
+                                </div>
+                            </li>
+                            {{/topExportedSpecies}}
+                        </ul>
+                    </div>
+                    <!-- Пагинация -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            {{#pageNumbersEx}}
+                            <li class="page-item {{#isActive}}active{{/isActive}}">
+                                <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
+                            </li>
+                            {{/pageNumbersEx}}
+
+                            <li class="page-item {{#nextDisabledEx}}disabled{{/nextDisabledEx}}">
+                                <a class="page-link" href="?page={{nextPageEx}}&size=10" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="font-weight-bold mb-3">Статистика по пунктам</h4>
+                        <div id="chart-map-column-04" class="custom-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Page end  -->
+    </div>
+</div>
+

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    {{> partials/breadcrumbs}}
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Фильтр продуктов</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="/dictionary/products" method="get">
+                                <!-- Описание -->
+                                <div class="form-group row">
+                                    <label for="description" class="col-sm-2 col-form-label">Описание</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="description" id="description" placeholder="Введите описание">
+                                    </div>
+                                </div>
+
+                                <!-- Код -->
+                                <div class="form-group row">
+                                    <label for="code" class="col-sm-2 col-form-label">Код</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="code" id="code" placeholder="Введите код продукта">
+                                    </div>
+                                </div>
+
+                                <!-- Кнопка для фильтрации -->
+                                <div class="form-group row">
+                                    <div class="col-sm-10 offset-sm-2">
+                                        <button type="submit" class="btn btn-primary">Фильтровать</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Описание образцов и единиц количества</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="table" class="table-editable">
+                            <span class="table-add float-right mb-3 mr-2">
+                                <button class="btn btn-sm bg-primary" type="button" onclick="location.href='/dictionary/products/form'">
+                                    <i class="ri-add-fill"></i><span class="pl-1">Добавить</span>
+                                </button>
+                            </span>
+                                <table class="table table-bordered table-responsive-md table-striped text-center">
+                                    <thead>
+                                    <tr>
+                                        <th>Описание</th>
+                                        <th>Код</th>
+                                        <th>Предпочитаемая единица измерения</th>
+                                        <th>Альтернативный блок</th>
+                                        <th>Объяснение</th>
+                                        <th>Поднять</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#products}}
+                                    <tr>
+                                        <td contenteditable="false">
+                                            <a href="/dictionary/products/{{id}}">{{description}}</a>
+                                        </td>
+                                        <td contenteditable="true">{{code}}</td>
+                                        <td contenteditable="true">{{preferredUnit}}</td>
+                                        <td contenteditable="true">{{alternativeBlock}}</td>
+                                        <td contenteditable="true">{{explanation}}</td>
+                                        <td>
+                                            <span class="table-up">
+                                                <a href="#!" class="indigo-text">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="blue">
+                                                        <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </a>
+                                            </span>
+                                            <span class="table-down">
+                                                <a href="#!" class="indigo-text">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="blue">
+                                                        <path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </a>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {{/products}}
+                                    </tbody>
+                                </table>
+
+                                <!-- Пагинация -->
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                            <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+
+                                        {{#pageNumbers}}
+                                        <li class="page-item {{#isActive}}active{{/isActive}}">
+                                            <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
+                                        </li>
+                                        {{/pageNumbers}}
+
+                                        <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
+                                            <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Wrapper End-->
+{{> partials/footer }}
+</body>
+</html>

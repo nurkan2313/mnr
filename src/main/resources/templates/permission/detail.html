@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+
+                    {{> partials/breadcrumbs}}
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Редактировать разрешение</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="/permission/update/{{permit.id}}" method="post">
+                                <div class="form-group">
+                                    <label for="issueDate">Дата выдачи</label>
+                                    <input type="datetime-local" class="form-control" name="issueDate" id="issueDate" value="{{permit.issueDate}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiryDate">Дата окончания</label>
+                                    <input type="datetime-local" class="form-control" name="expiryDate" id="expiryDate" value="{{permit.expiryDate}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="companyName">Наименование компании</label>
+                                    <input type="text" class="form-control" name="companyName" id="companyName" value="{{permit.companyName}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="object">Объект пользования</label>
+                                    <input type="text" class="form-control" name="object" id="object" value="{{permit.object}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="quantity">Количество</label>
+                                    <input type="number" class="form-control" name="quantity" id="quantity" value="{{permit.quantity}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="limiter">Лимит</label>
+                                    <input type="number" class="form-control" name="quantity" id="limiter" value="{{permit.limiter}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="importerCountry">Страна импортера</label>
+                                    <input type="text" class="form-control" name="importerCountry" id="importerCountry" value="{{permit.importerCountry}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exporterCountry">Страна экспортера</label>
+                                    <input type="text" class="form-control" name="exporterCountry" id="exporterCountry" value="{{permit.exporterCountry}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="purpose">Цель</label>
+                                    <input type="text" class="form-control" name="purpose" id="purpose" value="{{permit.purpose}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="remarks">Примечания</label>
+                                    <textarea class="form-control" name="remarks" id="remarks">{{permit.remarks}}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="protectionMarkNumber">Номер защитной марки</label>
+                                    <input type="text" class="form-control" name="protectionMarkNumber" id="protectionMarkNumber" value="{{permit.protectionMarkNumber}}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Статус</label>
+                                    <select class="form-control" name="status" id="status">
+                                        <option value="USED" {{#isUsed}}selected{{/isUsed}}>Использовано</option>
+                                        <option value="UNUSED" {{#isUnused}}selected{{/isUnused}}>Не использовано</option>
+                                        <option value="CANCELED" {{#isCanceled}}selected{{/isCanceled}}>Отменено</option>
+                                    </select>
+                                </div>
+
+                                <!-- Отображение изображения -->
+                                <div class="form-group">
+                                    {{#imagePath}}
+                                    <img src="{{imagePath}}" alt="Изображение" style="max-width: 100%; height: auto;">
+                                    {{/imagePath}}
+                                </div>
+
+                                <div class="form-group">
+                                    <a href="/download/{{permit.pdfFileName}}" class="mt-2 badge badge-primary" download>скачать PDF</a>
+                                </div>
+                                <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Wrapper End-->
+{{> partials/footer }}
+</body>
+</html>

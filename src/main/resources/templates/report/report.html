@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+{{> partials/head }}
+<body class="  ">
+<!-- loader Start -->
+{{> partials/loading }}
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+    {{> partials/iq-sidebar }}
+    {{> partials/iq-top-navbar }}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Line Chart</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="apex-basic"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Mixes Chart</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="apex-mixed-chart"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Line Area Chart</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="apex-line-area"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Wrapper End-->
+{{> partials/footer }}
+</body>
+</html>
