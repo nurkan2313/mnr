@@ -24,12 +24,12 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
-    @GetMapping("auth")
+    @GetMapping("/auth")
     public ModelAndView auth(Model model) {
         return new ModelAndView("/user/auth-login");
     }
 
-    @PostMapping("auth")
+    @PostMapping("/auth")
     public ModelAndView auth(@ModelAttribute LoginRequest loginRequest, Model model) {
         log.info("Login request - Email or Phone: {}", loginRequest.getEmailOrPhone());
         Users users = userService.auth(loginRequest);
@@ -42,12 +42,12 @@ public class UserController {
         }
     }
 
-    @GetMapping("registration")
+    @GetMapping("/registration")
     public String registerPage() {
         return "/user/auth-register";
     }
 
-    @PostMapping("registration")
+    @PostMapping("/registration")
     public String register(@ModelAttribute RegisterRequest request, Model model) {
         try {
             UserResponseDto register = userService.register(request);// Вызываем сервис для регистрации
