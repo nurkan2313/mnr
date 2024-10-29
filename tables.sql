@@ -90,6 +90,8 @@ CREATE TABLE IF NOT EXISTS incident (
                                         FOREIGN KEY (trade_direction_id) REFERENCES trade_direction(id),
                                         FOREIGN KEY (country_id) REFERENCES country(id)
 );
+
+
 CREATE TABLE if not exists transit_country (
      id BIGSERIAL PRIMARY KEY,  -- Автоматическая генерация идентификатора
      country_name VARCHAR(255) NOT NULL,  -- Название страны

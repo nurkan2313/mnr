@@ -24,22 +24,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**").permitAll()
-                        .requestMatchers("/auth", "/registration", "/",
-                                "/main", "/report", "/dashboard", "/error").permitAll()
-                        // Доступ только для администраторов
-                        .requestMatchers("/dictionary").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/css/**", "/js/**", "/images/**", "/vendor/**").permitAll()
+//                        .requestMatchers("/auth", "/registration", "/",
+//                                "/main", "/report", "/dashboard", "/error").permitAll()
+//                        // Доступ только для администраторов
+//                        .requestMatchers("/dictionary").hasRole("ADMIN")
+                        .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/auth")
-                        .usernameParameter("emailOrPhone")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .permitAll()
-                )
+//                .formLogin(form -> form
+//                        .loginPage("/auth")
+//                        .usernameParameter("emailOrPhone")
+//                        .permitAll()
+//                )
+//                .logout(logout -> logout
+//                        .logoutUrl("/logout")
+//                        .permitAll()
+//                )
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
