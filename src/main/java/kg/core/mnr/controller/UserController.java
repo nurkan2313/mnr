@@ -25,8 +25,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/auth")
-    public ModelAndView auth(Model model) {
-        return new ModelAndView("/user/auth-login");
+    public String auth() {
+        return "user/auth-login";
     }
 
     @PostMapping("/auth")
@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping("/registration")
     public String registerPage() {
-        return "/user/auth-register";
+        return "user/auth-register";
     }
 
     @PostMapping("/registration")
