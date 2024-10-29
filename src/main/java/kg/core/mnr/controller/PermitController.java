@@ -5,7 +5,6 @@ import kg.core.mnr.models.dto.CitesPermitUpdateDTO;
 import kg.core.mnr.models.dto.requests.CitesPermitFormRequest;
 import kg.core.mnr.models.entity.CitesPermit;
 import kg.core.mnr.models.mapper.CitesPermitMapper;
-import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.CitesPermitService;
 import lombok.AllArgsConstructor;
@@ -48,7 +47,6 @@ public class PermitController {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private final CitesPermitService citesPermitService;
     private final CitesPermitMapper citesPermitMapper;
-    private final CountryRepository countryRepository;
     private final ProductRepository productRepository;
 
     @GetMapping("permission")
@@ -64,7 +62,7 @@ public class PermitController {
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
+        breadcrumbs.add(new Breadcrumb("/permission/lists", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "форма для создания разрешения");
@@ -81,7 +79,7 @@ public class PermitController {
                     endDate);
 
             model.addAttribute("permits", filteredPermits);
-            return new ModelAndView("lists"); // Возвращаем список отфильтрованных данных
+            return new ModelAndView("permission/lists"); // Возвращаем список отфильтрованных данных
         }
 
         return new ModelAndView("permission/permit-form"); // Возвращаем форму для создания разрешения
@@ -101,7 +99,7 @@ public class PermitController {
 
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
+        breadcrumbs.add(new Breadcrumb("/permission/lists", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "просмотр разрешения");
@@ -185,7 +183,7 @@ public class PermitController {
     public String updatePermit(@PathVariable UUID id, @ModelAttribute CitesPermitUpdateDTO updateDTO) {
         updateDTO.setId(id);
         citesPermitService.updateCitesPermit(updateDTO);
-        return "redirect:/permission/list";  // Перенаправление на список разрешений
+        return "redirect:/permission/lists";  // Перенаправление на список разрешений
     }
 
     @PostMapping("permission")

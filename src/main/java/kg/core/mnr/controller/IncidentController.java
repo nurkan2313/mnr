@@ -91,7 +91,7 @@ public class IncidentController {
 
         if (model.containsAttribute("error")) {
             model.addAttribute("incidents", incidentService.getAllIncidents(pageable));
-            return "/incidents/list";
+            return "lists";
         }
 
         // Получение списков из сервисов
@@ -146,7 +146,7 @@ public class IncidentController {
         model.addAttribute("nextDisabled", (page == totalPages - 1));
         model.addAttribute("pageNumbers", pageNumbers);
 
-        return "/incidents/list";
+        return "incidents/lists";
     }
 
     private LocalDateTime parseDateTime(String registeredAt, Model model) {
