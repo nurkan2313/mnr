@@ -3,6 +3,7 @@ package kg.core.mnr.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.entity.CitesPermit;
+import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.DashboardService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,8 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 public class HomeController {
 
     private final DashboardService dashboardService;
+    private final ProductRepository productRepository;
 
     @GetMapping("/")
     public String homePage(HttpServletRequest request, Model model) {
@@ -68,6 +69,12 @@ public class HomeController {
         // Передача статусов как флаги в шаблон
         extracted(permitsByDateRange);
 
+        permitsByDateRange.forEach(it -> {
+            productRepository.findById(UUID.fromString(it.getObject())).ifPresent(product ->
+                    it.setObject(product.getDescription())
+            );
+        });
+
         // Определение номеров предыдущей и следующей страниц
         int totalPages = permitsByDateRange.getTotalPages();
 
@@ -101,7 +108,6 @@ public class HomeController {
         model.addAttribute("previousDisabled", (page == 0));
         model.addAttribute("nextDisabled", (page == totalPages - 1));
         model.addAttribute("nextDisabledEx", (page == totalExportedSpecies - 1));
-        model.addAttribute("totalExportedSpecies", totalExportedSpecies);
         model.addAttribute("totalExportedSpeciesPage", totalExportedSpecies);
         // Добавляем отформатированные даты в модель
         model.addAttribute("start", startDate);  // Форматируем дату начала
@@ -110,7 +116,6 @@ public class HomeController {
         model.addAttribute("totalIncidents", dashboardService.getTotalIncidents(result.startDateTime(), result.endDateTime()));
         model.addAttribute("totalPermits", dashboardService.getImportReportByCountry(result.startDateTime(), result.endDateTime()));
         model.addAttribute("importReportByCountry", dashboardService.getImportReportByCountry(result.startDateTime(), result.endDateTime()));
-        model.addAttribute("topExportedSpecies", dashboardService.getTopExportedSpecies(result.startDateTime(), result.endDateTime(), pageable));
 
         return "index";
     }
@@ -136,9 +141,14 @@ public class HomeController {
     private static void extracted(Page<CitesPermit> permitsByDateRange) {
         for (CitesPermit permit : permitsByDateRange) {
             if (permit.getStatus() == DocStatus.USED) {
-                permit.setUnused(false);
-            } else {
                 permit.setUsed(true);
+                permit.setUnused(false);
+            } else if (permit.getStatus() == DocStatus.UNUSED) {
+                permit.setUsed(false);
+                permit.setUnused(true);
+            } else {
+                permit.setUsed(false);
+                permit.setUnused(false); // для других статусов
             }
         }
     }

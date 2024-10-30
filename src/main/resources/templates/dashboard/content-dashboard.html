@@ -185,54 +185,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 col-md-12">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-header card-header-border d-flex justify-content-between">
-                        <div class="header-title">
-                            <h4 class="card-title">Топ вывезенных видов</h4>
-                        </div>
-                    </div>
-                    <div class="card-body-list">
-                        <ul class="list-style-3 mb-0">
-                            {{#topExportedSpecies}}
-                            <li class="p-3 list-item d-flex justify-content-start align-items-center">
-                                <div class="list-style-detail ml-3 mr-2">
-                                    <p class="mb-0">{{species}}</p>
-                                </div>
-                                <div class="list-style-action d-flex justify-content-end ml-auto">
-                                    <h6 class="font-weight-bold">{{totalcount}}</h6>
-                                </div>
-                            </li>
-                            {{/topExportedSpecies}}
-                        </ul>
-                    </div>
-                    <!-- Пагинация -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
-                                <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-
-                            {{#pageNumbersEx}}
-                            <li class="page-item {{#isActive}}active{{/isActive}}">
-                                <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
-                            </li>
-                            {{/pageNumbersEx}}
-
-                            <li class="page-item {{#nextDisabledEx}}disabled{{/nextDisabledEx}}">
-                                <a class="page-link" href="?page={{nextPageEx}}&size=10" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-
-            </div>
-
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-12 col-md-12">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="font-weight-bold mb-3">Статистика по пунктам</h4>

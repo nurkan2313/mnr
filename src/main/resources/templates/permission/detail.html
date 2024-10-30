@@ -70,9 +70,8 @@
                                 <div class="form-group">
                                     <label for="status">Статус</label>
                                     <select class="form-control" name="status" id="status">
-                                        <option value="USED" {{#isUsed}}selected{{/isUsed}}>Использовано</option>
-                                        <option value="UNUSED" {{#isUnused}}selected{{/isUnused}}>Не использовано</option>
-                                        <option value="CANCELED" {{#isCanceled}}selected{{/isCanceled}}>Отменено</option>
+                                        <option value="USED" {{#stat}} selected {{/stat}}>Использовано</option>
+                                        <option value="UNUSED" {{#stat}} selected {{/stat}} >Не использовано</option>
                                     </select>
                                 </div>
 

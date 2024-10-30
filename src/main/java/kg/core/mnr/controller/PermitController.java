@@ -2,11 +2,14 @@ package kg.core.mnr.controller;
 
 import kg.core.mnr.models.breadcrumbs.Breadcrumb;
 import kg.core.mnr.models.dto.CitesPermitUpdateDTO;
+import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.dto.requests.CitesPermitFormRequest;
 import kg.core.mnr.models.entity.CitesPermit;
 import kg.core.mnr.models.mapper.CitesPermitMapper;
+import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.CitesPermitService;
+import kg.core.mnr.service.DictionaryService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -48,6 +51,8 @@ public class PermitController {
     private final CitesPermitService citesPermitService;
     private final CitesPermitMapper citesPermitMapper;
     private final ProductRepository productRepository;
+    private final DictionaryService dictionaryService;
+    private final CountryRepository countryRepository;
 
     @GetMapping("permission")
     public ModelAndView permissionAndFilter(@RequestParam(required = false) String permitNumber,
@@ -101,6 +106,16 @@ public class PermitController {
         breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
+        if(permitById.getStatus().equals(DocStatus.USED)) {
+            model.addAttribute("stat", false);
+        } else {
+            model.addAttribute("stat", true);
+        }
+
+        permitById.setImporterCountry(countryRepository.findById(UUID.fromString(permitById.getImporterCountry())).get().getName());
+        permitById.setExporterCountry(countryRepository.findById(UUID.fromString(permitById.getExporterCountry())).get().getName());
+
+        model.addAttribute("status", permitById.getStatus().name());
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "просмотр разрешения");
         model.addAttribute("permit", permitById);
