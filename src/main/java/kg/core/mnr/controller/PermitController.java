@@ -95,7 +95,10 @@ public class PermitController {
         return new ModelAndView("permission/permit-form"); // Возвращаем форму для создания разрешения
     }
 
-
+    @GetMapping("/permission/report")
+    public String report() {
+        return "otchet/reports";
+    }
 
     @GetMapping("/permission/list")
     public String index(@RequestParam(required = false) String permitNumber,
