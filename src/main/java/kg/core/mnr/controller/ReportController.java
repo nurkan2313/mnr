@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/report")
+@RequestMapping("report")
 public class ReportController {
 
     @GetMapping
