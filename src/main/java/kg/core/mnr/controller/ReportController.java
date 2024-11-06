@@ -16,7 +16,7 @@ public class ReportController {
 
     @GetMapping
     public ModelAndView report() {
-        return new ModelAndView("/report/report");
+        return new ModelAndView("/report/reports");
     }
 
 }
