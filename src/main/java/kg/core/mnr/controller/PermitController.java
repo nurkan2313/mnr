@@ -55,13 +55,9 @@ import java.util.stream.IntStream;
 public class PermitController {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private final CitesPermitService citesPermitService;
-    private final CitesPermitMapper citesPermitMapper;
     private final ProductRepository productRepository;
-    private final ProductService productService;
-    private final DictionaryService dictionaryService;
     private final CountryRepository countryRepository;
     private final ExcelUploadService excelUploadService;
-    private final CitesPermitRepository citesPermitRepository;
 
     @GetMapping("permission")
     public ModelAndView permissionAndFilter(@RequestParam(required = false) String permitNumber,
