@@ -15,8 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class ReportController {
 
     @GetMapping
-    public ModelAndView report() {
-        return new ModelAndView("/report/reports");
+    public String report() {
+        return "/report/reports";
     }
 
 }
