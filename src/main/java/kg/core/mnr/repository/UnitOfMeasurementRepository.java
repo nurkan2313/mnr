@@ -14,4 +14,7 @@ public interface UnitOfMeasurementRepository extends JpaRepository<UnitOfMeasure
     List<UnitOfMeasurement> searchUnitsByName(@Param("unit") String unit);
 
     UnitOfMeasurement findByUnit(String name);
+
+    List<UnitOfMeasurement> findByUnitContainingIgnoreCase(String unit);
+
 }

@@ -18,7 +18,7 @@ import java.util.UUID;
 @Table(name = "cites_permit")
 public class CitesPermit {
     @Id
-    private UUID id;
+    private String id;
     @Column(name = "issue_date")
     private LocalDateTime issueDate;
     @Column(name = "expiry_date")
@@ -28,16 +28,23 @@ public class CitesPermit {
     private String object;
     @Column(name = "object_id")
     private UUID objectId;
-    private Double quantity;
+    private String quantity;
+    private String measure;
     private Double limiter;
     @Column(name = "importer_country")
     private String importerCountry;
+    @Column(name = "import_id")
+    private UUID importId;
+    @Column(name = "export_id")
+    private UUID exportId;
     @Column(name = "exporter_country")
     private String exporterCountry;
     private String purpose;
     private String remarks;
     @Column(name = "protection_mark_number")
     private String protectionMarkNumber;
+    @Column(name = "units_id")
+    private Integer unitsId;
     // Геттер для статуса
     @Setter
     @Getter
@@ -58,6 +65,25 @@ public class CitesPermit {
     @Setter
     @Getter
     @Transient
-    private String statusDescription; // Описание статуса
+    private String statusDescription; // Описание с// татуса
 
+    public CitesPermit(String number, LocalDateTime now, LocalDateTime localDateTime, String s, String flora, String number1, String kg, String usa, String canada, DocStatus docStatus, String research, String none, String number2) {
+        this.id = UUID.randomUUID().toString();
+        this.issueDate = now;
+        this.expiryDate = localDateTime;
+        this.companyName = s;
+        this.object = "Сибирский козерог";
+        this.quantity = number;
+        this.measure = s;
+        this.limiter = Double.parseDouble(flora);
+        this.importerCountry = usa;
+        this.importId = UUID.randomUUID();
+        this.exportId = UUID.randomUUID();
+        this.exporterCountry = kg;
+        this.purpose = s;
+        this.remarks = s;
+        this.protectionMarkNumber = number1;
+        this.unitsId = Integer.parseInt(number2);
+        this.status = docStatus;
+    }
 }

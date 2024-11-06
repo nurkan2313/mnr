@@ -20,7 +20,7 @@ public class Product {
     @Id
     private UUID id;
 
-    @Column(name = "description")
+    @Column(name = "description", unique = true)
     private String description;
 
     @Column(name = "code")

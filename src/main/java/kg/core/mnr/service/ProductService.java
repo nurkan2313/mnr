@@ -32,4 +32,24 @@ public class ProductService {
     public void deleteById(UUID id) {
         productRepository.deleteById(id);
     }
+
+    public UUID checkAndCreateProductByDescription(String description) {
+        if (description == null || description.isEmpty()) return null;
+
+        // Проверка существования продукта по описанию
+        Optional<Product> existingProduct = productRepository.findByDescription(description);
+
+        if (existingProduct.isPresent()) {
+            return existingProduct.get().getId();
+        } else {
+            // Создаем новый продукт
+            UUID id = UUID.randomUUID();
+            Product newProduct = new Product();
+            newProduct.setId(id);
+            newProduct.setDescription(description);
+
+            productRepository.save(newProduct);
+            return id;
+        }
+    }
 }

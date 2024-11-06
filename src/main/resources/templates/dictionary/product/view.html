@@ -37,11 +37,11 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="editable" contenteditable="true">{{product.description}}</td>
-                                            <td class="editable" contenteditable="true">{{product.code}}</td>
-                                            <td class="editable" contenteditable="true">{{product.preferredUnit}}</td>
-                                            <td class="editable" contenteditable="true">{{product.alternativeBlock}}</td>
-                                            <td class="editable" contenteditable="true">{{product.explanation}}</td>
+                                            <td class="editable" contenteditable="true">{{#product.description}} {{product.description}} {{/product.description}}</td>
+                                            <td class="editable" contenteditable="true">{{#product.code}} {{product.code}} {{/product.code}}</td>
+                                            <td class="editable" contenteditable="true">{{#product.preferredUnit}} {{product.preferredUnit}} {{/product.preferredUnit}}</td>
+                                            <td class="editable" contenteditable="true">{{#product.alternativeBlock}} {{product.alternativeBlock}} {{/product.alternativeBlock}}</td>
+                                            <td class="editable" contenteditable="true">{{#product.explanation}} {{product.explanation}} {{/product.explanation}}</td>
                                         </tr>
                                     </tbody>
                                 </table>

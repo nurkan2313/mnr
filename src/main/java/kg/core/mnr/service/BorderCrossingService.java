@@ -21,7 +21,7 @@ public class BorderCrossingService {
         this.citesPermitRepository = citesPermitRepository;
     }
 
-    public BorderCrossing recordCrossing(UUID permitId, String checkpoint) {
+    public BorderCrossing recordCrossing(String permitId, String checkpoint) {
         CitesPermit permit = citesPermitRepository.findById(permitId)
                 .orElseThrow(() -> new RuntimeException("Permit not found"));
 

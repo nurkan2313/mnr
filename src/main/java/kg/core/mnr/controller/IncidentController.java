@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -58,6 +60,24 @@ public class IncidentController {
     @ResponseBody
     public List<UnitOfMeasurement> searchUnits(@RequestParam("unit") String unit) {
         return dictionaryService.getSimilarUnitOfMeasurements(unit);
+    }
+
+    @PostMapping("/create-unit")
+    public ResponseEntity<UnitOfMeasurement> createUnit(@RequestBody Map<String, String> request) {
+        String unitName = request.get("unit");
+
+        // Проверяем наличие единицы измерения
+        UnitOfMeasurement existingUnit = unitOfMeasurementService.findUnitByName(unitName);
+        if (existingUnit != null) {
+            return ResponseEntity.ok(existingUnit); // Возвращаем уже существующую
+        }
+
+        // Создаем новую единицу
+        UnitOfMeasurement newUnit = new UnitOfMeasurement();
+        newUnit.setUnit(unitName);
+        unitOfMeasurementService.addUnit(newUnit);
+
+        return ResponseEntity.ok(newUnit);
     }
 
     @GetMapping("/search-species")

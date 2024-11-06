@@ -22,7 +22,7 @@
                     {{/errors}}
 
                     <!-- Форма для фильтров -->
-                    <form action="/permission/list" method="get">
+                    <form action="/permission/list" method="get" id="filterForm">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
                                 <div class="header-title">
@@ -53,14 +53,14 @@
 
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="object">Наименование товара</label>
+                                            <label for="object">Наименование объекта</label>
                                             <input type="text" name="object" class="form-control" id="object">
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="quantity">Количество товара</label>
+                                            <label for="quantity">Количество объекта</label>
                                             <input type="text" name="quantity" class="form-control" id="quantity">
                                         </div>
                                     </div>
@@ -79,6 +79,7 @@
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Фильтр</button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">Очистить</button>
                             </div>
                         </div>
                     </form>
@@ -102,16 +103,16 @@
                                             <tr>
                                                 <th>Отметка о пересечении</th>
                                                 <th>Номер разрешения</th>
-<!--                                                <th>Дата выдачи</th>-->
-<!--                                                <th>Дата окончания</th>-->
+                                                <th>Дата выдачи</th>
+                                                <th>Дата окончания</th>
                                                 <th>Физ/Юр лица</th>
                                                 <th>объект пользования</th>
-<!--                                                <th>Количество</th>-->
-<!--                                                <th>Лимит</th>-->
-<!--                                                <th>Страна импортера</th>-->
-<!--                                                <th>Страна экспортера</th>-->
-<!--                                                <th>Цель</th>-->
-<!--                                                <th>Примечания</th>-->
+                                                <th>Количество</th>
+                                                <th>Лимит</th>
+                                                <th>Страна импортера</th>
+                                                <th>Страна экспортера</th>
+                                                <th>Цель</th>
+                                                <th>Примечания</th>
                                                 <th>Номер защитной марки</th>
                                                 <th>Статус документа</th>
                                                 <th>Просмотр</th>
@@ -127,18 +128,18 @@
                                                     </button>
                                                 </td>
                                                 <td>{{ id }}</td>
-<!--                                                <td>{{ issueDate }}</td>-->
-<!--                                                <td>{{ expiryDate }}</td>-->
-                                                <td>{{ companyName }}</td>
-                                                <td>{{ object }}</td>
-<!--                                                <td>{{ quantity }}</td>-->
-<!--                                                <td>{{ limiter }}</td>-->
-<!--                                                <td>{{ importerCountry }}</td>-->
-<!--                                                <td>{{ exporterCountry }}</td>-->
-<!--                                                <td>{{ purpose }}</td>-->
-<!--                                                <td>{{ remarks }}</td>-->
-                                                <td>{{protectionMarkNumber}}</td>
-                                                <td>{{statusDescription}}</td>
+                                                <td>{{#issueDate}} {{ issueDate }} {{/issueDate }}</td>
+                                                <td>{{#expiryDate }} {{expiryDate}} {{/expiryDate }}</td>
+                                                <td>{{#companyName }}{{ companyName }}{{/companyName }}</td>
+                                                <td>{{#object }}{{ object }}{{/object }}</td>
+                                                <td>{{#quantity }} {{ quantity }} {{/quantity }}</td>
+                                                <td>{{#limiter }}{{ limiter }} {{/limiter}}</td>
+                                                <td>{{#importerCountry }} {{ importerCountry }} {{/importerCountry }}</td>
+                                                <td>{{#exporterCountry }} {{ exporterCountry }} {{/exporterCountry }}</td>
+                                                <td>{{#purpose }} {{ purpose }} {{/purpose }}</td>
+                                                <td>{{#remarks }} {{ remarks }} {{/remarks }}</td>
+                                                <td>{{#protectionMarkNumber}} {{protectionMarkNumber}} {{/protectionMarkNumber}}</td>
+                                                <td>{{#statusDescription}} {{statusDescription}} {{/statusDescription}}</td>
                                                 <td><a href="/permission/{{id}}">посмотреть</a></td>
                                             </tr>
                                         <!-- Уникальное модальное окно для каждого разрешения -->
@@ -306,6 +307,12 @@
                 .catch(error => console.error('Ошибка:', error));
         });
     });
+</script>
+<script>
+    // Функция для очистки формы
+    function resetForm() {
+        document.getElementById("filterForm").reset();
+    }
 </script>
     <!-- Wrapper End-->
     {{> partials/footer }}

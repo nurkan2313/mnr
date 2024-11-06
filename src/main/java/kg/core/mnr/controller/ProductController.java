@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,23 +44,14 @@ public class ProductController {
         return new ModelAndView("redirect:/products");
     }
 
-    // Обновление продукта
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Product> updateProduct(@PathVariable UUID id, @RequestBody Product productDetails) {
-//        Optional<Product> product = productService.findById(id);
-//        if (product.isPresent()) {
-//            Product existingProduct = product.get();
-//            existingProduct.setDescription(productDetails.getDescription());
-//            existingProduct.setCode(productDetails.getCode());
-//            existingProduct.setPreferredUnit(productDetails.getPreferredUnit());
-//            existingProduct.setAlternativeBlock(productDetails.getAlternativeBlock());
-//            existingProduct.setExplanation(productDetails.getExplanation());
-//
-//            return ResponseEntity.ok(productService.save(existingProduct));
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @PostMapping("/new")
+    @ResponseBody
+    public Product createProduct(@RequestBody Map<String, String> request) {
+        String description = request.get("description");
+        System.out.println("DESCR: " +description);
+        UUID productId = productService.checkAndCreateProductByDescription(description);
+        return productService.findById(productId).orElseThrow();
+    }
 
     // Удаление продукта
     @DeleteMapping("/{id}")

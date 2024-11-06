@@ -25,7 +25,7 @@ public class BorderCrossingController {
     // Запись новой отметки о пересечении границы
     @PostMapping("/{permitId}")
     public ResponseEntity<BorderCrossing> recordCrossing(
-            @PathVariable UUID permitId,
+            @PathVariable String permitId,
             @RequestParam String checkpoint) {
         
         BorderCrossing crossing = borderCrossingService.recordCrossing(permitId, checkpoint);
@@ -34,7 +34,7 @@ public class BorderCrossingController {
 
     // Получение всех пересечений по конкретному разрешению
     @GetMapping("/permit/{permitId}")
-    public ResponseEntity<List<BorderCrossing>> getCrossingsByPermit(@PathVariable UUID permitId) {
+    public ResponseEntity<List<BorderCrossing>> getCrossingsByPermit(@PathVariable String permitId) {
         List<BorderCrossing> crossings = borderCrossingRepository.findByPermitId(permitId);
         return ResponseEntity.ok(crossings);
     }

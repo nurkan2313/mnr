@@ -246,39 +246,90 @@
         });
     });
 
+    // ед. изм.
     document.addEventListener('DOMContentLoaded', function() {
         const unitSelect = document.getElementById('unitOfMeasurement');
         const choices = new Choices(unitSelect, {
-            searchEnabled: true,        // Включаем поиск
+            searchEnabled: true,
             searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
+            noResultsText: 'Не найдено. Нажмите "Создать новую единицу"',
             noChoicesText: 'Нет доступных вариантов'
         });
 
+        let lastSearchTerm = ''; // Сохраняет последний поисковый запрос
+
         unitSelect.addEventListener('search', function(event) {
             const searchTerm = event.detail.value;
+            lastSearchTerm = searchTerm;
 
             if (searchTerm.length < 2) {
-                return; // Не начинать поиск, если запрос короче 2 символов
+                return; // Прерываем поиск, если запрос короче 2 символов
             }
 
             fetch(`/incidents/search-units?unit=${encodeURIComponent(searchTerm)}`)
                 .then(response => response.json())
                 .then(data => {
-                    choices.clearChoices();  // Очистить старые результаты
+                    choices.clearChoices(); // Очистка старых результатов
 
-                    data.forEach(item => {
+                    if (data.length === 0) {
+                        // Если результаты не найдены, добавляем опцию для создания новой единицы
                         choices.setChoices([{
-                            value: item.id,
-                            label: item.unit,
-                            selected: false,
-                            disabled: false,
+                            value: 'create-new',
+                            label: `Создать новую единицу "${searchTerm}"`,
+                            customProperties: { createNew: true }
                         }], 'value', 'label', false);
-                    });
+                    } else {
+                        // Если результаты найдены, добавляем их в список выбора
+                        data.forEach(item => {
+                            choices.setChoices([{
+                                value: item.id,
+                                label: item.unit,
+                                selected: false,
+                                disabled: false,
+                            }], 'value', 'label', false);
+                        });
+                    }
                 })
                 .catch(error => console.error('Ошибка:', error));
         });
+
+        unitSelect.addEventListener('change', function(event) {
+            if (event.target.value === 'create-new') {
+                // Используем последний введенный запрос для создания новой единицы
+                const unitName = lastSearchTerm;
+
+                if (!unitName) {
+                    console.error('Название единицы измерения отсутствует.');
+                    return;
+                }
+
+                // Отправка запроса на создание новой единицы
+                fetch('/incidents/create-unit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ unit: unitName })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(`Новая единица измерения создана: ${data.unit}`);
+
+                        // Добавляем созданную единицу в список выбора и выбираем её
+                        choices.setChoices([{
+                            value: data.id,
+                            label: data.unit,
+                            selected: true,
+                            disabled: false
+                        }], 'value', 'label', false);
+
+                        choices.setChoiceByValue(data.id); // Устанавливаем новую единицу как выбранную
+                    })
+                    .catch(error => console.error('Ошибка создания единицы измерения:', error));
+            }
+        });
     });
+
 
 </script>
 

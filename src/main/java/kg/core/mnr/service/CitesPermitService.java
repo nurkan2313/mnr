@@ -1,18 +1,15 @@
 package kg.core.mnr.service;
 
 import kg.core.mnr.models.dto.CitesPermitUpdateDTO;
-import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.entity.CitesPermit;
 import kg.core.mnr.repository.CitesPermitRepository;
 import kg.core.mnr.repository.em.CitesPermitRepositoryImpl;
-import kg.core.mnr.utils.ImageCompressor;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +22,17 @@ public class CitesPermitService {
     private CitesPermitRepository citesPermitRepository;
     private CitesPermitRepositoryImpl citesPermitRepositoryI;
 
+    @Transactional
+    public void saveAll(List<CitesPermit> citesPermits) {
+        for (CitesPermit citesPermit : citesPermits) {
+            if (citesPermit.getId() == null) {
+                citesPermit.setId(UUID.randomUUID().toString());
+            }
+            citesPermit.setId(citesPermit.getId());
+        }
+        citesPermitRepository.saveAll(citesPermits);
+    }
+
     public List<CitesPermit> filterPermits(
             String permitNumber,
             String protectionNumber,
@@ -36,8 +44,8 @@ public class CitesPermitService {
         // Логика фильтрации
         return citesPermitRepositoryI.filterPermits(
                 permitNumber,
-                companyName,
                 protectionNumber,
+                companyName,
                 object,
                 quantity,
                 startDate,
@@ -48,10 +56,11 @@ public class CitesPermitService {
         return citesPermitRepository.findAll(pageable);
     }
 
-    public CitesPermit getPermitById(UUID id) {
+    public CitesPermit getPermitById(String id) {
         return citesPermitRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public CitesPermit updateCitesPermit(CitesPermitUpdateDTO dto) {
         Optional<CitesPermit> optionalPermit = citesPermitRepository.findById(dto.getId());
 
@@ -78,19 +87,34 @@ public class CitesPermitService {
         }
     }
 
+    @Transactional
     public void createPermit(CitesPermit permit) {
-        permit.setId(UUID.randomUUID());
+        // Получаем все записи и берём последнюю
+        List<CitesPermit> all = citesPermitRepository.findAll();
+
+        String lastId = all.isEmpty() ? "24KG000" : all.get(all.size() - 1).getId();
+
+        // Увеличиваем значение id
+        String newId = incrementId(lastId);
+
+        // Присваиваем новое id объекту permit
+        permit.setId(newId);
         citesPermitRepository.save(permit);
     }
 
-    public void saveImage(UUID permitId) throws IOException {
-        Optional<CitesPermit> permitOptional = citesPermitRepository.findById(permitId);
-        if (permitOptional.isPresent()) {
-            CitesPermit permit = permitOptional.get();
-            citesPermitRepository.save(permit);
-        } else {
-            throw new RuntimeException("Permit not found");
-        }
+    // Метод для увеличения значения id
+    private String incrementId(String lastId) {
+        // Извлекаем числовую часть id
+        String prefix = lastId.substring(0, 5); // "23KG"
+        String numericPart = lastId.substring(5); // "001"
+
+        // Увеличиваем числовую часть на 1
+        int numericValue = Integer.parseInt(numericPart) + 1;
+
+        // Форматируем обратно в строку с ведущими нулями
+        String newNumericPart = String.format("%03d", numericValue); // сохраняем 3 цифры, например "002"
+
+        return prefix + newNumericPart;
     }
 
 }

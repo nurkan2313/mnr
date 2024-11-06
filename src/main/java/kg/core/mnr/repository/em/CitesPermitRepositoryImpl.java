@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,8 +25,8 @@ public class CitesPermitRepositoryImpl {
 
     public List<CitesPermit> filterPermits(
             String permitNumber,
-            String companyName,
             String protectionNumber,
+            String companyName,
             String object,
             Double quantity,
             LocalDate startDate, LocalDate endDate) {
@@ -37,13 +38,13 @@ public class CitesPermitRepositoryImpl {
         List<Predicate> predicates = new ArrayList<>();
 
         if (permitNumber != null && !permitNumber.isEmpty()) {
-            predicates.add(cb.equal(permit.get("id"), UUID.fromString(permitNumber)));
-        }
-        if (companyName != null && !companyName.isEmpty()) {
-            predicates.add(cb.like(permit.get("companyName"), "%" + companyName + "%"));
+            predicates.add(cb.equal(permit.get("id"), permitNumber));
         }
         if (protectionNumber != null && !protectionNumber.isEmpty()) {
             predicates.add(cb.equal(permit.get("protectionMarkNumber"), protectionNumber));
+        }
+        if (companyName != null && !companyName.isEmpty()) {
+            predicates.add(cb.like(permit.get("companyName"), "%" + companyName + "%"));
         }
         if (object != null && !object.isEmpty()) {
             predicates.add(cb.equal(permit.get("object"), object));
@@ -56,6 +57,34 @@ public class CitesPermitRepositoryImpl {
         }
 
         query.select(permit).where(cb.and(predicates.toArray(new Predicate[0])));
+        return entityManager.createQuery(query).getResultList();
+    }
+
+    public List<CitesPermit> findByCriteria(String importerCountry, String exporterCountry, String object, LocalDateTime startDate, LocalDateTime endDate) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CitesPermit> query = cb.createQuery(CitesPermit.class);
+        Root<CitesPermit> root = query.from(CitesPermit.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Добавляем условия для фильтрации
+        if (importerCountry != null && !importerCountry.isEmpty()) {
+            predicates.add(cb.equal(root.get("importerCountry"), importerCountry));
+        }
+        if (exporterCountry != null && !exporterCountry.isEmpty()) {
+            predicates.add(cb.equal(root.get("exporterCountry"), exporterCountry));
+        }
+        if (object != null && !object.isEmpty()) {
+            predicates.add(cb.like(root.get("object"), "%" + object + "%"));
+        }
+        if (startDate != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("issueDate"), startDate));
+        }
+        if (endDate != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("expiryDate"), endDate));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
 }

@@ -25,6 +25,9 @@ public class CitesPermitFormRequest {
     private String object;
 
     private UUID objectId;
+    private Integer unitsId;
+    private UUID importId;
+    private UUID exportId;
 
     @NotNull(message = "Количество обязательно")
     @Positive(message = "Количество должно быть положительным числом")
@@ -51,8 +54,7 @@ public class CitesPermitFormRequest {
     @NotNull(message = "Статус документа обязателен")
     private DocStatus status; // Enum: used, unused, canceled
 
-    public CitesPermitFormRequest() {
-    }
+    public CitesPermitFormRequest() {}
 
     public CitesPermitFormRequest(LocalDateTime issueDate, LocalDateTime expiryDate, String companyName, String object, Double quantity, String importerCountry, String exporterCountry, String purpose, String remarks, String protectionMarkNumber, DocStatus status) {
         this.issueDate = issueDate;
@@ -83,6 +85,4 @@ public class CitesPermitFormRequest {
         this.protectionMarkNumber = protectionMarkNumber;
         this.status = status;
     }
-
-
 }

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -26,6 +27,7 @@ public interface CountryRepository extends JpaRepository<Country, UUID> {
     @Query("SELECT c FROM Country c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Country> searchCountriesByName(@Param("query") String query);
 
+    Optional<Country> findByName(String query);
 
     List<Country> findTop5ByNameContainingIgnoreCase(String name);
 

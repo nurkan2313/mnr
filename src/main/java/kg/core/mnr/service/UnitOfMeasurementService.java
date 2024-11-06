@@ -13,6 +13,10 @@ public class UnitOfMeasurementService {
     @Autowired
     private UnitOfMeasurementRepository repository;
 
+    public List<UnitOfMeasurement> searchUnits(String query) {
+        return repository.findByUnitContainingIgnoreCase(query);
+    }
+
     public UnitOfMeasurement addUnit(UnitOfMeasurement unit) {
         return repository.save(unit);
     }

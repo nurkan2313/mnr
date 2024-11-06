@@ -5,11 +5,15 @@ import kg.core.mnr.models.dto.CitesPermitUpdateDTO;
 import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.dto.requests.CitesPermitFormRequest;
 import kg.core.mnr.models.entity.CitesPermit;
+import kg.core.mnr.models.entity.dict.Product;
 import kg.core.mnr.models.mapper.CitesPermitMapper;
+import kg.core.mnr.repository.CitesPermitRepository;
 import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.CitesPermitService;
 import kg.core.mnr.service.DictionaryService;
+import kg.core.mnr.service.ExcelUploadService;
+import kg.core.mnr.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
@@ -40,6 +45,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,13 +57,16 @@ public class PermitController {
     private final CitesPermitService citesPermitService;
     private final CitesPermitMapper citesPermitMapper;
     private final ProductRepository productRepository;
+    private final ProductService productService;
     private final DictionaryService dictionaryService;
     private final CountryRepository countryRepository;
+    private final ExcelUploadService excelUploadService;
+    private final CitesPermitRepository citesPermitRepository;
 
     @GetMapping("permission")
     public ModelAndView permissionAndFilter(@RequestParam(required = false) String permitNumber,
-                                            @RequestParam(required = false) String companyName,
                                             @RequestParam(required = false) String protectionNumber,
+                                            @RequestParam(required = false) String companyName,
                                             @RequestParam(required = false) String object,
                                             @RequestParam(required = false) Double quantity,
                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -73,11 +82,11 @@ public class PermitController {
         model.addAttribute("currentPage", "форма для создания разрешения");
 
         // Проверка наличия параметров фильтрации
-        if (permitNumber != null || companyName != null || protectionNumber!= null || object != null || quantity != null) {
+        if (permitNumber != null || protectionNumber!= null ||  companyName != null  || object != null || quantity != null) {
             List<CitesPermit> filteredPermits = citesPermitService.filterPermits(
                     permitNumber,
-                    companyName,
                     protectionNumber,
+                    companyName,
                     object,
                     quantity,
                     startDate,
@@ -90,43 +99,12 @@ public class PermitController {
         return new ModelAndView("permission/permit-form"); // Возвращаем форму для создания разрешения
     }
 
-    @GetMapping("permission/{id}")
-    public String permission(@PathVariable UUID id, Model model) {
-        CitesPermit permitById = citesPermitService.getPermitById(id);
-        UUID objectId = UUID.fromString(permitById.getObject());
-        if (permitById == null) {
-            return "error/404";
-        }
 
-        permitById.setObject(productRepository
-                .findById(UUID.fromString(permitById.getObject())).get()
-                .getDescription());
-
-        List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
-        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
-
-        if(permitById.getStatus().equals(DocStatus.USED)) {
-            model.addAttribute("stat", false);
-        } else {
-            model.addAttribute("stat", true);
-        }
-
-        permitById.setImporterCountry(countryRepository.findById(UUID.fromString(permitById.getImporterCountry())).get().getName());
-        permitById.setExporterCountry(countryRepository.findById(UUID.fromString(permitById.getExporterCountry())).get().getName());
-
-        model.addAttribute("status", permitById.getStatus().name());
-        model.addAttribute("breadcrumbs", breadcrumbs);
-        model.addAttribute("currentPage", "просмотр разрешения");
-        model.addAttribute("permit", permitById);
-        model.addAttribute("imagePath", productRepository.findById(objectId).get().getImagePath());
-        return "permission/detail";
-    }
 
     @GetMapping("/permission/list")
     public String index(@RequestParam(required = false) String permitNumber,
-                              @RequestParam(required = false) String companyName,
                               @RequestParam(required = false) String protectionNumber,
+                              @RequestParam(required = false) String companyName,
                               @RequestParam(required = false) String object,
                               @RequestParam(required = false) Double quantity,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -144,21 +122,21 @@ public class PermitController {
         model.addAttribute("currentPage", "форма для создания разрешения");
 
         // Если присутствуют параметры фильтрации, выполняем фильтрацию
-        if (permitNumber != null || companyName != null || protectionNumber != null || object != null || quantity != null || startDate != null || endDate != null) {
+        if (permitNumber != null || protectionNumber != null || companyName != null || object != null || quantity != null || startDate != null || endDate != null) {
             List<CitesPermit> filteredPermits = citesPermitService.filterPermits(
                     permitNumber,
-                    companyName,
                     protectionNumber,
+                    companyName,
                     object,
                     quantity,
                     startDate,
                     endDate);
 
             filteredPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
-            filteredPermits.forEach(permit -> permit.setObject(
-                            productRepository
-                                    .findById(UUID.fromString(permit.getObject())).get().getDescription()
-                    ));
+//            filteredPermits.forEach(permit -> permit.setObject(
+//                            productRepository
+//                                    .findById(UUID.fromString(permit.getObject())).get().getDescription()
+//                    ));
 
 
             model.addAttribute("permits", filteredPermits);
@@ -169,10 +147,6 @@ public class PermitController {
             Page<CitesPermit> allPermits = citesPermitService.getAllPermits(pageable);
 
             allPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
-            allPermits.forEach(permit -> permit.setObject(
-                    productRepository
-                            .findById(UUID.fromString(permit.getObject())).get().getDescription()
-            ));
 
             int totalPages = allPermits.getTotalPages();
             int startPage = Math.max(1, page + 1 - 1); // Начальная страница
@@ -193,38 +167,120 @@ public class PermitController {
         }
     }
 
+    @GetMapping("permission/{id}")
+    public String permission(@PathVariable String id, Model model) {
+        CitesPermit permitById = citesPermitService.getPermitById(id);
+
+        Optional<Product> productOptional = productRepository.findByDescription(permitById.getObject());
+        String measure = productOptional.map(Product::getPreferredUnit).orElse(null);
+
+        String imagePath = productRepository.findByDescription(permitById.getObject())
+                .map(Product::getImagePath)
+                .orElse(null);
+
+        List<Breadcrumb> breadcrumbs = new ArrayList<>();
+        breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
+        breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
+
+        if(permitById.getStatus().equals(DocStatus.USED)) {
+            model.addAttribute("stat", false);
+        } else {
+            model.addAttribute("stat", true);
+        }
+
+        model.addAttribute("status", permitById.getStatus().name());
+        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute("currentPage", "просмотр разрешения");
+        model.addAttribute("permit", permitById);
+        model.addAttribute("measure", measure);
+        model.addAttribute("imagePath", imagePath);
+        return "permission/detail";
+    }
+
     // Обновление разрешения
     @PostMapping("permission/update/{id}")
-    public String updatePermit(@PathVariable UUID id, @ModelAttribute CitesPermitUpdateDTO updateDTO) {
+    public String updatePermit(@PathVariable String id, @ModelAttribute CitesPermitUpdateDTO updateDTO) {
         updateDTO.setId(id);
         citesPermitService.updateCitesPermit(updateDTO);
         return "redirect:/permission/lists";  // Перенаправление на список разрешений
     }
 
     @PostMapping("permission")
-    public String post(@Valid @ModelAttribute CitesPermitFormRequest form,
+    public String post(@Valid @ModelAttribute CitesPermitFormRequest dto,
                              BindingResult bindingResult,
                              @RequestParam("pdfFile") MultipartFile pdfFile) {
         try {
-            form.setIssueDate(LocalDateTime.parse(form.getIssueDateString(), formatter));
-            form.setExpiryDate(LocalDateTime.parse(form.getExpiryDateString(), formatter));
+            dto.setIssueDate(LocalDateTime.parse(dto.getIssueDateString(), formatter));
+            dto.setExpiryDate(LocalDateTime.parse(dto.getExpiryDateString(), formatter));
         } catch (DateTimeException e) {
             bindingResult.rejectValue("issueDate", "error.issueDate", "Invalid date format for issue date");
             bindingResult.rejectValue("expiryDate", "error.expiryDate", "Invalid date format for expiry date");
         }
-        CitesPermit permit = citesPermitMapper.toEntity(form);
+
+        CitesPermit citesPermit = new CitesPermit();
+
+        citesPermit.setIssueDate(dto.getIssueDate());
+        citesPermit.setExpiryDate(dto.getExpiryDate());
+        citesPermit.setObjectId(UUID.fromString(dto.getObject()));
+        citesPermit.setObject(
+                String.valueOf(productRepository.findById
+                        (UUID.fromString(dto.getObject())).get().getDescription()
+                )
+        );
+        citesPermit.setImportId(UUID.fromString(dto.getImporterCountry()));
+        citesPermit.setImporterCountry(String.valueOf(countryRepository.findById(
+                UUID.fromString(dto.getImporterCountry())).get().getName()
+        ));
+        citesPermit.setExportId(UUID.fromString(dto.getExporterCountry()));
+        citesPermit.setExporterCountry(
+                String.valueOf(countryRepository.findById(
+                        UUID.fromString(dto.getExporterCountry())).get().getName()
+                )
+        );
+
+        citesPermit.setCompanyName(dto.getCompanyName());
+
+        if ( dto.getQuantity() != null ) {
+            citesPermit.setQuantity( String.valueOf( dto.getQuantity() ) );
+        }
+
+        citesPermit.setLimiter(dto.getLimiter());
+        citesPermit.setPurpose(dto.getPurpose());
+        citesPermit.setRemarks(dto.getRemarks());
+        citesPermit.setProtectionMarkNumber(dto.getProtectionMarkNumber() );
+        citesPermit.setStatus(dto.getStatus());
+
         // Сохраняем файл
         if (!pdfFile.isEmpty()) {
             try {
                 String fileName = savePdfFile(pdfFile); // Функция сохранения файла
-                permit.setPdfFileName(fileName); // Устанавливаем имя файла в модель
+                citesPermit.setPdfFileName(fileName); // Устанавливаем имя файла в модель
             } catch (IOException e) {
                 bindingResult.rejectValue("pdfFile", "error.pdfFile", "Error saving file");
                 return "/permission/permit-form";
             }
         }
 
-        citesPermitService.createPermit(permit);
+        citesPermitService.createPermit(citesPermit);
+        return "redirect:/permission";
+    }
+
+    @PostMapping("permission/upload-excel")
+    public String uploadExcelFile(@RequestParam("excelFile") MultipartFile file,
+                                  RedirectAttributes redirectAttributes) {
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Выберите файл для загрузки");
+            return "redirect:/permission";
+        }
+
+        try {
+            List<CitesPermit> permits = excelUploadService.parseExcelFile(file);
+            citesPermitService.saveAll(permits); // Сохранение всех разрешений
+            redirectAttributes.addFlashAttribute("message", "Файл успешно загружен и данные сохранены!");
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("message", "Ошибка при обработке файла: " + e.getMessage());
+        }
+
         return "redirect:/permission";
     }
 

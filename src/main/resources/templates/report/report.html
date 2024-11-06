@@ -16,43 +16,131 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Line Chart</h4>
+                                <h4 class="card-title">Выгрузка отчетов</h4>
                             </div>
                         </div>
                         <div class="card-body">
-                            <div id="apex-basic"></div>
+                            <form action="/api/reports/cites-permit" method="get" id="filterForm">
+                                <div class="form-group">
+                                    <label for="importerCountry">Страна импортер</label>
+                                    <select id="importerCountry" name="importerCountry" class="form-control" required>
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exporterCountry">Страна экспортер</label>
+                                    <select id="exporterCountry" name="exporterCountry" class="form-control" required>
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="object">Объект пользования:</label>
+                                    <input type="text" class="form-control" id="object" name="object" placeholder="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="startDate">Начало даты:</label>
+                                    <input type="date" id="startDate" class="form-control" name="startDate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="endDate">Конец даты:</label>
+                                    <input type="date" id="endDate" class="form-control" name="endDate">
+                                </div>
+                                <button type="submit">Начать поиск</button>
+                                <button type="button" onclick="resetForm()">Очистить</button>
+                            </form>
                         </div>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Mixes Chart</h4>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="apex-mixed-chart"></div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-sm-12 col-lg-6">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Line Area Chart</h4>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="apex-line-area"></div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    //иморт
+    document.addEventListener('DOMContentLoaded', function() {
+        const suspectedOriginCountry = document.getElementById('importerCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(suspectedOriginCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        suspectedOriginCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+    //экспорт
+    document.addEventListener('DOMContentLoaded', function() {
+        const suspectedOriginCountry = document.getElementById('exporterCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(suspectedOriginCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        suspectedOriginCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                            value: item.id,
+                            label: item.name,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    });
+</script>
+
+<script>
+    // Функция для очистки формы
+    function resetForm() {
+        document.getElementById("filterForm").reset();
+    }
+</script>
 <!-- Wrapper End-->
 {{> partials/footer }}
 </body>

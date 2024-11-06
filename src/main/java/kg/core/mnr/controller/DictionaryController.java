@@ -3,10 +3,13 @@ package kg.core.mnr.controller;
 import kg.core.mnr.models.breadcrumbs.Breadcrumb;
 import kg.core.mnr.models.dto.requests.ProductRequest;
 import kg.core.mnr.models.entity.dict.Product;
+import kg.core.mnr.models.entity.dict.UnitOfMeasurement;
 import kg.core.mnr.models.mapper.ProductMapper;
 import kg.core.mnr.repository.ProductRepository;
+import kg.core.mnr.repository.UnitOfMeasurementRepository;
 import kg.core.mnr.service.DictionaryService;
 import kg.core.mnr.service.ProductService;
+import kg.core.mnr.service.UnitOfMeasurementService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,23 +30,45 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
 @AllArgsConstructor
 @Controller
-@PreAuthorize("hasAnyRole('ADMIN', 'BORDER')")
+//@PreAuthorize("hasAnyRole('ADMIN', 'BORDER')")
 @RequestMapping("dictionary")
 public class DictionaryController {
     private final DictionaryService dictionaryService;
     private final ProductService productService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final UnitOfMeasurementService unitOfMeasurementService;
+    private final UnitOfMeasurementRepository unitOfMeasurementRepository;
+
+    @GetMapping("/units/search")
+    @ResponseBody
+    public List<UnitOfMeasurement> searchUnits(@RequestParam("unit") String unit) {
+        System.out.println(dictionaryService.getSimilarUnitOfMeasurements(unit));
+        return dictionaryService.getSimilarUnitOfMeasurements(unit);
+    }
+
+    @PostMapping("/units/create")
+    public ResponseEntity<UnitOfMeasurement> createUnit(@RequestBody Map<String, String> request) {
+        String unitName = request.get("unit");
+
+        // Проверяем, что единица измерения уникальна
+        if (unitOfMeasurementRepository.findByUnit(unitName) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // Конфликт, если уже существует
+        }
+
+        UnitOfMeasurement newUnit = new UnitOfMeasurement();
+        newUnit.setUnit(unitName);
+        unitOfMeasurementRepository.save(newUnit);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUnit);
+    }
 
     @GetMapping("products/search")
     public List<Product> searchSimilarProducts(

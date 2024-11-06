@@ -21,6 +21,27 @@
                     </div>
                     {{/errors}}
 
+                    {{#message }}
+                    <div class="alert alert-info">
+                        {{message}}
+                    </div>
+                    {{/message}}
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Загрузить данные через Excel</h4>
+                        </div>
+                        <div class="card-body">
+                            <form action="permission/upload-excel" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="excelFile">Выберите Excel файл</label>
+                                    <input style="height: 72px;" name="excelFile" type="file" accept=".xlsx, .xls" class="form-control" id="excelFile" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Загрузить</button>
+                            </form>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -59,7 +80,7 @@
 
                                 <div class="form-group">
                                     <label for="quantity">Количество</label>
-                                    <input name="quantity" type="number" step="0.01" class="form-control" id="quantity">
+                                    <input name="quantity" type="text" class="form-control" id="quantity">
                                 </div>
 
                                 <div class="form-group">
@@ -99,7 +120,7 @@
                                 <div class="form-group">
                                     <label>Статус документа</label>
                                     <select name="status" class="form-control form-control mb-3">
-                                        <option selected="">Выьерите один из вариантов</option>
+                                        <option selected="">Выберите один из вариантов</option>
                                         <option value="USED">использован</option>
                                         <option value="UNUSED">не спользован</option>
                                         <option value="CANCELED">отменен</option>
@@ -160,7 +181,6 @@
     });
 
     //эскпортер
-
     document.addEventListener('DOMContentLoaded', function() {
         const exporter = document.getElementById('exporterCountry');
 
@@ -201,40 +221,88 @@
     // Поиск видов
     document.addEventListener('DOMContentLoaded', function() {
         const speciesSelect = document.getElementById('speciesSelect');
+        let lastSearchQuery = ''; // Переменная для хранения последнего введенного запроса
 
-        // Инициализация Choices.js
         const speciesChoices = new Choices(speciesSelect, {
-            searchEnabled: true,        // Включаем поиск
+            searchEnabled: true,
             searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
+            noResultsText: 'Не найдено. Нажмите "Создать новый продукт".',
             noChoicesText: 'Нет доступных вариантов'
         });
 
+        // Обработчик события поиска
         speciesSelect.addEventListener('search', function(event) {
             const query = event.detail.value;
 
             if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
+                return;
             }
 
-            // Выполняем запрос к серверу для поиска по введённой строке
+            lastSearchQuery = query; // Сохраняем последнее введенное значение
+
             fetch(`/incidents/search-species?species=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
-                    speciesChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        speciesChoices.setChoices([{
-                            value: item.id,
-                            label: item.description,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
+                    speciesChoices.clearChoices();
+                    if (data.length === 0) {
+                        const createOption = {
+                            value: 'create-new',
+                            label: `Создать новый продукт "${query}"`,
+                            customProperties: { createNew: true }
+                        };
+                        speciesChoices.setChoices([createOption], 'value', 'label', false);
+                    } else {
+                        data.forEach(item => {
+                            speciesChoices.setChoices([{
+                                value: item.id,
+                                label: item.description,
+                                selected: false,
+                                disabled: false,
+                            }], 'value', 'label', false);
+                        });
+                    }
                 })
                 .catch(error => console.error('Ошибка:', error));
         });
+
+        // Обработчик события выбора
+        speciesSelect.addEventListener('change', function(event) {
+            if (event.target.value === 'create-new') {
+                // Используем сохраненное значение `lastSearchQuery` в качестве описания продукта
+                const productDescription = lastSearchQuery;
+
+                if (!productDescription) {
+                    console.error('Описание продукта отсутствует.');
+                    return;
+                }
+
+                // Отправка запроса для создания нового продукта
+                fetch('http://localhost:10000/products/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ description: productDescription })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Продукт создан: ' + data.description);
+
+                        // Добавляем новый продукт в список выбора и устанавливаем его как выбранный
+                        speciesChoices.setChoices([{
+                            value: data.id,
+                            label: data.description,
+                            selected: true,
+                            disabled: false,
+                        }], 'value', 'label', false);
+
+                        speciesChoices.setChoiceByValue(data.id); // Устанавливаем вновь созданный продукт как выбранный
+                    })
+                    .catch(error => console.error('Ошибка создания продукта:', error));
+            }
+        });
     });
+
 </script>
 <script>
     function validateFileSize(fileInput) {
@@ -267,6 +335,46 @@
             input.value = ""; // Сбрасываем выбранный файл
         }
     }
+</script>
+
+<script>
+    const form = document.getElementById("uploadForm");
+    const progressContainer = document.getElementById("progressContainer");
+    const progressBar = document.querySelector(".progress-bar");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("POST", form.action, true);
+
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+
+                // Обновляем прогресс-бар
+                progressBar.style.width = percentComplete + "%";
+                progressBar.setAttribute("aria-valuenow", percentComplete);
+                progressBar.textContent = Math.round(percentComplete) + "%";
+
+                // Отображаем прогресс-бар
+                progressContainer.style.display = "block";
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                progressBar.textContent = "Загрузка завершена!";
+                alert("Файл успешно загружен и обработан.");
+            } else {
+                alert("Ошибка при загрузке файла.");
+            }
+        };
+
+        xhr.send(formData);
+    });
 </script>
 
 <!-- Wrapper End-->

@@ -77,12 +77,12 @@
                                     {{#products}}
                                     <tr>
                                         <td contenteditable="false">
-                                            <a href="/dictionary/products/{{id}}">{{description}}</a>
+                                            <a href="/dictionary/products/{{id}}">{{#description}}{{description}}{{/description}}</a>
                                         </td>
-                                        <td contenteditable="true">{{code}}</td>
-                                        <td contenteditable="true">{{preferredUnit}}</td>
-                                        <td contenteditable="true">{{alternativeBlock}}</td>
-                                        <td contenteditable="true">{{explanation}}</td>
+                                        <td contenteditable="true">{{#code}} {{code}} {{/code}}</td>
+                                        <td contenteditable="true">{{#preferredUnit}} {{preferredUnit}} {{/preferredUnit}}</td>
+                                        <td contenteditable="true">{{#alternativeBlock}} {{alternativeBlock}} {{/alternativeBlock}}</td>
+                                        <td contenteditable="true">{{#explanation}} {{explanation}} {{/explanation}}</td>
                                         <td>
                                             <span class="table-up">
                                                 <a href="#!" class="indigo-text">
