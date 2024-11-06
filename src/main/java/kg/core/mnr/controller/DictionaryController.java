@@ -4,19 +4,16 @@ import kg.core.mnr.models.breadcrumbs.Breadcrumb;
 import kg.core.mnr.models.dto.requests.ProductRequest;
 import kg.core.mnr.models.entity.dict.Product;
 import kg.core.mnr.models.entity.dict.UnitOfMeasurement;
-import kg.core.mnr.models.mapper.ProductMapper;
 import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.repository.UnitOfMeasurementRepository;
 import kg.core.mnr.service.DictionaryService;
 import kg.core.mnr.service.ProductService;
-import kg.core.mnr.service.UnitOfMeasurementService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -37,14 +34,11 @@ import java.util.stream.IntStream;
 
 @AllArgsConstructor
 @Controller
-//@PreAuthorize("hasAnyRole('ADMIN', 'BORDER')")
 @RequestMapping("dictionary")
 public class DictionaryController {
     private final DictionaryService dictionaryService;
     private final ProductService productService;
-    private final ProductMapper productMapper;
     private final ProductRepository productRepository;
-    private final UnitOfMeasurementService unitOfMeasurementService;
     private final UnitOfMeasurementRepository unitOfMeasurementRepository;
 
     @GetMapping("/units/search")
