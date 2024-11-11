@@ -44,10 +44,10 @@ public class CitesPermitRepositoryImpl {
             predicates.add(cb.equal(permit.get("protectionMarkNumber"), protectionNumber));
         }
         if (companyName != null && !companyName.isEmpty()) {
-            predicates.add(cb.like(permit.get("companyName"), "%" + companyName + "%"));
+            predicates.add(cb.like(cb.lower(permit.get("companyName")), "%" + companyName.toLowerCase() + "%"));
         }
         if (object != null && !object.isEmpty()) {
-            predicates.add(cb.equal(permit.get("object"), object));
+            predicates.add(cb.like(cb.lower(permit.get("object")), "%" + object.toLowerCase() + "%"));
         }
         if (quantity != null) {
             predicates.add(cb.equal(permit.get("quantity"), quantity));

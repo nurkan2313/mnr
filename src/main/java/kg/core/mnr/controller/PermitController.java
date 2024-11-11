@@ -132,6 +132,7 @@ public class PermitController {
                     endDate);
 
             filteredPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
+
 //            filteredPermits.forEach(permit -> permit.setObject(
 //                            productRepository
 //                                    .findById(UUID.fromString(permit.getObject())).get().getDescription()
