@@ -69,12 +69,6 @@ public class HomeController {
         // Передача статусов как флаги в шаблон
         extracted(permitsByDateRange);
 
-        permitsByDateRange.forEach(it -> {
-            productRepository.findById(UUID.fromString(it.getObject())).ifPresent(product ->
-                    it.setObject(product.getDescription())
-            );
-        });
-
         // Определение номеров предыдущей и следующей страниц
         int totalPages = permitsByDateRange.getTotalPages();
 

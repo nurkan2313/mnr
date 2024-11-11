@@ -53,9 +53,9 @@ server:
       enabled: true
       force: true
 
-#logging:
-#  level:
-#    org.springframework: DEBUG
+logging:
+  level:
+    org.springframework: DEBUG
 #  file:
 
 #    name: app.log
