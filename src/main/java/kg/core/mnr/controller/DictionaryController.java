@@ -1,5 +1,6 @@
 package kg.core.mnr.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kg.core.mnr.models.breadcrumbs.Breadcrumb;
 import kg.core.mnr.models.dto.requests.ProductRequest;
 import kg.core.mnr.models.entity.dict.Product;
@@ -128,25 +129,16 @@ public class DictionaryController {
 
         Product product = new Product();
         product.setId(UUID.randomUUID());
-        product.setCode(productRequest.getCode());
         product.setDescription(productRequest.getDescription());
         product.setPreferredUnit(productRequest.getPreferredUnit());
-        product.setAlternativeBlock(productRequest.getAlternativeBlock());
         product.setExplanation(productRequest.getExplanation());
         if (!image.isEmpty()) {
-            product.setImagePath(saveImage(image)); // Сохраняем путь в базе данных
+            product.setImagePath(productService.saveImage(image)); // Сохраняем путь в базе данных
         }
         productRepository.save(product);
         return new ModelAndView("redirect:/dictionary/products");
     }
 
-    private String saveImage(MultipartFile pdfFile) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + pdfFile.getOriginalFilename();
-        Path filePath = Paths.get("src/main/resources/static/uploads/images", fileName);
-        Files.createDirectories(filePath.getParent()); // создаем директории, если не существует
-        Files.copy(pdfFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // сохраняем файл
-        return "/uploads/images/" + fileName;
-    }
 
     @GetMapping("products/form")
     public String form(Model model) {
@@ -187,20 +179,30 @@ public class DictionaryController {
                 });
     }
 
-    @PutMapping("products/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable UUID id, @RequestBody Product productDetails) {
-        Optional<Product> existingProduct = productService.findById(id);
-        if (existingProduct.isPresent()) {
-            Product product = existingProduct.get();
-            product.setDescription(productDetails.getDescription());
-            product.setCode(productDetails.getCode());
-            product.setPreferredUnit(productDetails.getPreferredUnit());
-            product.setAlternativeBlock(productDetails.getAlternativeBlock());
-            product.setExplanation(productDetails.getExplanation());
-            productService.save(product);
-            return ResponseEntity.ok("Успешно обновлено!");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+    @PutMapping(value = "products/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable UUID id,
+            @RequestPart("product") String productJson,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+        try {
+            // Обработка данных продукта из JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            Product product = objectMapper.readValue(productJson, Product.class);
+
+            // Если файл был отправлен, сохраните его
+            if (file != null && !file.isEmpty()) {
+                String imagePath = productService.saveImage(file);
+                product.setImagePath(imagePath);
+            }
+
+            // Логика обновления продукта в БД
+            productService.update(id, product);
+
+            return ResponseEntity.ok("Продукт успешно обновлен");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ошибка обработки данных");
         }
     }
+
+
 }

@@ -6,14 +6,10 @@ import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.dto.requests.CitesPermitFormRequest;
 import kg.core.mnr.models.entity.CitesPermit;
 import kg.core.mnr.models.entity.dict.Product;
-import kg.core.mnr.models.mapper.CitesPermitMapper;
-import kg.core.mnr.repository.CitesPermitRepository;
 import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.CitesPermitService;
-import kg.core.mnr.service.DictionaryService;
 import kg.core.mnr.service.ExcelUploadService;
-import kg.core.mnr.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -132,12 +128,6 @@ public class PermitController {
                     endDate);
 
             filteredPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
-
-//            filteredPermits.forEach(permit -> permit.setObject(
-//                            productRepository
-//                                    .findById(UUID.fromString(permit.getObject())).get().getDescription()
-//                    ));
-
 
             model.addAttribute("permits", filteredPermits);
             return "permission/lists"; // Возвращаем список отфильтрованных данных

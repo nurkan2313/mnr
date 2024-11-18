@@ -27,24 +27,24 @@
                                 <table class="table table-bordered table-responsive-md table-striped text-center">
                                     <thead>
                                         <tr>
-                                            <th>Описание</th>
-                                            <th>Код</th>
+                                            <th>Название</th>
                                             <th>Предпочитаемая единица измерения</th>
-                                            <th>Альтернативный блок</th>
-                                            <th>Объяснение</th>
+                                            <th>Описание</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td class="editable" contenteditable="true">{{#product.description}} {{product.description}} {{/product.description}}</td>
-                                            <td class="editable" contenteditable="true">{{#product.code}} {{product.code}} {{/product.code}}</td>
                                             <td class="editable" contenteditable="true">{{#product.preferredUnit}} {{product.preferredUnit}} {{/product.preferredUnit}}</td>
-                                            <td class="editable" contenteditable="true">{{#product.alternativeBlock}} {{product.alternativeBlock}} {{/product.alternativeBlock}}</td>
                                             <td class="editable" contenteditable="true">{{#product.explanation}} {{product.explanation}} {{/product.explanation}}</td>
+                                            <td>
+                                                <input type="file" id="productImage" accept="image/*" />
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
+                                <button class="btn btn-primary" onclick="updateProduct('{{product.id}}')">Обновить</button>
                             </div>
                         </div>
                     </div>
@@ -60,29 +60,36 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function updateProduct(productId) {
-        // Collect the editable data from the table
-        const updatedProduct = {
-            description: $('td.editable:eq(0)').text(),
-            code: $('td.editable:eq(1)').text(),
-            preferredUnit: $('td.editable:eq(2)').text(),
-            alternativeBlock: $('td.editable:eq(3)').text(),
-            explanation: $('td.editable:eq(4)').text(),
+        const product = {
+            description: $('td.editable:eq(0)').text().trim(),
+            preferredUnit: $('td.editable:eq(1)').text().trim(),
+            explanation: $('td.editable:eq(2)').text().trim(),
         };
 
-        // Send the data to the server via AJAX
+        const imageFile = $('#productImage')[0].files[0];
+        const formData = new FormData();
+
+        formData.append('product', JSON.stringify(product)); // JSON-строка с данными продукта
+        if (imageFile) {
+            formData.append('file', imageFile); // Файл изображения
+        }
+
         $.ajax({
             url: '/dictionary/products/' + productId,
             type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(updatedProduct),
+            processData: false,
+            contentType: false,
+            data: formData,
             success: function(response) {
-                alert('Product updated successfully!');
+                alert('Продукт успешно обновлен!');
             },
             error: function(err) {
-
-            }
+                alert('Ошибка обновления продукта!');
+                console.error(err);
+            },
         });
     }
+
 </script>
 </body>
 </html>

@@ -22,19 +22,12 @@
                         </div>
                         <div class="card-body">
                             <form action="/dictionary/products" method="get">
+
                                 <!-- Описание -->
                                 <div class="form-group row">
                                     <label for="description" class="col-sm-2 col-form-label">Описание</label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" name="description" id="description" placeholder="Введите описание">
-                                    </div>
-                                </div>
-
-                                <!-- Код -->
-                                <div class="form-group row">
-                                    <label for="code" class="col-sm-2 col-form-label">Код</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" name="code" id="code" placeholder="Введите код продукта">
                                     </div>
                                 </div>
 
@@ -64,12 +57,10 @@
                                 <table class="table table-bordered table-responsive-md table-striped text-center">
                                     <thead>
                                     <tr>
-                                        <th>Описание</th>
-                                        <th>Код</th>
+                                        <th>Название</th>
                                         <th>Предпочитаемая единица измерения</th>
-                                        <th>Альтернативный блок</th>
-                                        <th>Объяснение</th>
-                                        <th>Поднять</th>
+                                        <th>Опсание</th>
+                                        <th>Картинка</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -79,25 +70,10 @@
                                         <td contenteditable="false">
                                             <a href="/dictionary/products/{{id}}">{{#description}}{{description}}{{/description}}</a>
                                         </td>
-                                        <td contenteditable="true">{{#code}} {{code}} {{/code}}</td>
                                         <td contenteditable="true">{{#preferredUnit}} {{preferredUnit}} {{/preferredUnit}}</td>
-                                        <td contenteditable="true">{{#alternativeBlock}} {{alternativeBlock}} {{/alternativeBlock}}</td>
                                         <td contenteditable="true">{{#explanation}} {{explanation}} {{/explanation}}</td>
                                         <td>
-                                            <span class="table-up">
-                                                <a href="#!" class="indigo-text">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="blue">
-                                                        <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                                    </svg>
-                                                </a>
-                                            </span>
-                                            <span class="table-down">
-                                                <a href="#!" class="indigo-text">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 20 20" fill="blue">
-                                                        <path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                                    </svg>
-                                                </a>
-                                            </span>
+                                            <img src="{{#imagePath}}{{imagePath}}{{/imagePath}}">
                                         </td>
                                     </tr>
                                     {{/products}}

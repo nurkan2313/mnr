@@ -42,6 +42,13 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // URL для выхода
+                        .logoutSuccessUrl("/auth") // Куда перенаправить после выхода
+                        .invalidateHttpSession(true) // Аннулировать сессию
+                        .deleteCookies("JSESSIONID") // Удалить cookies (например, JSESSIONID)
+                        .permitAll()
+                )
                 .userDetailsService(userService);
         return http.build();
     }

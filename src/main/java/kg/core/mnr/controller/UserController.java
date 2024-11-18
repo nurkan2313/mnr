@@ -29,6 +29,11 @@ public class UserController {
         return "user/auth-login";
     }
 
+    @GetMapping("/logout-success")
+    public String logoutPage() {
+        return "user/auth-login"; // Возвращает страницу после выхода
+    }
+
     @PostMapping("/auth")
     public ModelAndView auth(@ModelAttribute LoginRequest loginRequest, Model model) {
         log.info("Login request - Email or Phone: {}", loginRequest.getEmailOrPhone());
