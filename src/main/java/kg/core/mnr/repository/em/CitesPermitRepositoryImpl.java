@@ -66,19 +66,27 @@ public class CitesPermitRepositoryImpl {
 
         // Добавляем условия для фильтрации
         if (importerCountry != null && !importerCountry.isEmpty()) {
-            predicates.add(cb.equal(root.get("importerCountry"), importerCountry));
+            predicates.add(cb.equal(cb.lower(root.get("importerCountry")), importerCountry.toLowerCase()));
         }
         if (exporterCountry != null && !exporterCountry.isEmpty()) {
-            predicates.add(cb.equal(root.get("exporterCountry"), exporterCountry));
+            predicates.add(cb.equal(cb.lower(root.get("exporterCountry")), exporterCountry.toLowerCase()));
         }
         if (object != null && !object.isEmpty()) {
-            predicates.add(cb.like(root.get("object"), "%" + object + "%"));
+            predicates.add(cb.like(cb.lower(root.get("object")), "%" + object.toLowerCase() + "%"));
         }
         if (startDate != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("issueDate"), startDate));
+            Predicate issueDatePredicate = cb.or(
+                    cb.isNull(root.get("issueDate")), // Если дата выпуска NULL, включить
+                    cb.greaterThanOrEqualTo(root.get("issueDate"), startDate) // Или >= startDate
+            );
+            predicates.add(issueDatePredicate);
         }
         if (endDate != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("expiryDate"), endDate));
+            Predicate expiryDatePredicate = cb.or(
+                    cb.isNull(root.get("expiryDate")), // Учет NULL значений
+                    cb.lessThanOrEqualTo(root.get("expiryDate"), endDate)
+            );
+            predicates.add(expiryDatePredicate);
         }
 
         query.where(predicates.toArray(new Predicate[0]));
