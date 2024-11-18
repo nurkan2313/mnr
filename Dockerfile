@@ -1,4 +1,5 @@
 FROM maven:3.8-openjdk-17 as builder
+RUN apt-get update && apt-get install -y libfreetype6
 WORKDIR /app
 COPY pom.xml ./
 RUN --mount=type=cache,target=/root/.m2/repository \
