@@ -2,7 +2,7 @@
 FROM maven:3.8-openjdk-17-slim as builder
 
 # Install necessary build dependencies
-RUN apt-get update && apt-get install -y libfreetype6
+RUN apt-get update && apt-get install -y libfreetype6 fontconfig
 
 # Set working directory
 WORKDIR /app
@@ -24,7 +24,7 @@ RUN mvn package -DskipTests
 FROM openjdk:17-jdk-slim
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y libfreetype6
+RUN apt-get update && apt-get install -y libfreetype6 fontconfig
 
 # Set working directory
 WORKDIR /app
