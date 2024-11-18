@@ -1,4 +1,4 @@
-FROM maven:3.8-openjdk-17 as builder
+FROM maven:3.8-openjdk-17-slim as builder
 RUN apt-get update && apt-get install -y libfreetype6
 WORKDIR /app
 COPY pom.xml ./
