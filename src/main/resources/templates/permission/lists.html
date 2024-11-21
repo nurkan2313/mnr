@@ -176,6 +176,20 @@
                                     {{#totalPages}}
                                     <nav aria-label="Page navigation" {{^totalPages}}style="display:none;"{{/totalPages}}>
                                     <ul class="pagination justify-content-center">
+                                        <!-- Кнопка "Шаг назад на 10 страниц" -->
+
+                                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                            <a class="page-link" href="?page={{firstPage}}&size=10" aria-label="First">
+                                                <span aria-hidden="true">Первая</span>
+                                            </a>
+                                        </li>
+
+                                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                            <a class="page-link" href="?page={{stepBack10}}&size=10" aria-label="Step Back 10">
+                                                <span aria-hidden="true">&laquo;</span><span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+
                                         <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
                                             <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
@@ -192,6 +206,16 @@
                                             <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
+                                        </li>
+                                        <!-- Кнопка "Шаг вперед на 10 страниц" -->
+                                        <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
+                                            <a class="page-link" href="?page={{stepForward10}}&size=10" aria-label="Step Forward 10">
+                                                <span aria-hidden="true">&raquo;</span><span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{lastPage}}&size=10">Последняя</a>
                                         </li>
                                     </ul>
                                     </nav>

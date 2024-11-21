@@ -100,7 +100,7 @@ public class DictionaryController {
 
         // Определяем начальную и конечную страницы для отображения
         int startPage = Math.max(1, page + 1 - 1);  // Начальная страница
-        int endPage = Math.min(totalPages, startPage + 2);  // Конечная страница (максимум 3)
+        int endPage = Math.min(totalPages, startPage + 10);  // Конечная страница (максимум 10)
 
         List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
                 .boxed()

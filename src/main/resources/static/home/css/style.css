@@ -146,7 +146,7 @@ body {
 
 /*** Header ***/
 .header-bg {
-    background: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(../../images/bg-1.jpg) center center no-repeat;
+    background: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url(../../images/snow.jpeg) center center no-repeat;
     background-size: cover;
 }
 

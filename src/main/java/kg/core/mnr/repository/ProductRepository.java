@@ -28,11 +28,15 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Page<Product> findByDescriptionContainingAndCodeContaining(String description, String code, Pageable pageable);
 
     // Фильтрация только по описанию
+    @Query(value = "SELECT * FROM products WHERE " +
+            "(LOWER(description) LIKE LOWER(CONCAT('%', :description, '%')) OR :description IS NULL) ", nativeQuery = true)
     Page<Product> findByDescriptionContaining(String description, Pageable pageable);
 
     // Фильтрация только по коду
     Page<Product> findByCodeContaining(String code, Pageable pageable);
 
+    @Query(value = "SELECT * FROM products WHERE " +
+            "(LOWER(description) LIKE LOWER(CONCAT('%', :description, '%')) OR :description IS NULL) ", nativeQuery = true)
     Optional<Product> findByDescription(String description);
 
 }

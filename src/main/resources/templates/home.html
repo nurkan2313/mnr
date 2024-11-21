@@ -121,12 +121,35 @@
                     class="header-bg h-100 d-flex flex-column justify-content-center p-5"
             >
                 <h4 style="font-family: Roboto, sans-serif;" class="display-8 text-light mb-5">
-                    Данная база данных была разработана на средства гранта Бюро по борьбе с международным оборотом наркотиков и правоохранительной деятельности государственного департамента США.
+                    Основная цель базы данных является регистрация, хранение и обработка выданных разрешений СИТЕС, а также информации по нелегальной торговле объектами животного и растительного мира в Кыргызской Республике.
                 </h4>
                 <div class="d-flex justify-content-center align-items-center gap-3 pt-4">
                     <!-- Добавляем изображения -->
                     <img src="/images/us_flag.jpg" alt="US Flag" class="img-fluid" style="max-width: 150px;">
                     <img src="/images/inl_no_logo.png" alt="INL Logo" class="img-fluid" style="max-width: 150px;">
+                </div>
+                <!-- Кнопка для открытия модального окна -->
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Подробнее
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Модальное окно -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+<!--                        <h5 class="modal-title" id="exampleModalLabel">Дополнительная информация</h5>-->
+<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+                    </div>
+                    <div class="modal-body">
+                        Пользователями базы данных будут сотрудники Министерства природных ресурсов, экологии и технического надзора Кыргызской Республики (далее МПРЭТН), Государственной таможенной службы при Министерстве финансов Кыргызской Республики, Пограничной службы Государственного комитета национальной безопасности Кыргызской Республики и других государственных ведомств.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,58 +296,85 @@
 <!-- Animal End -->
 
 <!-- Доноры Start -->
-<!--<div class="container-xxl py-5">-->
-<!--    <div class="container">-->
-<!--        <h1-->
-<!--                class="display-5 text-center mb-5 wow fadeInUp"-->
-<!--                data-wow-delay="0.1s"-->
-<!--        >-->
-<!--            Наши партнеры-->
-<!--        </h1>-->
-<!--        <div-->
-<!--                class="owl-carousel testimonial-carousel wow fadeInUp"-->
-<!--                data-wow-delay="0.1s"-->
-<!--        >-->
-<!--            &lt;!&ndash; class="img-fluid  border border-2 p-2 mx-auto mb-4" &ndash;&gt;-->
+<div class="container-xxl py-5">
+    <div class="container">
+        <h1
+                class="display-5 text-center mb-5 wow fadeInUp"
+                data-wow-delay="0.1s"
+        >
+            Наши партнеры
+        </h1>
+        <div class="text-center">
+            <p>Данная база данных была разработана на средства гранта Бюро по борьбе с международным
+                оборотом наркотиков и правоохранительной деятельности государственного департамента США.
+                База данных была разработана в процессе тесного сотрудничества Министерства природных ресурсов,
+                экологии и технического надзора Кыргызской Республики с такими международными организациями
+                как TRAFFIC и Fauna & Flora в рамках двухлетнего проекта под названием «Укрепление потенциала
+                и содействие в борьбе с преступлениями против дикой природы в Центральной Азии».
+            </p>
+        </div>
+        <div
+                class="owl-carousel testimonial-carousel wow fadeInUp"
+                data-wow-delay="0.1s"
+        >
+            <!-- class="img-fluid  border border-2 p-2 mx-auto mb-4" -->
 
-<!--            <div class="testimonial-item text-center">-->
-<!--                <img-->
-<!--                        class="img-fluid mx-auto mb-4"-->
-<!--                        src="/images/donors/ff.png"-->
-<!--                        style="width: 350px; height: 140px; object-fit: cover;"-->
-<!--                />-->
-<!--                &lt;!&ndash; <div class="testimonial-text rounded text-center p-4">-->
-<!--                  <p>-->
-<!--                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo-->
-<!--                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed-->
-<!--                    clita erat magna elitr erat sit sit erat at rebum justo sea-->
-<!--                    clita.-->
-<!--                  </p>-->
-<!--                  <h5 class="mb-1">Patient Name</h5>-->
-<!--                  <span class="fst-italic">Profession</span>-->
-<!--                </div> &ndash;&gt;-->
-<!--            </div>-->
-<!--            <div class="testimonial-item text-center">-->
-<!--                <img-->
-<!--                        class="img-fluid mx-auto mb-4"-->
-<!--                        src="/images/donors/traffic.jpg"-->
-<!--                        style="width: 350px; height: 120px; object-fit: cover;"-->
-<!--                />-->
-<!--                &lt;!&ndash; <div class="testimonial-text rounded text-center p-4">-->
-<!--                  <p>-->
-<!--                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo-->
-<!--                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed-->
-<!--                    clita erat magna elitr erat sit sit erat at rebum justo sea-->
-<!--                    clita.-->
-<!--                  </p>-->
-<!--                  <h5 class="mb-1">Patient Name</h5>-->
-<!--                  <span class="fst-italic">Profession</span>-->
-<!--                </div> &ndash;&gt;-->
-<!--            </div>-->
+            <div class="testimonial-item text-center pt-4">
+                <img
+                        class="img-fluid mx-auto mb-4"
+                        src="/images/donors/ff.png"
+                        style="width: 350px; height: 140px; object-fit: cover;"
+                />
+                <!-- <div class="testimonial-text rounded text-center p-4">
+                  <p>
+                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo
+                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed
+                    clita erat magna elitr erat sit sit erat at rebum justo sea
+                    clita.
+                  </p>
+                  <h5 class="mb-1">Patient Name</h5>
+                  <span class="fst-italic">Profession</span>
+                </div> -->
+            </div>
+            <div class="testimonial-item text-center">
+                <img
+                        class="img-fluid mx-auto mb-4"
+                        src="/images/donors/traffic.jpg"
+                        style="width: 350px; height: 120px; object-fit: cover;"
+                />
+                <!-- <div class="testimonial-text rounded text-center p-4">
+                  <p>
+                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo
+                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed
+                    clita erat magna elitr erat sit sit erat at rebum justo sea
+                    clita.
+                  </p>
+                  <h5 class="mb-1">Patient Name</h5>
+                  <span class="fst-italic">Profession</span>
+                </div> -->
+            </div>
 
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+            <div class="testimonial-item text-center d-flex justify-content-center align-items-center gap-3">
+                <img class="img-fluid"
+                     src="/images/us_flag.jpg" alt="US Flag"
+                     style="width: 350px; height: 120px; object-fit: cover;">
+                <img src="/images/inl_no_logo.png"
+                     class="img-fluid"
+                     alt="INL Logo"
+                     style="width: 350px; height: 225px; object-fit: cover;">
+            </div>
+
+            <div class="testimonial-item text-center">
+                <img
+                        class="img-fluid mx-auto mb-4"
+                        src="/images/ministry.png"
+                        style="width: 166px; height: 176px; object-fit: cover;"
+                />
+            </div>
+
+        </div>
+    </div>
+</div>
 <!-- Доноры End -->
 
 <!-- Facts Start -->

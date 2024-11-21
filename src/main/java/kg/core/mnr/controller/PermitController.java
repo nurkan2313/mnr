@@ -105,7 +105,7 @@ public class PermitController {
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                               @RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size,
+                              @RequestParam(defaultValue = "15") int size,
                               Model model) {
 
         // Добавление хлебных крошек
@@ -139,14 +139,23 @@ public class PermitController {
             allPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
 
             int totalPages = allPermits.getTotalPages();
+            int lastPage = totalPages - 1;
             int startPage = Math.max(1, page + 1 - 1); // Начальная страница
-            int endPage = Math.min(totalPages, startPage + 2); // Конечная страница (максимум 3)
+            int firstPage = 0;
+            int stepBack10 = Math.max(0, page - 10); // Шаг назад на 10 страниц
+            int stepForward10 = Math.min(lastPage, page + 10); // Шаг вперед на 10 страниц
+            int endPage = Math.min(totalPages, startPage + 9); // Конечная страница (максимум 3)
             List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
                     .boxed()
                     .collect(Collectors.toList());
 
             model.addAttribute("permits", allPermits);
             model.addAttribute("totalPages", totalPages);
+            model.addAttribute("lastPage", lastPage); // Передача индекса последней страницы
+            model.addAttribute("startPage", startPage); // Передача индекса последней страницы
+            model.addAttribute("firstPage", firstPage);
+            model.addAttribute("stepBack10", stepBack10); // Шаг назад на 10 страниц
+            model.addAttribute("stepForward10", stepForward10);
             model.addAttribute("previousPage", (page > 0) ? page - 1 : 0);
             model.addAttribute("nextPage", (page < totalPages - 1) ? page + 1 : totalPages - 1);
             model.addAttribute("previousDisabled", (page == 0));
