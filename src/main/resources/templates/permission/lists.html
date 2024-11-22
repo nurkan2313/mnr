@@ -38,6 +38,14 @@
                                             <input type="text" name="permitNumber" class="form-control" id="permitNumber" placeholder="">
                                         </div>
                                     </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="type">Тип</label>
+                                            <input type="text" name="type" class="form-control" id="type" placeholder="">
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="protectionNumber">Номер защитной марки</label>
@@ -108,13 +116,13 @@
                                                 <th>Физ/Юр лица</th>
                                                 <th>объект пользования</th>
                                                 <th>Количество</th>
-                                                <th>Лимит</th>
                                                 <th>Страна импортера</th>
                                                 <th>Страна экспортера</th>
                                                 <th>Цель</th>
                                                 <th>Примечания</th>
                                                 <th>Номер защитной марки</th>
                                                 <th>Статус документа</th>
+                                                <th>Тип</th>
                                                 <th>Просмотр</th>
                                             </tr>
                                         </thead>
@@ -133,13 +141,13 @@
                                                 <td>{{#companyName }}{{ companyName }}{{/companyName }}</td>
                                                 <td>{{#object }}{{ object }}{{/object }}</td>
                                                 <td>{{#quantity }} {{ quantity }} {{/quantity }}</td>
-                                                <td>{{#limiter }}{{ limiter }} {{/limiter}}</td>
                                                 <td>{{#importerCountry }} {{ importerCountry }} {{/importerCountry }}</td>
                                                 <td>{{#exporterCountry }} {{ exporterCountry }} {{/exporterCountry }}</td>
                                                 <td>{{#purpose }} {{ purpose }} {{/purpose }}</td>
                                                 <td>{{#remarks }} {{ remarks }} {{/remarks }}</td>
                                                 <td>{{#protectionMarkNumber}} {{protectionMarkNumber}} {{/protectionMarkNumber}}</td>
                                                 <td>{{#statusDescription}} {{statusDescription}} {{/statusDescription}}</td>
+                                                <td>{{#type}} {{type}} {{/type}}</td>
                                                 <td><a href="/permission/{{id}}">посмотреть</a></td>
                                             </tr>
                                         <!-- Уникальное модальное окно для каждого разрешения -->

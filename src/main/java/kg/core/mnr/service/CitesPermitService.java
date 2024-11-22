@@ -40,7 +40,8 @@ public class CitesPermitService {
             String object,
             Double quantity,
             LocalDate startDate,
-            LocalDate endDate) {
+            LocalDate endDate,
+            String type) {
         // Логика фильтрации
         return citesPermitRepositoryI.filterPermits(
                 permitNumber,
@@ -49,7 +50,29 @@ public class CitesPermitService {
                 object,
                 quantity,
                 startDate,
-                endDate);
+                endDate,
+                type);
+    }
+
+    public List<CitesPermit> filterPermits(
+            String permitNumber,
+            String protectionNumber,
+            String companyName,
+            String object,
+            Double quantity,
+            LocalDate startDate,
+            LocalDate endDate
+           ) {
+        // Логика фильтрации
+        return citesPermitRepositoryI.filterPermits(
+                permitNumber,
+                protectionNumber,
+                companyName,
+                object,
+                quantity,
+                startDate,
+                endDate
+                );
     }
 
     public Page<CitesPermit> getAllPermits(Pageable pageable) {

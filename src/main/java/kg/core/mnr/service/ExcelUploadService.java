@@ -44,15 +44,16 @@ public class ExcelUploadService {
 
                 CitesPermit permit = new CitesPermit();
 
-                permit.setId(parseIdCell(row.getCell(1)));
-                permit.setIssueDate(parseDateCell(row.getCell(2)));
-                permit.setCompanyName(parseStringCell(row.getCell(3)));
-                permit.setObject(parseStringCell(row.getCell(4)));
-                permit.setQuantity(parseStringCell(row.getCell(5)));
+                permit.setId(parseIdCell(row.getCell(2)));
+                permit.setType(parseStringCell(row.getCell(1)));
+                permit.setIssueDate(parseDateCell(row.getCell(3)));
+                permit.setCompanyName(parseStringCell(row.getCell(4)));
+                permit.setObject(parseStringCell(row.getCell(5)));
+                permit.setQuantity(parseStringCell(row.getCell(6)));
 
                 // Используем метод checkAndCreateCountry для импорта и экспорта стран
-                String importerCountryName = parseStringCell(row.getCell(6));
-                String exporterCountryName = parseStringCell(row.getCell(7));
+                String importerCountryName = parseStringCell(row.getCell(7));
+                String exporterCountryName = parseStringCell(row.getCell(8));
 
                 UUID importerCountryId = checkAndCreateCountry(importerCountryName);
                 UUID exporterCountryId = checkAndCreateCountry(exporterCountryName);
@@ -63,14 +64,11 @@ public class ExcelUploadService {
                 permit.setExportId(exporterCountryId);
                 permit.setImportId(importerCountryId);
 
-                permit.setPurpose(parseStringCell(row.getCell(8)));
-                permit.setRemarks(parseStringCell(row.getCell(9)));
-                permit.setProtectionMarkNumber(String.valueOf(parseNumericCell(row.getCell(10))));
+                permit.setPurpose(parseStringCell(row.getCell(9)));
+                permit.setRemarks(parseStringCell(row.getCell(10)));
+                permit.setProtectionMarkNumber(String.valueOf(parseNumericCell(row.getCell(11))));
                 permit.setStatus(DocStatus.USED);
 
-                // Проверка существования продукта и его создание при необходимости
-                UUID id = checkAndCreateProduct(row.getCell(4));
-                permit.setObjectId(id);
                 permits.add(permit);
             }
         }

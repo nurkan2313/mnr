@@ -130,7 +130,6 @@ public class DictionaryController {
         Product product = new Product();
         product.setId(UUID.randomUUID());
         product.setDescription(productRequest.getDescription());
-        product.setPreferredUnit(productRequest.getPreferredUnit());
         product.setExplanation(productRequest.getExplanation());
         if (!image.isEmpty()) {
             product.setImagePath(productService.saveImage(image)); // Сохраняем путь в базе данных

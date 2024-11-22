@@ -38,23 +38,24 @@ public class CitesPermitReportController {
             @RequestParam(required = false) String exporterCountry,
             @RequestParam(required = false) String object,
             @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String exporter,
             @RequestParam(required = false) String endDate) {
 
         // Парсинг строковых дат в LocalDateTime
         LocalDateTime startDateTime = parseDate(startDate);
         LocalDateTime endDateTime = parseDate(endDate);
 
-        if(importerCountry != null ) {
+        if(importerCountry != null && !importerCountry.isEmpty()) {
             importerCountry =  countryRepository.findById(UUID.fromString(importerCountry)).get().getName();
         }
 
-        if(exporterCountry != null ) {
+        if(exporterCountry != null && !exporterCountry.isEmpty()) {
             exporterCountry = countryRepository.findById(UUID.fromString(exporterCountry)).get().getName();
         }
 
         // Получение данных с использованием фильтрации
         List<CitesPermit> filteredData = citesPermitRepository.findByCriteria(
-                importerCountry, exporterCountry, object, startDateTime, endDateTime);
+                importerCountry, exporterCountry, object, exporter, startDateTime, endDateTime);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             // Генерация отчета в формате Excel и запись в поток

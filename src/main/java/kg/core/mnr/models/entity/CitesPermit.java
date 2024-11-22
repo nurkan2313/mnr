@@ -28,6 +28,7 @@ public class CitesPermit {
     private String object;
     @Column(name = "object_id")
     private UUID objectId;
+    private String type;
     private String quantity;
     private String measure;
     private Double limiter;

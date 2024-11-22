@@ -28,6 +28,7 @@ public class CitesPermitFormRequest {
     private Integer unitsId;
     private UUID importId;
     private UUID exportId;
+    private String type;
 
     @NotNull(message = "Количество обязательно")
     @Positive(message = "Количество должно быть положительным числом")

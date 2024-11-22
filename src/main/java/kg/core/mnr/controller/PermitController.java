@@ -102,6 +102,7 @@ public class PermitController {
                               @RequestParam(required = false) String companyName,
                               @RequestParam(required = false) String object,
                               @RequestParam(required = false) Double quantity,
+                              @RequestParam(required = false) String type,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                               @RequestParam(defaultValue = "0") int page,
@@ -117,7 +118,8 @@ public class PermitController {
         model.addAttribute("currentPage", "форма для создания разрешения");
 
         // Если присутствуют параметры фильтрации, выполняем фильтрацию
-        if (permitNumber != null || protectionNumber != null || companyName != null || object != null || quantity != null || startDate != null || endDate != null) {
+        if (permitNumber != null || protectionNumber != null || companyName != null || object != null
+                || quantity != null || startDate != null || endDate != null || type != null) {
             List<CitesPermit> filteredPermits = citesPermitService.filterPermits(
                     permitNumber,
                     protectionNumber,
@@ -125,7 +127,8 @@ public class PermitController {
                     object,
                     quantity,
                     startDate,
-                    endDate);
+                    endDate,
+                    type);
 
             filteredPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
 
@@ -243,6 +246,7 @@ public class PermitController {
             citesPermit.setQuantity( String.valueOf( dto.getQuantity() ) );
         }
 
+        citesPermit.setType(dto.getType());
         citesPermit.setLimiter(dto.getLimiter());
         citesPermit.setPurpose(dto.getPurpose());
         citesPermit.setRemarks(dto.getRemarks());

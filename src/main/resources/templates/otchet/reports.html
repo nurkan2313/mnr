@@ -23,15 +23,20 @@
                             <form action="/api/reports/cites-permit" method="get" id="filterForm">
                                 <div class="form-group">
                                     <label for="importerCountry">Страна импортер</label>
-                                    <select id="importerCountry" name="importerCountry" class="form-control" required>
+                                    <select id="importerCountry" name="importerCountry" class="form-control">
                                         <option value="">Начните ввод для поиска</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="exporterCountry">Страна экспортер</label>
-                                    <select id="exporterCountry" name="exporterCountry" class="form-control" required>
+                                    <select id="exporterCountry" name="exporterCountry" class="form-control">
                                         <option value="">Начните ввод для поиска</option>
                                     </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exporter">Экспортер/Импортер</label>
+                                    <input type="text" class="form-control" id="exporter" name="exporter" placeholder="">
                                 </div>
 
                                 <div class="form-group">
