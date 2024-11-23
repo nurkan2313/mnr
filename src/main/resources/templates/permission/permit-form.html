@@ -224,40 +224,40 @@
     });
 
     // Поиск видов
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const speciesSelect = document.getElementById('speciesSelect');
-        let lastSearchQuery = ''; // Переменная для хранения последнего введенного запроса
+        let lastSearchQuery = ''; // Сохраняем последнее введенное значение
 
         const speciesChoices = new Choices(speciesSelect, {
             searchEnabled: true,
             searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено. Нажмите "Создать новый продукт".',
-            noChoicesText: 'Нет доступных вариантов'
+            noResultsText: 'Не найдено. Вы можете использовать введённые данные.',
+            noChoicesText: 'Нет доступных вариантов',
         });
 
-        // Обработчик события поиска
-        speciesSelect.addEventListener('search', function(event) {
+        // Обработчик поиска
+        speciesSelect.addEventListener('search', function (event) {
             const query = event.detail.value;
 
             if (!query || query.length < 1) {
-                return;
+                return; // Не выполняем запрос, если строка короткая
             }
 
-            lastSearchQuery = query; // Сохраняем последнее введенное значение
+            lastSearchQuery = query; // Сохраняем введенное значение
 
             fetch(`/incidents/search-species?species=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
+                .then((response) => response.json())
+                .then((data) => {
                     speciesChoices.clearChoices();
                     if (data.length === 0) {
-                        const createOption = {
-                            value: 'create-new',
-                            label: `Создать новый продукт "${query}"`,
-                            customProperties: { createNew: true }
+                        const useEnteredOption = {
+                            value: query, // Используем введенные данные как value
+                            label: `Использовать введённое: "${query}"`,
+                            customProperties: { useEntered: true },
                         };
-                        speciesChoices.setChoices([createOption], 'value', 'label', false);
+                        speciesChoices.setChoices([useEnteredOption], 'value', 'label', false);
                     } else {
-                        data.forEach(item => {
+                        data.forEach((item) => {
                             speciesChoices.setChoices([{
                                 value: item.id,
                                 label: item.description,
@@ -267,46 +267,22 @@
                         });
                     }
                 })
-                .catch(error => console.error('Ошибка:', error));
+                .catch((error) => console.error('Ошибка:', error));
         });
 
-        // Обработчик события выбора
-        speciesSelect.addEventListener('change', function(event) {
-            if (event.target.value === 'create-new') {
-                // Используем сохраненное значение `lastSearchQuery` в качестве описания продукта
-                const productDescription = lastSearchQuery;
+        // Обработчик выбора
+        speciesSelect.addEventListener('change', function (event) {
+            const selectedValue = event.target.value;
 
-                if (!productDescription) {
-                    console.error('Описание продукта отсутствует.');
-                    return;
-                }
-
-                // Отправка запроса для создания нового продукта
-                fetch('http://localhost:10000/products/new', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ description: productDescription })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert('Продукт создан: ' + data.description);
-
-                        // Добавляем новый продукт в список выбора и устанавливаем его как выбранный
-                        speciesChoices.setChoices([{
-                            value: data.id,
-                            label: data.description,
-                            selected: true,
-                            disabled: false,
-                        }], 'value', 'label', false);
-
-                        speciesChoices.setChoiceByValue(data.id); // Устанавливаем вновь созданный продукт как выбранный
-                    })
-                    .catch(error => console.error('Ошибка создания продукта:', error));
+            if (selectedValue === lastSearchQuery) {
+                // Прямо устанавливаем значение как введенные данные
+                speciesSelect.value = lastSearchQuery;
             }
         });
     });
+
+
+
 
 </script>
 <script>

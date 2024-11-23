@@ -50,87 +50,68 @@ public class HomeController {
             @RequestParam(defaultValue = "10") int size,
             Model model) {
 
-        // Формат для dd/MM/yyyy
-        DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        // Если даты не заданы, устанавливаем текущую дату и дату неделю назад
-        if (startDate == null || endDate == null) {
-            LocalDate now = LocalDate.now();  // Текущая дата
-            LocalDate weekAgo = now.minusWeeks(1);  // Дата неделю назад
-            startDate = weekAgo.toString();  // Преобразуем в строку в формате YYYY-MM-DD
-            endDate = now.toString();
-        }
-
-        Result result = getResult(startDate, endDate, customFormatter);
-
         Pageable pageable = PageRequest.of(page, size);
-        // Фильтруем данные по диапазону дат
-        Page<CitesPermit> permitsByDateRange = dashboardService.getPermitsByDateRange(result.startDateTime(), result.endDateTime(),pageable);
-        // Передача статусов как флаги в шаблон
+
+        // Получение данных по диапазону дат
+        Page<CitesPermit> permitsByDateRange = dashboardService.getPermitsByDateRange(pageable);
+
         extracted(permitsByDateRange);
 
-        // Определение номеров предыдущей и следующей страниц
+        // Определение пагинации
         int totalPages = permitsByDateRange.getTotalPages();
+        List<Integer> pageNumbers = generatePageNumbers(page, totalPages);
 
-        Page<Map<String, Object>> topExportedSpecies = dashboardService.getTopExportedSpecies(result.startDateTime(), result.endDateTime(), pageable);
-        int totalExportedSpecies = topExportedSpecies.getTotalPages();
+        // Получение данных по топовым экспортируемым видам
+        Page<Map<String, Object>> topExportedSpecies = dashboardService.getTopExportedSpecies(pageable);
+        int totalExportedSpeciesPages = topExportedSpecies.getTotalPages();
+        List<Integer> pageNumbersEx = generatePageNumbers(page, totalExportedSpeciesPages);
 
-        int startPageExp = Math.max(1, page + 1 - 1);  // Начальная страница
-        int endPageExp = Math.min(totalExportedSpecies, startPageExp + 2);  // Конечная страница (максимум 3)
+        // Добавляем данные в модель
+        addPaginationAttributes(model, page, totalPages, totalExportedSpeciesPages, pageNumbers, pageNumbersEx);
 
-        // Определяем начальную и конечную страницы для отображения
-        int startPage = Math.max(1, page + 1 - 1);  // Начальная страница
-        int endPage = Math.min(totalPages, startPage + 2);  // Конечная страница (максимум 3)
-
-        List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
-                .boxed()
-                .collect(Collectors.toList());
-
-        List<Integer> pageNumbersEx = IntStream.rangeClosed(startPageExp, endPageExp)
-                .boxed()
-                .collect(Collectors.toList());
-
+        // Добавляем данные в модель
+        model.addAttribute("firstPage", 0);
+        model.addAttribute("lastPage", totalPages - 1);
+        model.addAttribute("nextStepPage", Math.min(page + 10, totalPages - 1));
+        model.addAttribute("previousStepPage", Math.max(page - 10, 0));
         model.addAttribute("pageNumbers", pageNumbers);
-        model.addAttribute("pageNumbersEx", pageNumbersEx);
-        model.addAttribute("permits", permitsByDateRange);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("totalExportedSpecies", totalExportedSpecies);
         model.addAttribute("previousPage", (page > 0) ? page - 1 : 0);
         model.addAttribute("nextPage", (page < totalPages - 1) ? page + 1 : totalPages - 1);
-        model.addAttribute("nextPageEx", (page < totalExportedSpecies - 1) ? page + 1 : totalExportedSpecies - 1);
         model.addAttribute("previousDisabled", (page == 0));
         model.addAttribute("nextDisabled", (page == totalPages - 1));
-        model.addAttribute("nextDisabledEx", (page == totalExportedSpecies - 1));
-        model.addAttribute("totalExportedSpeciesPage", totalExportedSpecies);
-        // Добавляем отформатированные даты в модель
-        model.addAttribute("start", startDate);  // Форматируем дату начала
-        model.addAttribute("end", endDate);      // Форматируем дату окончания
-        // Остальные данные для дашборда
-        model.addAttribute("totalIncidents", dashboardService.getTotalIncidents(result.startDateTime(), result.endDateTime()));
-        model.addAttribute("totalPermits", dashboardService.getImportReportByCountry(result.startDateTime(), result.endDateTime()));
-        model.addAttribute("importReportByCountry", dashboardService.getImportReportByCountry(result.startDateTime(), result.endDateTime()));
+        model.addAttribute("permits", permitsByDateRange);
+        model.addAttribute("totalIncidents", dashboardService.getTotalIncidents());
+        model.addAttribute("totalPermits", dashboardService.getImportReportByCountry());
+        model.addAttribute("importReportByCountry", dashboardService.getImportReportByCountry());
 
         return "index";
     }
 
-    private static Result getResult(String startDate, String endDate, DateTimeFormatter customFormatter) {
-        LocalDateTime startDateTime;
-        LocalDateTime endDateTime;
-        try {
-            // Парсим даты в формате yyyy-MM-dd (стандартный формат)
-            startDateTime = LocalDate.parse(startDate).atStartOfDay();
-            endDateTime = LocalDate.parse(endDate).atTime(23, 59, 59);
-        } catch (DateTimeParseException e) {
-            // Если ошибка, пробуем парсить в формате dd/MM/yyyy
-            startDateTime = LocalDate.parse(startDate, customFormatter).atStartOfDay();
-            endDateTime = LocalDate.parse(endDate, customFormatter).atTime(23, 59, 59);
-        }
-
-        return new Result(startDateTime, endDateTime);
+    private List<Integer> generatePageNumbers(int currentPage, int totalPages) {
+        int startPage = Math.max(1, currentPage + 1 - 1);  // Начальная страница
+        int endPage = Math.min(totalPages, startPage + 2);  // Конечная страница (максимум 3)
+        return IntStream.rangeClosed(startPage, endPage)
+                .boxed()
+                .collect(Collectors.toList());
     }
 
-    private record Result(LocalDateTime startDateTime, LocalDateTime endDateTime) {}
+    private void addPaginationAttributes( Model model, int currentPage, int totalPages, int totalExportedSpeciesPages,
+                                         List<Integer> pageNumbers, List<Integer> pageNumbersEx) {
+        model.addAttribute("pageNumbers", pageNumbers);
+        model.addAttribute("pageNumbersEx", pageNumbersEx);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalExportedSpeciesPage", totalExportedSpeciesPages);
+        model.addAttribute("previousPage", (currentPage > 0) ? currentPage - 1 : 0);
+        model.addAttribute("nextPage", (currentPage < totalPages - 1) ? currentPage + 1 : totalPages - 1);
+        model.addAttribute("nextPageEx", (currentPage < totalExportedSpeciesPages - 1) ? currentPage + 1 : totalExportedSpeciesPages - 1);
+        model.addAttribute("previousDisabled", (currentPage == 0));
+        model.addAttribute("nextDisabled", (currentPage == totalPages - 1));
+        model.addAttribute("nextDisabledEx", (currentPage == totalExportedSpeciesPages - 1));
+
+    }
 
     private static void extracted(Page<CitesPermit> permitsByDateRange) {
         for (CitesPermit permit : permitsByDateRange) {

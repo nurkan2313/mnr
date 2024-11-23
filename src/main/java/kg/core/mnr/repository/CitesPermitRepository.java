@@ -16,13 +16,13 @@ import java.util.UUID;
 
 public interface CitesPermitRepository extends JpaRepository<CitesPermit, String> {
 
-    @Query("select count(c.importerCountry) from CitesPermit c where c.issueDate between :from and :to")
-    Long countByImporter(LocalDateTime from, LocalDateTime to);
+    @Query("select count(c.importerCountry) from CitesPermit c ")
+    Long countByImporter();
 
-    @Query(value = "SELECT object AS species, COUNT(*) AS totalCount FROM cites_permit WHERE issue_date BETWEEN :from AND :to GROUP BY object ORDER BY totalCount DESC",
-            countQuery = "SELECT COUNT(DISTINCT object) FROM cites_permit WHERE issue_date BETWEEN :from AND :to",
+    @Query(value = "SELECT object AS species, COUNT(*) AS totalCount FROM cites_permit GROUP BY object ORDER BY totalCount DESC",
+            countQuery = "SELECT COUNT(DISTINCT object) FROM cites_permit ",
             nativeQuery = true)
-    Page<Map<String, Object>> getCitesPermitByCountry(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to, Pageable pageable);
+    Page<Map<String, Object>> getCitesPermitByCountry(Pageable pageable);
 
     @Query(value = "SELECT * FROM cites_permit"
             ,nativeQuery = true)
@@ -40,6 +40,6 @@ public interface CitesPermitRepository extends JpaRepository<CitesPermit, String
 //                                     @Param("status") DocStatus status);
 
 
-    Page<CitesPermit> findAllByIssueDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    Page<CitesPermit> findAll(Pageable pageable);
 
 }

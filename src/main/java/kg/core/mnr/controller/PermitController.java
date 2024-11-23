@@ -223,12 +223,7 @@ public class PermitController {
 
         citesPermit.setIssueDate(dto.getIssueDate());
         citesPermit.setExpiryDate(dto.getExpiryDate());
-        citesPermit.setObjectId(UUID.fromString(dto.getObject()));
-        citesPermit.setObject(
-                String.valueOf(productRepository.findById
-                        (UUID.fromString(dto.getObject())).get().getDescription()
-                )
-        );
+        citesPermit.setObject(dto.getObject());
         citesPermit.setImportId(UUID.fromString(dto.getImporterCountry()));
         citesPermit.setImporterCountry(String.valueOf(countryRepository.findById(
                 UUID.fromString(dto.getImporterCountry())).get().getName()

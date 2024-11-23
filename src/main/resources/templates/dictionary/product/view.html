@@ -28,15 +28,13 @@
                                     <thead>
                                         <tr>
                                             <th>Название</th>
-                                            <th>Предпочитаемая единица измерения</th>
                                             <th>Описание</th>
-                                            <th></th>
+                                            <th>изображение</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td class="editable" contenteditable="true">{{#product.description}} {{product.description}} {{/product.description}}</td>
-                                            <td class="editable" contenteditable="true">{{#product.preferredUnit}} {{product.preferredUnit}} {{/product.preferredUnit}}</td>
                                             <td class="editable" contenteditable="true">{{#product.explanation}} {{product.explanation}} {{/product.explanation}}</td>
                                             <td>
                                                 <input type="file" id="productImage" accept="image/*" />

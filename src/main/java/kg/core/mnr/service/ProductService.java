@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,8 +83,27 @@ public class ProductService {
     }
 
     public String saveImage(MultipartFile imageFile) throws IOException {
+        // Проверяем, есть ли файл
+        if (imageFile == null || imageFile.isEmpty()) {
+            throw new IllegalArgumentException("Файл не может быть пустым");
+        }
+
+        // Извлекаем оригинальное имя файла и расширение
+        String originalFileName = imageFile.getOriginalFilename();
+        if (originalFileName == null || !originalFileName.contains(".")) {
+            throw new IllegalArgumentException("Файл должен иметь расширение");
+        }
+
+        String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
+
+        // Проверяем допустимые расширения
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
+        if (!allowedExtensions.contains(extension)) {
+            throw new IllegalArgumentException("Недопустимый формат файла: " + extension);
+        }
+
         // Генерируем уникальное имя для файла
-        String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "." + extension;
 
         // Указываем путь для сохранения файла
         Path filePath = Paths.get("src/main/resources/static/uploads/images", fileName);
@@ -97,5 +117,6 @@ public class ProductService {
         // Возвращаем относительный путь к файлу
         return "/uploads/images/" + fileName;
     }
+
 
 }

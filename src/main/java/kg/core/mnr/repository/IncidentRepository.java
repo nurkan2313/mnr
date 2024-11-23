@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface IncidentRepository extends JpaRepository<Incident, UUID> {
-    @Query(value = "SELECT COUNT(*) AS totalCount FROM incident where registered_at between :from and :to "
+    @Query(value = "SELECT COUNT(*) AS totalCount FROM incident "
             ,nativeQuery = true)
-    Integer getAllByRegisteredAtBetween(LocalDateTime from, LocalDateTime to);
+    Integer getAllByRegisteredAtBetween();
 
 }

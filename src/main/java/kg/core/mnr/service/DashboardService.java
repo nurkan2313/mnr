@@ -24,24 +24,24 @@ public class DashboardService {
         return citesPermitRepository.count();
     }
 
-    public long getTotalIncidents(LocalDateTime startDate, LocalDateTime endDate) {
-        return incidentRepository.getAllByRegisteredAtBetween(startDate, endDate);
+    public long getTotalIncidents() {
+        return incidentRepository.getAllByRegisteredAtBetween();
     }
 
-    public Long getImportReportByCountry(LocalDateTime startDate, LocalDateTime endDate) {
-        return citesPermitRepository.countByImporter(startDate, endDate);
+    public Long getImportReportByCountry() {
+        return citesPermitRepository.countByImporter();
     }
 
-    public Page<Map<String, Object>> getTopExportedSpecies(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
-        return citesPermitRepository.getCitesPermitByCountry(startDate, endDate, pageable);
+    public Page<Map<String, Object>> getTopExportedSpecies(Pageable pageable) {
+        return citesPermitRepository.getCitesPermitByCountry(pageable);
     }
 
     public List<CitesPermit> getCitesPermitByCountry() {
         return citesPermitRepository.getPermitesReport();
     }
 
-    public Page<CitesPermit> getPermitsByDateRange(LocalDateTime start, LocalDateTime end, Pageable pageable) {
-        return citesPermitRepository.findAllByIssueDateBetween(start, end, pageable); // Assuming a JPA repository
+    public Page<CitesPermit> getPermitsByDateRange(Pageable pageable) {
+        return citesPermitRepository.findAll(pageable); // Assuming a JPA repository
     }
 
     public double calculatePercentageChange(long current, long previous) {
