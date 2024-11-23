@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -28,7 +29,7 @@ public class CitesPermitReportController {
     private final CitesPermitReportService reportService;
     private final CitesPermitRepositoryImpl citesPermitRepository;
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DictionaryService dictionaryService;
     private final CountryRepository countryRepository;
 
@@ -42,8 +43,8 @@ public class CitesPermitReportController {
             @RequestParam(required = false) String endDate) {
 
         // Парсинг строковых дат в LocalDateTime
-        LocalDateTime startDateTime = parseDate(startDate);
-        LocalDateTime endDateTime = parseDate(endDate);
+        LocalDate startDateTime = parseDate(startDate);
+        LocalDate endDeateTime = parseDate(endDate);
 
         if(importerCountry != null && !importerCountry.isEmpty()) {
             importerCountry =  countryRepository.findById(UUID.fromString(importerCountry)).get().getName();
@@ -55,7 +56,7 @@ public class CitesPermitReportController {
 
         // Получение данных с использованием фильтрации
         List<CitesPermit> filteredData = citesPermitRepository.findByCriteria(
-                importerCountry, exporterCountry, object, exporter, startDateTime, endDateTime);
+                importerCountry, exporterCountry, object, exporter, startDateTime, endDeateTime);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             // Генерация отчета в формате Excel и запись в поток
@@ -76,25 +77,22 @@ public class CitesPermitReportController {
         }
     }
 
-    public LocalDateTime parseDate(String date) {
+    public LocalDate parseDate(String date) {
         if (date == null || date.isEmpty()) {
             System.out.println("Дата пуста или равна null.");
             return null;
         }
 
         try {
-            // Проверяем, содержит ли строка только дату
-            if (date.length() == 10) { // если формат yyyy-MM-dd
-                date += " 00:00:00.000000"; // добавляем время по умолчанию с микросекундами
-            }
-
-            LocalDateTime parsedDate = LocalDateTime.parse(date, formatter);
+            // Парсим строку в LocalDate с использованием заданного формата
+            LocalDate parsedDate = LocalDate.parse(date, formatter);
             System.out.println("Успешный разбор даты: " + parsedDate);
             return parsedDate;
-
         } catch (DateTimeParseException e) {
             System.err.println("Ошибка разбора даты: " + e.getMessage());
         }
+
         return null;
     }
+
 }

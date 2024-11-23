@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class CitesPermitReportService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public void generateCitesPermitReport(List<CitesPermit> citesPermits, OutputStream outputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook();

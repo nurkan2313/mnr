@@ -90,21 +90,21 @@ public class ExcelUploadService {
         return null;
     }
 
-    private LocalDateTime parseDateCell(Cell cell) {
+    private LocalDate parseDateCell(Cell cell) {
         if (cell == null) return null;
 
         try {
             if (cell.getCellType() == CellType.NUMERIC) {
-                return cell.getLocalDateTimeCellValue();
+                // Если ячейка содержит числовое значение, извлекаем дату
+                return cell.getLocalDateTimeCellValue().toLocalDate();
             } else if (cell.getCellType() == CellType.STRING) {
-                String dateString = cell.getStringCellValue();
+                String dateString = cell.getStringCellValue().trim();
                 try {
                     // Пытаемся сначала распарсить с полным форматом
-                    return LocalDateTime.parse(dateString, DATE_FORMATTER_FULL);
+                    return LocalDate.parse(dateString, DATE_FORMATTER_FULL);
                 } catch (Exception e) {
                     // Если не получилось, пробуем с коротким форматом
-                    LocalDate date = LocalDate.parse(dateString, DATE_FORMATTER_SHORT);
-                    return date.atStartOfDay();
+                    return LocalDate.parse(dateString, DATE_FORMATTER_SHORT);
                 }
             }
         } catch (Exception e) {
@@ -112,6 +112,7 @@ public class ExcelUploadService {
         }
         return null;
     }
+
 
     // Метод для обработки числовых ячеек
     private Integer parseNumericCell(Cell cell) {
@@ -137,13 +138,20 @@ public class ExcelUploadService {
             if (cell.getCellType() == CellType.STRING) {
                 return cell.getStringCellValue();
             } else if (cell.getCellType() == CellType.NUMERIC) {
-                return String.valueOf(cell.getNumericCellValue());
+                double numericValue = cell.getNumericCellValue();
+                // Если значение целое, преобразуем его без дробной части
+                if (numericValue == Math.floor(numericValue)) {
+                    return String.valueOf((int) numericValue);
+                } else {
+                    return String.valueOf(numericValue);
+                }
             }
         } catch (Exception e) {
             System.err.println("Ошибка при парсинге строкового значения: " + e.getMessage());
         }
         return null;
     }
+
 
     private UUID checkAndCreateProduct(Cell cell) {
         if (cell == null) return null;

@@ -25,7 +25,7 @@ public class CitesPermitRepositoryImpl {
             String protectionNumber,
             String companyName,
             String object,
-            Double quantity,
+            String quantity,
             LocalDate startDate, LocalDate endDate,
             String type) {
 
@@ -47,11 +47,11 @@ public class CitesPermitRepositoryImpl {
         if (object != null && !object.isEmpty()) {
             predicates.add(cb.like(cb.lower(permit.get("object")), "%" + object.toLowerCase() + "%"));
         }
-        if (quantity != null) {
+        if (quantity != null && !quantity.isEmpty()) {
             predicates.add(cb.equal(permit.get("quantity"), quantity));
         }
         if (startDate != null && endDate != null) {
-            predicates.add(cb.between(permit.get("issueDate"), startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
+            predicates.add(cb.between(permit.get("issueDate"), startDate, endDate));
         }
         if (type != null && !type.isEmpty()) {
             predicates.add(cb.equal(cb.lower(permit.get("type")), type.toLowerCase()));
@@ -66,7 +66,7 @@ public class CitesPermitRepositoryImpl {
             String protectionNumber,
             String companyName,
             String object,
-            Double quantity,
+            String quantity,
             LocalDate startDate, LocalDate endDate) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -87,7 +87,7 @@ public class CitesPermitRepositoryImpl {
         if (object != null && !object.isEmpty()) {
             predicates.add(cb.like(cb.lower(permit.get("object")), "%" + object.toLowerCase() + "%"));
         }
-        if (quantity != null) {
+        if (quantity != null && !quantity.isEmpty()) {
             predicates.add(cb.equal(permit.get("quantity"), quantity));
         }
         if (startDate != null && endDate != null) {
@@ -98,7 +98,7 @@ public class CitesPermitRepositoryImpl {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public List<CitesPermit> findByCriteria(String importerCountry, String exporterCountry, String object, String exporter, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<CitesPermit> findByCriteria(String importerCountry, String exporterCountry, String object, String exporter, LocalDate startDate, LocalDate endDate) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<CitesPermit> query = cb.createQuery(CitesPermit.class);
         Root<CitesPermit> root = query.from(CitesPermit.class);

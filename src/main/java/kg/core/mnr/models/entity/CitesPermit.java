@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,9 +21,9 @@ public class CitesPermit {
     @Id
     private String id;
     @Column(name = "issue_date")
-    private LocalDateTime issueDate;
+    private LocalDate issueDate;
     @Column(name = "expiry_date")
-    private LocalDateTime expiryDate;
+    private LocalDate expiryDate;
     @Column(name = "company_name")
     private String companyName;
     private String object;
@@ -68,7 +69,7 @@ public class CitesPermit {
     @Transient
     private String statusDescription; // Описание с// татуса
 
-    public CitesPermit(String number, LocalDateTime now, LocalDateTime localDateTime, String s, String flora, String number1, String kg, String usa, String canada, DocStatus docStatus, String research, String none, String number2) {
+    public CitesPermit(String number, LocalDate now, LocalDate localDateTime, String s, String flora, String number1, String kg, String usa, String canada, DocStatus docStatus, String research, String none, String number2) {
         this.id = UUID.randomUUID().toString();
         this.issueDate = now;
         this.expiryDate = localDateTime;

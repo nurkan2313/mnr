@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -15,8 +16,8 @@ public class CitesPermitFormRequest {
     private String issueDateString;  // Строка для даты выдачи
     private String expiryDateString; // Строка для даты окончания
 
-    private LocalDateTime issueDate;
-    private LocalDateTime expiryDate;
+    private LocalDate issueDate;
+    private LocalDate expiryDate;
 
     @NotBlank(message = "Название компании не может быть пустым")
     private String companyName;
@@ -57,7 +58,7 @@ public class CitesPermitFormRequest {
 
     public CitesPermitFormRequest() {}
 
-    public CitesPermitFormRequest(LocalDateTime issueDate, LocalDateTime expiryDate, String companyName, String object, Double quantity, String importerCountry, String exporterCountry, String purpose, String remarks, String protectionMarkNumber, DocStatus status) {
+    public CitesPermitFormRequest(LocalDate issueDate, LocalDate expiryDate, String companyName, String object, Double quantity, String importerCountry, String exporterCountry, String purpose, String remarks, String protectionMarkNumber, DocStatus status) {
         this.issueDate = issueDate;
         this.expiryDate = expiryDate;
         this.companyName = companyName;
@@ -71,7 +72,7 @@ public class CitesPermitFormRequest {
         this.status = status;
     }
 
-    public CitesPermitFormRequest(String issueDateString, String expiryDateString, LocalDateTime issueDate, LocalDateTime expiryDate, String companyName, String object, Double quantity, String importerCountry, String exporterCountry, String purpose, String remarks, String protectionMarkNumber, DocStatus status) {
+    public CitesPermitFormRequest(String issueDateString, String expiryDateString, LocalDate issueDate, LocalDate expiryDate, String companyName, String object, Double quantity, String importerCountry, String exporterCountry, String purpose, String remarks, String protectionMarkNumber, DocStatus status) {
         this.issueDateString = issueDateString;
         this.expiryDateString = expiryDateString;
         this.issueDate = issueDate;

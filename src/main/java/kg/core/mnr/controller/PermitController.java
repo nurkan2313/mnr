@@ -37,7 +37,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class PermitController {
                                             @RequestParam(required = false) String protectionNumber,
                                             @RequestParam(required = false) String companyName,
                                             @RequestParam(required = false) String object,
-                                            @RequestParam(required = false) Double quantity,
+                                            @RequestParam(required = false) String quantity,
                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                             Model model) {
@@ -101,13 +100,15 @@ public class PermitController {
                               @RequestParam(required = false) String protectionNumber,
                               @RequestParam(required = false) String companyName,
                               @RequestParam(required = false) String object,
-                              @RequestParam(required = false) Double quantity,
+                              @RequestParam(required = false) String quantity,
                               @RequestParam(required = false) String type,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "15") int size,
                               Model model) {
+
+        int zeroBasedPage = (page > 0) ? page - 1 : 0;
 
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
@@ -116,7 +117,6 @@ public class PermitController {
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "форма для создания разрешения");
-
         // Если присутствуют параметры фильтрации, выполняем фильтрацию
         if (permitNumber != null || protectionNumber != null || companyName != null || object != null
                 || quantity != null || startDate != null || endDate != null || type != null) {
@@ -136,21 +136,24 @@ public class PermitController {
             return "permission/lists"; // Возвращаем список отфильтрованных данных
         } else {
             // Если параметры фильтрации отсутствуют, выполняем пагинацию
-            Pageable pageable = PageRequest.of(page, size);
+            Pageable pageable = PageRequest.of(zeroBasedPage, size);
+
             Page<CitesPermit> allPermits = citesPermitService.getAllPermits(pageable);
 
             allPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
 
             int totalPages = allPermits.getTotalPages();
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());  // Страницы 1-базированные
+
             int lastPage = totalPages - 1;
             int startPage = Math.max(1, page + 1 - 1); // Начальная страница
-            int firstPage = 0;
+            int firstPage = 1;
             int stepBack10 = Math.max(0, page - 10); // Шаг назад на 10 страниц
             int stepForward10 = Math.min(lastPage, page + 10); // Шаг вперед на 10 страниц
             int endPage = Math.min(totalPages, startPage + 9); // Конечная страница (максимум 3)
-            List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
-                    .boxed()
-                    .collect(Collectors.toList());
+//            List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+//                    .boxed()
+//                    .collect(Collectors.toList());
 
             model.addAttribute("permits", allPermits);
             model.addAttribute("totalPages", totalPages);
@@ -212,8 +215,8 @@ public class PermitController {
                              BindingResult bindingResult,
                              @RequestParam("pdfFile") MultipartFile pdfFile) {
         try {
-            dto.setIssueDate(LocalDateTime.parse(dto.getIssueDateString(), formatter));
-            dto.setExpiryDate(LocalDateTime.parse(dto.getExpiryDateString(), formatter));
+            dto.setIssueDate(LocalDate.parse(dto.getIssueDateString(), formatter));
+            dto.setExpiryDate(LocalDate.parse(dto.getExpiryDateString(), formatter));
         } catch (DateTimeException e) {
             bindingResult.rejectValue("issueDate", "error.issueDate", "Invalid date format for issue date");
             bindingResult.rejectValue("expiryDate", "error.expiryDate", "Invalid date format for expiry date");
@@ -223,7 +226,8 @@ public class PermitController {
 
         citesPermit.setIssueDate(dto.getIssueDate());
         citesPermit.setExpiryDate(dto.getExpiryDate());
-        citesPermit.setObject(dto.getObject());
+        processObject(citesPermit, dto);
+
         citesPermit.setImportId(UUID.fromString(dto.getImporterCountry()));
         citesPermit.setImporterCountry(String.valueOf(countryRepository.findById(
                 UUID.fromString(dto.getImporterCountry())).get().getName()
@@ -261,6 +265,32 @@ public class PermitController {
 
         citesPermitService.createPermit(citesPermit);
         return "redirect:/permission";
+    }
+
+    public void processObject(CitesPermit citesPermit, CitesPermitFormRequest dto) {
+        Object object = dto.getObject();
+
+        // Проверяем, является ли объект строкой и пытаемся преобразовать в UUID
+        if (object instanceof String) {
+            try {
+                UUID objectId = UUID.fromString((String) object);
+
+                // Если UUID успешно извлечен, ищем описание
+                Optional<Product> productOptional = productRepository.findById(objectId);
+                if (productOptional.isPresent()) {
+                    citesPermit.setObject(productOptional.get().getDescription());
+                } else {
+                    // Если продукт не найден, сохраняем исходное значение
+                    citesPermit.setObject(object.toString());
+                }
+            } catch (IllegalArgumentException e) {
+                // Если строка не является валидным UUID, сохраняем исходное значение
+                citesPermit.setObject(object.toString());
+            }
+        } else {
+            // Если объект не строка, сохраняем его строковое представление
+            citesPermit.setObject(object != null ? object.toString() : null);
+        }
     }
 
     @PostMapping("permission/upload-excel")
@@ -302,10 +332,27 @@ public class PermitController {
 
 
     private String savePdfFile(MultipartFile pdfFile) throws IOException {
-        String fileName = UUID.randomUUID() + "_" + pdfFile.getOriginalFilename();
+        // Проверяем, что файл не пуст
+        if (pdfFile == null || pdfFile.isEmpty()) {
+            throw new IllegalArgumentException("Файл не может быть пустым");
+        }
+
+        // Извлекаем оригинальное имя файла
+        String originalFileName = pdfFile.getOriginalFilename();
+        if (originalFileName == null || !originalFileName.toLowerCase().endsWith(".pdf")) {
+            throw new IllegalArgumentException("Файл должен иметь расширение .pdf");
+        }
+
+        // Генерируем уникальное имя для сохранения файла
+        String fileName = UUID.randomUUID().toString() + ".pdf";
+
+        // Указываем путь для сохранения
         Path filePath = Paths.get("uploads", fileName);
-        Files.createDirectories(filePath.getParent()); // создаем директории, если не существует
-        Files.copy(pdfFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // сохраняем файл
+        Files.createDirectories(filePath.getParent()); // Создаем директории, если их нет
+
+        // Сохраняем файл
+        Files.copy(pdfFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
         return fileName;
     }
 

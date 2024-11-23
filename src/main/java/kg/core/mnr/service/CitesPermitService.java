@@ -38,7 +38,7 @@ public class CitesPermitService {
             String protectionNumber,
             String companyName,
             String object,
-            Double quantity,
+            String quantity,
             LocalDate startDate,
             LocalDate endDate,
             String type) {
@@ -59,7 +59,7 @@ public class CitesPermitService {
             String protectionNumber,
             String companyName,
             String object,
-            Double quantity,
+            String quantity,
             LocalDate startDate,
             LocalDate endDate
            ) {
@@ -91,8 +91,8 @@ public class CitesPermitService {
             CitesPermit permit = optionalPermit.get();
 
             // Обновляем поля
-            permit.setIssueDate(dto.getIssueDate().atStartOfDay());
-            permit.setExpiryDate(dto.getExpiryDate().atStartOfDay());
+            permit.setIssueDate(dto.getIssueDate());
+            permit.setExpiryDate(dto.getExpiryDate());
             permit.setCompanyName(dto.getCompanyName());
             permit.setObject(dto.getObject());
             permit.setQuantity(dto.getQuantity());

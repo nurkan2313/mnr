@@ -198,19 +198,22 @@
                                             </a>
                                         </li>
 
-                                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
+                                        <!-- Кнопка "Предыдущая страница" -->
+                                        <li class="page-item {{#previousPage}}active{{/previousPage}} {{^previousPage}}disabled{{/previousPage}}">
                                             <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
 
+                                        <!-- Список страниц -->
                                         {{#pageNumbers}}
-                                        <li class="page-item {{#isActive}}active{{/isActive}}">
+                                        <li class="page-item {{#isActive}}{{isActive}}{{/isActive}}">
                                             <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
                                         </li>
                                         {{/pageNumbers}}
 
-                                        <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
+                                        <!-- Кнопка "Следующая страница" -->
+                                        <li class="page-item {{#nextPage}}active{{/nextPage}} {{^nextPage}}disabled{{/nextPage}}">
                                             <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>

@@ -84,8 +84,13 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="type">Тип</label>
-                                    <input name="type" type="text" class="form-control" id="type" placeholder="ситес">
+                                    <label>Тип</label>
+                                    <select name="type" id="type" class="form-control form-control mb-3">
+                                        <option selected="">Выберите один из вариантов</option>
+                                        <option value="ситес">ситес</option>
+                                        <option value="животное">животное</option>
+                                        <option value="растительное">растительное</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">
@@ -280,9 +285,6 @@
             }
         });
     });
-
-
-
 
 </script>
 <script>
