@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -105,7 +106,7 @@ public class IncidentController {
                                   Model model) {
 
         // Преобразование строки в LocalDateTime
-        LocalDateTime registeredAtDate = parseDateTime(registeredAt, model);
+        LocalDate registeredAtDate = parseDate(registeredAt, model);
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -169,20 +170,19 @@ public class IncidentController {
         return "incidents/lists";
     }
 
-    private LocalDateTime parseDateTime(String registeredAt, Model model) {
+    private LocalDate parseDate(String registeredAt, Model model) {
         if (registeredAt != null && !registeredAt.isEmpty()) {
             try {
-                if (registeredAt.length() == 16) { // Проверка длины строки без секунд
-                    registeredAt += ":00"; // Добавляем секунды
-                }
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                return LocalDateTime.parse(registeredAt, formatter);
+                // Используем форматер для LocalDate
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                return LocalDate.parse(registeredAt, formatter);
             } catch (DateTimeParseException e) {
                 model.addAttribute("error", "Invalid date format for registeredAt");
             }
         }
         return null;
     }
+
 
     private boolean isNullOrEmpty(String... values) {
         for (String value : values) {

@@ -5,6 +5,7 @@ import kg.core.mnr.models.entity.dict.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -19,9 +20,13 @@ import java.util.UUID;
 public class Incident {
     @Id
     UUID id;
-    LocalDateTime registeredAt;
+    @Column(name = "registered_at")
+    LocalDate registeredAt;
+    @Column(name = "species")
     String species;
+    @Column(name = "description")
     String description;
+    @Column(name = "count")
     Double count;
 
     @ManyToOne

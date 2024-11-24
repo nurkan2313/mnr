@@ -1,16 +1,16 @@
 package kg.core.mnr.repository.em;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import kg.core.mnr.models.entity.Incident;
-import kg.core.mnr.repository.IncidentRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class IncidentRepositoryImpl {
 
     public Page<Incident> filterByCriteria(String species, String authority, String transportMethod,
                                            String suspectedOriginCountry, String finalDestination,
-                                           LocalDateTime registeredAt, Pageable pageable) {
+                                           LocalDate registeredAt, Pageable pageable) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Incident> query = cb.createQuery(Incident.class);
@@ -53,11 +53,10 @@ public class IncidentRepositoryImpl {
             predicates.add(cb.equal(incident.get("finalDestination"), finalDestination));
         }
         if (registeredAt != null) {
-            // Создаем диапазон времени для дня (с начала дня до конца дня)
-            LocalDateTime startOfDay = registeredAt.toLocalDate().atStartOfDay();
-            LocalDateTime endOfDay = registeredAt.toLocalDate().atTime(23, 59, 59);
-            predicates.add(cb.between(incident.get("registeredAt"), startOfDay, endOfDay));
+            // Используем LocalDate для диапазона
+            predicates.add(cb.equal(cb.function("DATE", LocalDate.class, incident.get("registeredAt")), registeredAt));
         }
+
 
         // Применение фильтров
         query.select(incident).where(cb.and(predicates.toArray(new Predicate[0])));
@@ -68,11 +67,17 @@ public class IncidentRepositoryImpl {
                 .setMaxResults(pageable.getPageSize())        // Количество элементов на странице
                 .getResultList();
 
-        // Получение общего количества записей для пагинации
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Incident> countRoot = countQuery.from(Incident.class);
         countQuery.select(cb.count(countRoot)).where(cb.and(predicates.toArray(new Predicate[0])));
-        Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
+
+        Long totalElements;
+        try {
+            totalElements = entityManager.createQuery(countQuery).getSingleResult();
+        } catch (NoResultException e) {
+            totalElements = 0L; // Если результатов нет
+        }
+
 
         // Возвращаем объект Page
         return new PageImpl<>(resultList, pageable, totalElements);

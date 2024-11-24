@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class IncidentService {
                                           String transportMethod,
                                           String suspectedOriginCountry,
                                           String finalDestination,
-                                          LocalDateTime registeredAt,
+                                          LocalDate registeredAt,
                                           Pageable pageable) {
         return incidentRepositoryImpl.filterByCriteria(species, authority, transportMethod, suspectedOriginCountry, finalDestination, registeredAt, pageable);
     }
