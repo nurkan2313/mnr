@@ -29,6 +29,9 @@ RUN apt-get update && apt-get install -y libfreetype6 fontconfig
 # Set working directory
 WORKDIR /app
 
+# Create uploads/files directory and set permissions
+RUN mkdir -p uploads/files && chmod -R 755 uploads/files
+
 # Copy the built JAR file from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 

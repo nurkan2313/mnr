@@ -43,7 +43,6 @@ public class ProductService {
 
             // Обновляем только те поля, которые переданы в новом объекте
             productToUpdate.setExplanation(product.getExplanation());
-            productToUpdate.setPreferredUnit(product.getPreferredUnit());
             productToUpdate.setDescription(product.getDescription());
 
             // Сохраняем обновления
@@ -106,7 +105,8 @@ public class ProductService {
         String fileName = UUID.randomUUID() + "." + extension;
 
         // Указываем путь для сохранения файла
-        Path filePath = Paths.get("src/main/resources/static/uploads/images", fileName);
+//        Path filePath = Paths.get("src/main/resources/static/uploads/images", fileName);
+        Path filePath = Paths.get("uploads/files", fileName);
 
         // Создаем директории, если их ещё нет
         Files.createDirectories(filePath.getParent());
@@ -114,8 +114,12 @@ public class ProductService {
         // Сохраняем файл на указанный путь
         Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+        // Логирование для проверки
+        System.out.println("Файл сохранен по пути: " + filePath.toAbsolutePath());
+
         // Возвращаем относительный путь к файлу
-        return "/uploads/images/" + fileName;
+//        return "/uploads/images/" + fileName;
+        return "/uploads/files/" + fileName;
     }
 
 

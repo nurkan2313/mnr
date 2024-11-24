@@ -90,8 +90,19 @@ public class CitesPermitRepositoryImpl {
         if (quantity != null && !quantity.isEmpty()) {
             predicates.add(cb.equal(permit.get("quantity"), quantity));
         }
-        if (startDate != null && endDate != null) {
-            predicates.add(cb.between(permit.get("issueDate"), startDate.atStartOfDay(), endDate.atTime(23, 59, 59)));
+        if (startDate != null) {
+            Predicate issueDatePredicate = cb.or(
+                    cb.isNull(permit.get("issueDate")), // Если дата выпуска NULL, включить
+                    cb.greaterThanOrEqualTo(permit.get("issueDate"), startDate) // Или >= startDate
+            );
+            predicates.add(issueDatePredicate);
+        }
+        if (endDate != null) {
+            Predicate expiryDatePredicate = cb.or(
+                    cb.isNull(permit.get("expiryDate")), // Учет NULL значений
+                    cb.lessThanOrEqualTo(permit.get("expiryDate"), endDate)
+            );
+            predicates.add(expiryDatePredicate);
         }
 
         query.select(permit).where(cb.and(predicates.toArray(new Predicate[0])));
