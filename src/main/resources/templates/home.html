@@ -44,6 +44,26 @@
             font-family: 'Noto Sans', sans-serif !important;
         }
 
+        .modal-dialog {
+            max-width: 800px; /* Установите желаемую ширину, например, 800px */
+            width: 90%; /* Адаптивная ширина, чтобы окно занимало 90% ширины экрана */
+        }
+
+        /* Увеличение отступов внутри модального окна */
+        .modal-content {
+            padding: 20px; /* Добавляем отступы для всего содержимого модального окна */
+            margin-top: 110px;
+        }
+
+        /* Увеличение размера текста в модальном окне */
+        .modal-body {
+            font-size: 20px; /* Увеличение размера шрифта */
+            line-height: 1.6; /* Увеличение межстрочного интервала для читаемости */
+        }
+
+        .modal-footer {
+            padding-top: 15px; /* Увеличение отступов сверху для кнопки */
+        }
     </style>
 
     <!-- Template Stylesheet (подключаем после всего, если там есть стили для текста) -->
@@ -149,6 +169,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-lg-8 wow fadeIn" data-wow-delay="0.5s">
             <div class="owl-carousel header-carousel">
                 <div class="owl-carousel-item">
@@ -184,108 +205,102 @@
             </div>
         </div>
         <div class="row g-4">
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="row g-4">
-                    <div class="col-12">
-                        <a
-                                class="animal-item"
-                                href="/images/animal-md-1.jpg"
-                                data-lightbox="Животные"
-                        >
-                            <div class="position-relative">
-                                <img class="img-fluid" src="/images/animal-md-1.jpg" alt="" />
-                                <div class="animal-text p-4">
-                                    <p class="text-white small text-uppercase mb-0">Животные</p>
-                                    <h5 class="text-white mb-0">Лось</h5>
-                                </div>
+            <!-- Первый столбец -->
+            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="d-flex align-items-stretch">
+                    <a class="animal-item w-100" href="/images/archar.jpg" data-lightbox="Животные">
+                        <div class="position-relative">
+                            <img class="img-fluid" src="/images/archar.jpg" alt="Архар" />
+                            <div class="animal-text p-4">
+                                <p class="text-white small text-uppercase mb-0">Животные</p>
+                                <h5 class="text-white mb-0">Архар</h5>
                             </div>
-                        </a>
-                    </div>
-                    <div class="col-12">
-                        <a
-                                class="animal-item"
-                                href="/images/animal-lg-1.jpg"
-                                data-lightbox="animal"
-                        >
-                            <div class="position-relative">
-                                <img class="img-fluid" src="/images/animal-lg-1.jpg" alt="" />
-                                <div class="animal-text p-4">
-                                    <p class="text-white small text-uppercase mb-0">Animal</p>
-                                    <h5 class="text-white mb-0">Elephant</h5>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="row g-4">
-                    <div class="col-12">
-                        <a
-                                class="animal-item"
-                                href="/images/animal-lg-2.jpg"
-                                data-lightbox="animal"
-                        >
-                            <div class="position-relative">
-                                <img class="img-fluid" src="/images/animal-lg-2.jpg" alt="" />
-                                <div class="animal-text p-4">
-                                    <p class="text-white small text-uppercase mb-0">Animal</p>
-                                    <h5 class="text-white mb-0">Elephant</h5>
-                                </div>
+
+            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="d-flex align-items-stretch">
+                    <a class="animal-item w-100" href="/images/red_wolf.jpg" data-lightbox="Животные">
+                        <div class="position-relative">
+                            <img class="img-fluid" src="/images/red_wolf.jpg" alt="Красный волк" />
+                            <div class="animal-text p-4">
+                                <p class="text-white small text-uppercase mb-0">Животные</p>
+                                <h5 class="text-white mb-0">Красный волк</h5>
                             </div>
-                        </a>
-                    </div>
-                    <div class="col-12">
-                        <a
-                                class="animal-item"
-                                href="/images/animal-md-2.jpg"
-                                data-lightbox="animal"
-                        >
-                            <div class="position-relative">
-                                <img class="img-fluid" src="/images/animal-md-2.jpg" alt="" />
-                                <div class="animal-text p-4">
-                                    <p class="text-white small text-uppercase mb-0">Animal</p>
-                                    <h5 class="text-white mb-0">Elephant</h5>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="row g-4">
-                    <div class="col-12">
-                        <a
-                                class="animal-item"
-                                href="/images/animal-md-3.jpg"
-                                data-lightbox="animal"
-                        >
-                            <div class="position-relative">
-                                <img class="img-fluid" src="/images/animal-md-3.jpg" alt="" />
-                                <div class="animal-text p-4">
-                                    <p class="text-white small text-uppercase mb-0">Animal</p>
-                                    <h5 class="text-white mb-0">Elephant</h5>
-                                </div>
+
+            <!-- Второй столбец -->
+            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="d-flex align-items-stretch">
+                    <a class="animal-item w-100" href="/images/med.jpg" data-lightbox="Животные">
+                        <div class="position-relative">
+                            <img class="img-fluid" src="/images/med.jpg" alt="Медведь" />
+                            <div class="animal-text p-4">
+                                <p class="text-white small text-uppercase mb-0">Животные</p>
+                                <h5 class="text-white mb-0">Медведь</h5>
                             </div>
-                        </a>
-                    </div>
-                    <div class="col-12">
-                        <a
-                                class="animal-item"
-                                href="/images/animal-lg-3.jpg"
-                                data-lightbox="animal"
-                        >
-                            <div class="position-relative">
-                                <img class="img-fluid" src="/images/animal-lg-3.jpg" alt="" />
-                                <div class="animal-text p-4">
-                                    <p class="text-white small text-uppercase mb-0">Animal</p>
-                                    <h5 class="text-white mb-0">Elephant</h5>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 </div>
             </div>
+
+            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
+                <div class="d-flex align-items-stretch">
+                    <a class="animal-item w-100" href="/images/manul.jpg" data-lightbox="Животные">
+                        <div class="position-relative">
+                            <img class="img-fluid" src="/images/manul.jpg" alt="Манул" />
+                            <div class="animal-text p-4">
+                                <p class="text-white small text-uppercase mb-0">Животные</p>
+                                <h5 class="text-white mb-0">Манул</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+        <!--            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">-->
+<!--                <div class="row g-4">-->
+<!--                    <div class="col-12">-->
+<!--                        <a-->
+<!--                                class="animal-item"-->
+<!--                                href="/images/medved.jpg"-->
+<!--                                data-lightbox="animal"-->
+<!--                        >-->
+<!--                            <div class="position-relative">-->
+<!--                                <img class="img-fluid" src="/images/medved.jpg" alt="" />-->
+<!--                                <div class="animal-text p-4">-->
+<!--                                    <p class="text-white small text-uppercase mb-0">Животные</p>-->
+<!--                                    <h5 class="text-white mb-0">Медведь</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                    <div class="col-12">-->
+<!--                        <a-->
+<!--                                class="animal-item"-->
+<!--                                href="/images/manul.jpg"-->
+<!--                                data-lightbox="animal"-->
+<!--                        >-->
+<!--                            <div class="position-relative">-->
+<!--                                <img class="img-fluid" src="/images/manul.jpg" alt="" />-->
+<!--                                <div class="animal-text p-4">-->
+<!--                                    <p class="text-white small text-uppercase mb-0">Животные</p>-->
+<!--                                    <h5 class="text-white mb-0">Манул</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 </div>

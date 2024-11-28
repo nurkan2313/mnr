@@ -34,6 +34,7 @@ public class CitesPermitReportController {
 
     @GetMapping
     public ResponseEntity<byte[]> generateCitesPermitReport(
+            @RequestParam(required = false) String region,
             @RequestParam(required = false) String importerCountry,
             @RequestParam(required = false) String exporterCountry,
             @RequestParam(required = false) String object,
@@ -55,7 +56,7 @@ public class CitesPermitReportController {
 
         // Получение данных с использованием фильтрации
         List<CitesPermit> filteredData = citesPermitRepository.findByCriteria(
-                importerCountry, exporterCountry, object, exporter, startDateTime, endDeateTime);
+                region, importerCountry, exporterCountry, object, exporter, startDateTime, endDeateTime);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             // Генерация отчета в формате Excel и запись в поток

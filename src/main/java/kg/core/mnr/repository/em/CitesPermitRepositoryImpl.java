@@ -2,11 +2,9 @@ package kg.core.mnr.repository.em;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import kg.core.mnr.models.entity.CitesPermit;
+import kg.core.mnr.models.entity.dict.Country;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -109,14 +107,25 @@ public class CitesPermitRepositoryImpl {
         return entityManager.createQuery(query).getResultList();
     }
 
-    public List<CitesPermit> findByCriteria(String importerCountry, String exporterCountry, String object, String exporter, LocalDate startDate, LocalDate endDate) {
+    public List<CitesPermit> findByCriteria(String region, String importerCountry, String exporterCountry, String object, String exporter, LocalDate startDate, LocalDate endDate) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<CitesPermit> query = cb.createQuery(CitesPermit.class);
         Root<CitesPermit> root = query.from(CitesPermit.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // Добавляем условия для фильтрации
+        // Фильтрация по региону
+        if (region != null && !region.isEmpty()) {
+            Subquery<String> subquery = query.subquery(String.class);
+            Root<Country> countryRoot = subquery.from(Country.class);
+            subquery.select(countryRoot.get("name"))
+                    .where(cb.equal(cb.lower(countryRoot.get("region")), region.toLowerCase()));
+
+            predicates.add(cb.or(
+                    root.get("importerCountry").in(subquery)
+            ));
+        }
+
         if (importerCountry != null && !importerCountry.isEmpty()) {
             predicates.add(cb.equal(cb.lower(root.get("importerCountry")), importerCountry.toLowerCase()));
         }

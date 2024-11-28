@@ -22,6 +22,9 @@ public class Country {
     @Column(name = "id", nullable = false)
     private UUID id;
 
+    @Column(name = "region")
+    private String region;
+
     @Column(name = "name", nullable = false)
     private String name;
 

@@ -29,6 +29,9 @@ public interface CountryRepository extends JpaRepository<Country, UUID> {
 
     Optional<Country> findByName(String query);
 
+    @Query("SELECT c.region FROM Country c WHERE c.name = :name")
+    String findRegionByCountryName(@Param("name") String name);
+
     List<Country> findTop5ByNameContainingIgnoreCase(String name);
 
 }
