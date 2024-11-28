@@ -95,6 +95,11 @@ public class PermitController {
         return "otchet/reports";
     }
 
+    @GetMapping("/permission/report/export-data")
+    public String exportВata() {
+        return "otchet/export-data";
+    }
+
     @GetMapping("/permission/list")
     public String index(@RequestParam(required = false) String permitNumber,
                               @RequestParam(required = false) String protectionNumber,
