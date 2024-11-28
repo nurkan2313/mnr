@@ -24,8 +24,17 @@
                             <form id="report-form">
                                 <div class="form-group">
                                     <label for="region">Регион</label>
-                                    <input type="text" id="region" class="form-control" placeholder="Введите регион">
+                                    <select id="region" name="region" class="form-control">
+                                        <option value="">Все регионы</option>
+                                        <option value="Азия">Азия</option>
+                                        <option value="Европа">Европа</option>
+                                        <option value="Африка">Африка</option>
+                                        <option value="Северная Америка">Северная Америка</option>
+                                        <option value="Южная Америка">Южная Америка</option>
+                                        <option value="Океания">Океания</option>
+                                    </select>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="importerCountry">Страна-импортер</label>
                                     <input type="text" id="importerCountry" class="form-control" placeholder="Введите страну-импортера">

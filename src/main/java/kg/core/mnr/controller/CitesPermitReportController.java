@@ -3,7 +3,9 @@ package kg.core.mnr.controller;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
 import kg.core.mnr.models.entity.CitesPermit;
+import kg.core.mnr.models.entity.dict.Country;
 import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.em.CitesPermitRepositoryImpl;
 import kg.core.mnr.service.CitesPermitReportService;
@@ -20,10 +22,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -112,8 +111,9 @@ public class CitesPermitReportController {
             @RequestParam(required = false) String object,
             @RequestParam String startDate,
             @RequestParam String endDate,
-            @RequestParam(required = false) String exporter) {
+            @RequestParam(required = false) String companyName) {
 
+        // Форматирование дат
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start = LocalDate.parse(startDate, formatter);
         LocalDate end = LocalDate.parse(endDate, formatter);
@@ -123,56 +123,73 @@ public class CitesPermitReportController {
                 "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
         };
 
-        // Базовый запрос
-        StringBuilder queryBuilder = new StringBuilder(
-                "SELECT MONTH(p.issueDate), COUNT(p.id) " +
-                        "FROM CitesPermit p " +
-                        "WHERE p.issueDate BETWEEN :startDate AND :endDate ");
+        // Базовый SQL-запрос
+        StringBuilder sqlBuilder = new StringBuilder(
+                "SELECT EXTRACT(MONTH FROM p.issue_date) AS month, COUNT(p.id) " +
+                        "FROM cites_permit p " +
+                        "WHERE p.issue_date BETWEEN :startDate AND :endDate "
+        );
 
-        if (object != null && !object.isEmpty()) {
-            queryBuilder.append("AND LOWER(p.object) LIKE LOWER(:object) ");
-        }
+        // Фильтрация по региону (через таблицу Country)
         if (region != null && !region.isEmpty()) {
-            queryBuilder.append("AND LOWER(p.region) LIKE LOWER(:region) ");
+            sqlBuilder.append(
+                    "AND (p.importer_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region) " +
+                            "OR p.exporter_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region)) "
+            );
+        }
+
+        // Фильтрация по объекту
+        if (object != null && !object.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.object) LIKE :object ");
+        }
+
+        // Фильтрация по стране-импортёру
+        if (importerCountry != null && !importerCountry.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.importer_country) LIKE :importerCountry ");
+        }
+
+        // Фильтрация по стране-экспортёру
+        if (exporterCountry != null && !exporterCountry.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.exporter_country) LIKE :exporterCountry ");
+        }
+
+        // Фильтрация по экспортеру
+        if (companyName != null && !companyName.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.company_name) LIKE :companyName ");
+        }
+
+        // Группировка и сортировка
+        sqlBuilder.append("GROUP BY EXTRACT(MONTH FROM p.issue_date) ");
+        sqlBuilder.append("ORDER BY EXTRACT(MONTH FROM p.issue_date)");
+
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("startDate", java.sql.Date.valueOf(start));
+        query.setParameter("endDate", java.sql.Date.valueOf(end));
+
+        // Установка параметров для фильтров
+        if (region != null && !region.isEmpty()) {
+            query.setParameter("region", region.toLowerCase());
+        }
+        if (object != null && !object.isEmpty()) {
+            query.setParameter("object", "%" + object.toLowerCase() + "%");
         }
         if (importerCountry != null && !importerCountry.isEmpty()) {
-            queryBuilder.append("AND LOWER(p.importerCountry) LIKE LOWER(:importerCountry) ");
+            query.setParameter("importerCountry", "%" + importerCountry.toLowerCase() + "%");
         }
         if (exporterCountry != null && !exporterCountry.isEmpty()) {
-            queryBuilder.append("AND LOWER(p.exporterCountry) LIKE LOWER(:exporterCountry) ");
+            query.setParameter("exporterCountry", "%" + exporterCountry.toLowerCase() + "%");
         }
-        if (exporter != null && !exporter.isEmpty()) {
-            queryBuilder.append("AND LOWER(p.exporter) LIKE LOWER(:exporter) ");
-        }
-
-        queryBuilder.append("GROUP BY MONTH(p.issueDate) ORDER BY MONTH(p.issueDate)");
-
-        Query query = entityManager.createQuery(queryBuilder.toString(), Object[].class);
-        query.setParameter("startDate", start);
-        query.setParameter("endDate", end);
-
-        if (object != null && !object.isEmpty()) {
-            query.setParameter("object", "%" + object + "%");
-        }
-        if (region != null && !region.isEmpty()) {
-            query.setParameter("region", "%" + region + "%");
-        }
-        if (importerCountry != null && !importerCountry.isEmpty()) {
-            query.setParameter("importerCountry", "%" + importerCountry + "%");
-        }
-        if (exporterCountry != null && !exporterCountry.isEmpty()) {
-            query.setParameter("exporterCountry", "%" + exporterCountry + "%");
-        }
-        if (exporter != null && !exporter.isEmpty()) {
-            query.setParameter("exporter", "%" + exporter + "%");
+        if (companyName != null && !companyName.isEmpty()) {
+            query.setParameter("companyName", "%" + companyName.toLowerCase() + "%");
         }
 
+        // Выполнение запроса
         List<Object[]> results = query.getResultList();
 
-        // Преобразование данных
+        // Преобразование данных для ответа
         List<Map<String, Object>> response = results.stream().map(row -> {
             Map<String, Object> map = new HashMap<>();
-            int monthIndex = (int) row[0] - 1; // Индексация месяцев с 0
+            int monthIndex = ((Number) row[0]).intValue() - 1; // Индексация месяцев с 0
             map.put("month", monthNames[monthIndex]); // Название месяца
             map.put("count", row[1]); // Количество
             return map;
@@ -180,5 +197,9 @@ public class CitesPermitReportController {
 
         return ResponseEntity.ok(response);
     }
+
+
+
+
 
 }

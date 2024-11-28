@@ -111,7 +111,6 @@ public class CitesPermitRepositoryImpl {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<CitesPermit> query = cb.createQuery(CitesPermit.class);
         Root<CitesPermit> root = query.from(CitesPermit.class);
-
         List<Predicate> predicates = new ArrayList<>();
 
         // Фильтрация по региону
