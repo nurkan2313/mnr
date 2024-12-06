@@ -65,6 +65,46 @@
             padding-top: 15px; /* Увеличение отступов сверху для кнопки */
         }
     </style>
+    <!-- Стили -->
+    <style>
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-content p {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
 
     <!-- Template Stylesheet (подключаем после всего, если там есть стили для текста) -->
     <link href="/home/css/style.css" rel="stylesheet" />
@@ -204,11 +244,80 @@
             <div class="col-lg-6 text-lg-end">
             </div>
         </div>
+<!--        <div class="row g-4">-->
+<!--            &lt;!&ndash; Первый столбец &ndash;&gt;-->
+<!--            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">-->
+<!--                <div class="d-flex align-items-stretch">-->
+<!--                    <a class="animal-item w-100" href="/images/archar.jpg" data-lightbox="Животные">-->
+<!--                        <div class="position-relative">-->
+<!--                            <img class="img-fluid" src="/images/archar.jpg" alt="Архар" />-->
+<!--                            <div class="animal-text p-4">-->
+<!--                                <p class="text-white small text-uppercase mb-0">Животные</p>-->
+<!--                                <h5 class="text-white mb-0">Архар</h5>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.2s">-->
+<!--                <div class="d-flex align-items-stretch">-->
+<!--                    <a class="animal-item w-100" href="/images/red_wolf.jpg" data-lightbox="Животные">-->
+<!--                        <div class="position-relative">-->
+<!--                            <img class="img-fluid" src="/images/red_wolf.jpg" alt="Красный волк" />-->
+<!--                            <div class="animal-text p-4">-->
+<!--                                <p class="text-white small text-uppercase mb-0">Животные</p>-->
+<!--                                <h5 class="text-white mb-0">Красный волк</h5>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Второй столбец &ndash;&gt;-->
+<!--            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">-->
+<!--                <div class="d-flex align-items-stretch">-->
+<!--                    <a class="animal-item w-100" href="/images/med.jpg" data-lightbox="Животные">-->
+<!--                        <div class="position-relative">-->
+<!--                            <img class="img-fluid" src="/images/med.jpg" alt="Медведь" />-->
+<!--                            <div class="animal-text p-4">-->
+<!--                                <p class="text-white small text-uppercase mb-0">Животные</p>-->
+<!--                                <h5 class="text-white mb-0">Медведь</h5>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.4s">-->
+<!--                <div class="d-flex align-items-stretch">-->
+<!--                    <a class="animal-item w-100" href="/images/manul.jpg" data-lightbox="Животные">-->
+<!--                        <div class="position-relative">-->
+<!--                            <img class="img-fluid" src="/images/manul.jpg" alt="Манул" />-->
+<!--                            <div class="animal-text p-4">-->
+<!--                                <p class="text-white small text-uppercase mb-0">Животные</p>-->
+<!--                                <h5 class="text-white mb-0">Манул</h5>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <!-- Модальное окно -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p id="modal-text"></p>
+            </div>
+        </div>
+
+        <!-- Галерея -->
         <div class="row g-4">
             <!-- Первый столбец -->
             <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                 <div class="d-flex align-items-stretch">
-                    <a class="animal-item w-100" href="/images/archar.jpg" data-lightbox="Животные">
+                    <div class="animal-item w-100" onclick="openModal('Это самый крупный представитель диких баранов — его длина составляет 120—200 см, высота в холке 90—120 см, а вес 65—180 кг. В зависимости от размера и окраски тела различают несколько подвидов, самым крупным из которых считается памирский горный баран (Ovis ammon polii), названный так в честь великого путешественника, первым из европейцев его описавшего. И самцы, и самки обладают длинными рогами, однако у самцов они выглядят значительно крупнее и внушительнее и могут составлять до 13 % всей массы тела. Рога до 190 см в длину, закручены в спираль с окончаниями наружу и вверх; имеют большую популярность у охотников — их цена может достигать нескольких тысяч долларов. Окраска тела у разных подвидов варьирует в широком диапазоне от светлого песочного до тёмного серо-бурого цвета, однако нижняя часть тела обычно выглядит заметно светлее. По бокам вдоль всего тела имеются тёмно-бурые полосы, чётко разделяющие более тёмный верх и более светлый низ. Морда и охвостье светлые. ')">
                         <div class="position-relative">
                             <img class="img-fluid" src="/images/archar.jpg" alt="Архар" />
                             <div class="animal-text p-4">
@@ -216,13 +325,13 @@
                                 <h5 class="text-white mb-0">Архар</h5>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="d-flex align-items-stretch">
-                    <a class="animal-item w-100" href="/images/red_wolf.jpg" data-lightbox="Животные">
+                    <div class="animal-item w-100" onclick="openModal('Красный волк — довольно крупный зверь с длиной тела 55—110 см, хвоста — 45—50 см и массой 17—21 кг. В его облике сочетаются черты волка, лисицы и шакала. От обыкновенного волка отличается окраской, пушистой шерстью и более длинным хвостом, почти достигающим земли, а конец хвоста черный. Характерна укороченная, заострённая морда. Уши большие, стоячие, с закруглёнными вершинами, высоко посажены на голове.')">
                         <div class="position-relative">
                             <img class="img-fluid" src="/images/red_wolf.jpg" alt="Красный волк" />
                             <div class="animal-text p-4">
@@ -230,14 +339,24 @@
                                 <h5 class="text-white mb-0">Красный волк</h5>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Второй столбец -->
             <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                 <div class="d-flex align-items-stretch">
-                    <a class="animal-item w-100" href="/images/med.jpg" data-lightbox="Животные">
+                    <div class="animal-item w-100" onclick="openModal('Тянь-шаньский бурый медведь - обособленный подвид бурого медведя, ' +
+                     'обитающий в горах Памира, Тянь-Шаня и Гималаев. Имеет относительно небольшие размеры: длина тела до 140 см, масса до 300 кг.' +
+                      ' Главный отличительный признак - длинные светлые когти на передних лапах. ' +
+                       'Медведя на Тянь-Шане впервые описал в 1873 году крупнейший российский зоолог и теоретик-эволюционист Николай Северцов,' +
+                        ' дав ему название белокоготный' +
+                     'В настоящее время это название используется как синоним для тянь-шаньского медведя' +
+                    'На территории Кыргызстана тянь-шаньского медведя можно встретить в Джети-Огузском заказнике,' +
+                    'Беш-Аральском государственном заповеднике, Нарынском государственном заповеднике, Падыша-Атинском' +
+                    'государственном заповеднике, а также в Сары-Челекском биосферном заповеднике. В природе' +
+                   ' тянь-шаньский медведь живет 20-30 лет, в неволе - более 50, а вот половой зрелости особи достигают' +
+                    'на третьем-четвертом году жизни. Основной угрозой для медведей являются браконьеры.')">
                         <div class="position-relative">
                             <img class="img-fluid" src="/images/med.jpg" alt="Медведь" />
                             <div class="animal-text p-4">
@@ -245,13 +364,17 @@
                                 <h5 class="text-white mb-0">Медведь</h5>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
                 <div class="d-flex align-items-stretch">
-                    <a class="animal-item w-100" href="/images/manul.jpg" data-lightbox="Животные">
+                    <div class="animal-item w-100" onclick="openModal('Распространение общее и в стране. В Кыргызстане населяет высокогорную зону хребтов Кеминского ущ., Иссыккульской котловины, Центрального и Внутреннего Тянь-Шаня, в том числе Сары-Джаз: Энильчек, Адыр-Тер, Кейкап,Койлю, Ак-Шыйрак, Ыштак-Карасай, Тарагай,Кызыл-Бель, Джетим, Узенгю-Кууш, Нарын-Тоо, Ат-Баши, КокШаал-Тоо. Возможно, обитает и в горных системах Юга Киргизии: в высокогорье Алая, на северных склонах Туркестанского хр., в верховьях р. Кара-Кульджа, Тар, но сведения недостоверны [4, 9, 10]. Всюду распространен спорадически.\n'+
+'\n'+
+'Карта Красная книга КиргизияМеста обитания. Обычно живет в степных участках невысоких гор, но в условиях Тянь-Шаня занимает высокогорные степи и сырты. Поселяется на скалистых безлесых склонах гор, по каменистым россыпям, на остепненных склонах сыртов, по речным поймам, отдавая предпочтение бесснежным, слабозакустаренным участкам близ поселений сурков [9, 11]. Живет в расщелинах скал, осыпях, иногда в сурчиных норах.\n'+
+'\n'+
+'Образ жизни (жизненные циклы). Ночной хищник, ведет скрытный образ жизни. Живет оседло, но в многоснежные зимы порой переселяется в менее заснеженные районы. Логово устраивает в расщелинах скал, возможно, в брошенных норах сурков. Гон – в феврале – марте, в апреле – мае рождается 3 – 4, реже – от 2 до 10 котят. Основной корм – пищухи, сурки, полевки, другие мышевидные грызуны, птицы.')">
                         <div class="position-relative">
                             <img class="img-fluid" src="/images/manul.jpg" alt="Манул" />
                             <div class="animal-text p-4">
@@ -259,10 +382,12 @@
                                 <h5 class="text-white mb-0">Манул</h5>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
+
+
 
     </div>
 
@@ -446,6 +571,28 @@
 <script src="/lib/counterup/counterup.min.js"></script>
 <script src="/lib/owlcarousel/owl.carousel.min.js"></script>
 <script src="/lib/lightbox/js/lightbox.min.js"></script>
+<!-- Скрипт -->
+<script>
+    function openModal(text) {
+        const modal = document.getElementById('modal');
+        const modalText = document.getElementById('modal-text');
+        modalText.textContent = text;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+
+    // Закрытие модального окна при клике вне области
+    window.onclick = function (event) {
+        const modal = document.getElementById('modal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+</script>
 
 <!-- Template Javascript -->
 <script src="/home/js/main.js"></script>

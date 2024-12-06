@@ -42,6 +42,7 @@
                                         <div class="form-group">
                                             <label for="type">Тип</label>
                                             <select id="type" name="type" class="form-control">
+                                                <option value="">Выберите тип</option>
                                                 <option value="CITES">CITES</option>
                                                 <option value="Флора">Флора</option>
                                                 <option value="Фауна">Фауна</option>
@@ -262,7 +263,6 @@
             .catch(error => console.error('Ошибка:', error));
     }
 </script>
-
 <script>
     // Поиск стран
     document.addEventListener('DOMContentLoaded', function() {
@@ -302,7 +302,6 @@
         });
     });
 </script>
-
 <script>
     // Поиск стран
     document.addEventListener('DOMContentLoaded', function() {
