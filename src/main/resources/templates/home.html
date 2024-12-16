@@ -449,66 +449,66 @@
                 и содействие в борьбе с преступлениями против дикой природы в Центральной Азии».
             </p>
         </div>
-        <div
-                class="owl-carousel testimonial-carousel wow fadeInUp"
-                data-wow-delay="0.1s"
-        >
-            <!-- class="img-fluid  border border-2 p-2 mx-auto mb-4" -->
 
-            <div class="testimonial-item text-center pt-4">
-                <img
-                        class="img-fluid mx-auto mb-4"
-                        src="/images/donors/ff.png"
-                        style="width: 350px; height: 140px; object-fit: cover;"
-                />
-                <!-- <div class="testimonial-text rounded text-center p-4">
-                  <p>
-                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo
-                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed
-                    clita erat magna elitr erat sit sit erat at rebum justo sea
-                    clita.
-                  </p>
-                  <h5 class="mb-1">Patient Name</h5>
-                  <span class="fst-italic">Profession</span>
-                </div> -->
-            </div>
-            <div class="testimonial-item text-center">
-                <img
-                        class="img-fluid mx-auto mb-4"
-                        src="/images/donors/traffic.jpg"
-                        style="width: 350px; height: 120px; margin-top:  2.5rem !important; object-fit: cover;"
-                />
-                <!-- <div class="testimonial-text rounded text-center p-4">
-                  <p>
-                    Clita clita tempor justo dolor ipsum amet kasd amet duo justo
-                    duo duo labore sed sed. Magna ut diam sit et amet stet eos sed
-                    clita erat magna elitr erat sit sit erat at rebum justo sea
-                    clita.
-                  </p>
-                  <h5 class="mb-1">Patient Name</h5>
-                  <span class="fst-italic">Profession</span>
-                </div> -->
-            </div>
+<!--        <div class="owl-carousel testimonial-carousel wow fadeInUp" >-->
+<!--            <div class="testimonial-item text-center pt-4">-->
+<!--                <img class="img-fluid mx-auto mb-4" src="/images/donors/ff.png" style="width: 350px; height: 140px; object-fit: cover;">-->
+<!--            </div>-->
+<!--            <div class="testimonial-item text-center">-->
+<!--                <img class="img-fluid mx-auto mb-4" src="/images/donors/traffic.jpg" style="width: 350px; height: 120px; margin-top: 2.5rem !important; object-fit: cover;">-->
+<!--            </div>-->
+<!--            <div class="testimonial-item text-center d-flex justify-content-center align-items-center gap-3">-->
+<!--                <img class="img-fluid" src="/images/us_flag.jpg" alt="US Flag" style="width: 350px; height: 120px; object-fit: cover;">-->
+<!--                <img src="/images/inl_no_logo.png" class="img-fluid" alt="INL Logo" style="width: 350px; height: 225px; object-fit: cover;">-->
+<!--            </div>-->
+<!--            <div class="testimonial-item text-center">-->
+<!--                <img class="img-fluid mx-auto mb-4" src="/images/ministry.png" style="width: 166px; height: 176px; object-fit: cover;">-->
+<!--            </div>-->
+<!--        </div>-->
 
-            <div class="testimonial-item text-center d-flex justify-content-center align-items-center gap-3">
-                <img class="img-fluid"
-                     src="/images/us_flag.jpg" alt="US Flag"
-                     style="width: 350px; height: 120px; object-fit: cover;">
-                <img src="/images/inl_no_logo.png"
-                     class="img-fluid"
-                     alt="INL Logo"
-                     style="width: 350px; height: 225px; object-fit: cover;">
-            </div>
+        <style>
+            .slider {
+                width: 100%;
+                overflow: hidden;
+                position: relative;
+                height: 200px; /* Высота слайдера */
+            }
+            .slides {
+                display: flex;
+                transition: transform 0.3s ease-in-out; /* Анимация прокрутки */
+            }
+            .slide {
+                min-width: 100%; /* Каждый слайд занимает 100% ширины контейнера */
+                display: flex; /* Flexbox для центрирования содержимого */
+                justify-content: center; /* Центрирование по горизонтали */
+                align-items: center; /* Центрирование по вертикали */
+            }
+            .slide img {
+                width: auto; /* Автоматическая ширина для сохранения пропорций */
+                height: auto; /* Автоматическая высота для сохранения пропорций */
+                max-width: 100%; /* Убедимся, что изображение не выходит за пределы контейнера */
+                max-height: 100%; /* Убедимся, что изображение не выходит за пределы высоты слайдера */
+            }
+        </style>
 
-            <div class="testimonial-item text-center">
-                <img
-                        class="img-fluid mx-auto mb-4"
-                        src="/images/ministry.png"
-                        style="width: 166px; height: 176px; object-fit: cover;"
-                />
-            </div>
 
+        <div class="slider">
+            <div class="slides">
+                <div class="slide">
+                    <img src="/images/donors/ff.png" style="width: 350px; height: 140px; object-fit: cover;" alt="Slide 1">
+                </div>
+                <div class="slide">
+                    <img src="/images/donors/traffic.jpg" style="width: 350px; height: 120px; object-fit: cover;" alt="Slide 2">
+                </div>
+                <div class="slide">
+                    <img src="/images/us_flag.jpg" style="width: 350px; height: 120px; object-fit: cover;" alt="Slide 3">
+                    <img src="/images/inl_no_logo.png" style="width: 320px; height: 230px; object-fit: cover;" alt="Slide 4">
+                </div>
+
+            </div>
         </div>
+
+
     </div>
 </div>
 <!-- Доноры End -->
@@ -571,6 +571,7 @@
 <script src="/lib/counterup/counterup.min.js"></script>
 <script src="/lib/owlcarousel/owl.carousel.min.js"></script>
 <script src="/lib/lightbox/js/lightbox.min.js"></script>
+
 <!-- Скрипт -->
 <script>
     function openModal(text) {
@@ -592,6 +593,56 @@
             modal.style.display = 'none';
         }
     };
+</script>
+
+<script>
+    // Настройки
+    const slideInterval = 2000; // Интервал между слайдами (в мс)
+    const slideSpeed = 1000;   // Скорость смены слайдов (в мс)
+
+    // Инициализация
+    const slides = document.querySelector('.slides');
+    const slide = document.querySelectorAll('.slide');
+    const totalSlides = slide.length;
+    let currentIndex = 0;
+
+    // Автопрокрутка
+    function showNextSlide() {
+        currentIndex = (currentIndex + 1) % totalSlides; // Следующий слайд (циклично)
+        const offset = -currentIndex * 100; // Смещение для слайда
+        slides.style.transition = `transform ${slideSpeed}ms ease-in-out`; // Анимация
+        slides.style.transform = `translateX(${offset}%)`; // Прокрутка
+    }
+
+    // Запуск автопрокрутки
+    setInterval(showNextSlide, slideInterval + slideSpeed);
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $('.owl-carousel').owlCarousel({
+            loop: true, // Зацикливание
+            margin: 10, // Отступ между слайдами
+            nav: false, // Навигация
+            autoplay: true, // Автопрокрутка
+            autoplayTimeout: 200, // Интервал между слайдами (в миллисекундах) — 0.5 секунды
+            smartSpeed: 100, // Скорость анимации перехода между слайдами (в миллисекундах)
+            items: 1, // Количество отображаемых слайдов за раз
+            responsive: {
+                0: {
+                    items: 1 // На маленьких экранах — 1 слайд
+                },
+                768: {
+                    items: 2 // На средних экранах — 2 слайда
+                },
+                1024: {
+                    items: 3 // На больших экранах — 3 слайда
+                }
+            }
+        });
+    });
+
 </script>
 
 <!-- Template Javascript -->
