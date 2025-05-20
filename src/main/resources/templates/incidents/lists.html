@@ -79,6 +79,7 @@
                                     <table class="table table-striped" >
                                         <thead>
                                         <tr>
+                                            <th></th>
                                             <th>Регистрационный номер</th>
                                             <th>Дата изъятия</th>
                                             <th>Виды</th>
@@ -101,6 +102,7 @@
                                         <tbody>
                                         {{#incidents}}
                                         <tr>
+                                            <td><a href="/incidents/{{id}}">посмотреть</a></td>
                                             <td>{{ id }}</td>
                                             <td>{{ registeredAt }}</td>
                                             <td>{{ species }}</td>
@@ -117,7 +119,7 @@
                                             <td>{{transitCountries}}</td>
                                             <td>{{finalDestination}}</td>
                                             <td class="text-right">{{additionalInfo}}</td>
-                                            <td><a href="/incidents/{{id}}">посмотреть</a></td>
+
                                         </tr>
                                     {{/incidents}}
                                     </tbody>

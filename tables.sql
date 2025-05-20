@@ -98,3 +98,26 @@ CREATE TABLE if not exists transit_country (
      incident_id UUID NOT NULL,  -- Внешний ключ для инцидента
      CONSTRAINT fk_incident FOREIGN KEY (incident_id) REFERENCES incident (id) ON DELETE CASCADE
 );
+
+CREATE TABLE cites_permit (
+  id TEXT PRIMARY KEY,
+  issue_date DATE,
+  expiry_date DATE,
+  company_name TEXT,
+  object TEXT,
+  object_id UUID,
+  type TEXT,
+  quantity TEXT,
+  measure TEXT,
+  limiter DOUBLE PRECISION,
+  importer_country TEXT,
+  import_id UUID,
+  export_id UUID,
+  exporter_country TEXT,
+  purpose TEXT,
+  remarks TEXT,
+  protection_mark_number TEXT,
+  units_id INTEGER,
+  status TEXT,
+  pdf_file_name TEXT
+);

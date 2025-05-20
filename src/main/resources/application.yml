@@ -8,7 +8,7 @@ spring:
       enabled: true
   datasource:
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5433/wild
+#    url: jdbc:postgresql://db:5433/wild
     url: jdbc:postgresql://dpg-csfrkblds78s7390i840-a.oregon-postgres.render.com:5432/wild_p7mm
     username: nurkan
 #    username: postgres

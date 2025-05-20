@@ -113,16 +113,14 @@ public class CitesPermitRepositoryImpl {
         Root<CitesPermit> root = query.from(CitesPermit.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        // Фильтрация по региону
+        // Filter by region
         if (region != null && !region.isEmpty()) {
             Subquery<String> subquery = query.subquery(String.class);
             Root<Country> countryRoot = subquery.from(Country.class);
             subquery.select(countryRoot.get("name"))
                     .where(cb.equal(cb.lower(countryRoot.get("region")), region.toLowerCase()));
 
-            predicates.add(cb.or(
-                    root.get("importerCountry").in(subquery)
-            ));
+            predicates.add(cb.or(root.get("importerCountry").in(subquery)));
         }
 
         if (importerCountry != null && !importerCountry.isEmpty()) {
@@ -137,17 +135,21 @@ public class CitesPermitRepositoryImpl {
         if (exporter != null && !exporter.isEmpty()) {
             predicates.add(cb.like(cb.lower(root.get("companyName")), "%" + exporter.toLowerCase() + "%"));
         }
+
+        // Filter by startDate
         if (startDate != null) {
             Predicate issueDatePredicate = cb.or(
-                    cb.isNull(root.get("issueDate")), // Если дата выпуска NULL, включить
-                    cb.greaterThanOrEqualTo(root.get("issueDate"), startDate) // Или >= startDate
+                    cb.isNull(root.get("issueDate")), // Include if issueDate is NULL
+                    cb.greaterThanOrEqualTo(root.get("issueDate"), startDate) // Or >= startDate
             );
             predicates.add(issueDatePredicate);
         }
+
+        // Filter by endDate
         if (endDate != null) {
             Predicate expiryDatePredicate = cb.or(
-                    cb.isNull(root.get("expiryDate")), // Учет NULL значений
-                    cb.lessThanOrEqualTo(root.get("expiryDate"), endDate)
+                    cb.isNull(root.get("expiryDate")), // Include if expiryDate is NULL
+                    cb.lessThanOrEqualTo(root.get("expiryDate"), endDate) // Or <= endDate
             );
             predicates.add(expiryDatePredicate);
         }
@@ -155,4 +157,5 @@ public class CitesPermitRepositoryImpl {
         query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
+
 }

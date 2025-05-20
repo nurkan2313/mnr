@@ -3,9 +3,7 @@ package kg.core.mnr.controller;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.persistence.criteria.*;
 import kg.core.mnr.models.entity.CitesPermit;
-import kg.core.mnr.models.entity.dict.Country;
 import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.em.CitesPermitRepositoryImpl;
 import kg.core.mnr.service.CitesPermitReportService;
@@ -109,28 +107,42 @@ public class CitesPermitReportController {
             @RequestParam(required = false) String importerCountry,
             @RequestParam(required = false) String exporterCountry,
             @RequestParam(required = false) String object,
-            @RequestParam String startDate,
-            @RequestParam String endDate,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String companyName) {
 
-        // Форматирование дат
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = LocalDate.parse(startDate, formatter);
-        LocalDate end = LocalDate.parse(endDate, formatter);
+        LocalDate start = null;
+        LocalDate end = null;
+
+        // Parse dates if provided
+        if (startDate != null && !startDate.isEmpty()) {
+            start = LocalDate.parse(startDate, formatter);
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            end = LocalDate.parse(endDate, formatter);
+        }
 
         String[] monthNames = {
                 "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
                 "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
         };
 
-        // Базовый SQL-запрос
+        // Base SQL query
         StringBuilder sqlBuilder = new StringBuilder(
-                "SELECT EXTRACT(MONTH FROM p.issue_date) AS month, COUNT(p.id) " +
-                        "FROM cites_permit p " +
-                        "WHERE p.issue_date BETWEEN :startDate AND :endDate "
+                "SELECT p.exporter_country AS country, p.object AS object, EXTRACT(MONTH FROM p.issue_date) AS month, SUM(CAST(p.quantity AS NUMERIC)) AS total_quantity " +
+                        "FROM cites_permit p WHERE 1=1 "
         );
 
-        // Фильтрация по региону (через таблицу Country)
+        // Add date range filters if dates are provided
+        if (start != null) {
+            sqlBuilder.append("AND (p.issue_date >= :startDate OR p.issue_date IS NULL) ");
+        }
+        if (end != null) {
+            sqlBuilder.append("AND (p.issue_date <= :endDate OR p.issue_date IS NULL) ");
+        }
+
+        // Region filter
         if (region != null && !region.isEmpty()) {
             sqlBuilder.append(
                     "AND (p.importer_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region) " +
@@ -138,35 +150,78 @@ public class CitesPermitReportController {
             );
         }
 
-        // Фильтрация по объекту
+        // Object filter
         if (object != null && !object.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.object) LIKE :object ");
         }
 
-        // Фильтрация по стране-импортёру
+        // Importer country filter
         if (importerCountry != null && !importerCountry.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.importer_country) LIKE :importerCountry ");
         }
 
-        // Фильтрация по стране-экспортёру
+        // Exporter country filter
         if (exporterCountry != null && !exporterCountry.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.exporter_country) LIKE :exporterCountry ");
         }
 
-        // Фильтрация по экспортеру
+        // Exporter filter
         if (companyName != null && !companyName.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.company_name) LIKE :companyName ");
         }
 
-        // Группировка и сортировка
-        sqlBuilder.append("GROUP BY EXTRACT(MONTH FROM p.issue_date) ");
-        sqlBuilder.append("ORDER BY EXTRACT(MONTH FROM p.issue_date)");
+
+        // Add date range filters if dates are provided
+        if (start != null) {
+            sqlBuilder.append("AND (p.issue_date >= :startDate OR p.issue_date IS NULL) ");
+        }
+        if (end != null) {
+            sqlBuilder.append("AND (p.issue_date <= :endDate OR p.issue_date IS NULL) ");
+        }
+
+        // Region filter
+        if (region != null && !region.isEmpty()) {
+            sqlBuilder.append(
+                    "AND (p.importer_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region) " +
+                            "OR p.exporter_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region)) "
+            );
+        }
+
+        // Object filter
+        if (object != null && !object.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.object) LIKE :object ");
+        }
+
+        // Importer country filter
+        if (importerCountry != null && !importerCountry.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.importer_country) LIKE :importerCountry ");
+        }
+
+        // Exporter country filter
+        if (exporterCountry != null && !exporterCountry.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.exporter_country) LIKE :exporterCountry ");
+        }
+
+        // Exporter filter
+        if (companyName != null && !companyName.isEmpty()) {
+            sqlBuilder.append("AND LOWER(p.company_name) LIKE :companyName ");
+        }
+
+        // Grouping and sorting
+        sqlBuilder.append("GROUP BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date) ");
+        sqlBuilder.append("ORDER BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date)");
 
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        query.setParameter("startDate", java.sql.Date.valueOf(start));
-        query.setParameter("endDate", java.sql.Date.valueOf(end));
 
-        // Установка параметров для фильтров
+        // Set parameters for date filters
+        if (start != null) {
+            query.setParameter("startDate", java.sql.Date.valueOf(start));
+        }
+        if (end != null) {
+            query.setParameter("endDate", java.sql.Date.valueOf(end));
+        }
+
+        // Set parameters for other filters
         if (region != null && !region.isEmpty()) {
             query.setParameter("region", region.toLowerCase());
         }
@@ -183,23 +238,20 @@ public class CitesPermitReportController {
             query.setParameter("companyName", "%" + companyName.toLowerCase() + "%");
         }
 
-        // Выполнение запроса
+        // Execute query
         List<Object[]> results = query.getResultList();
 
-        // Преобразование данных для ответа
+        // Transform results for response
         List<Map<String, Object>> response = results.stream().map(row -> {
             Map<String, Object> map = new HashMap<>();
-            int monthIndex = ((Number) row[0]).intValue() - 1; // Индексация месяцев с 0
-            map.put("month", monthNames[monthIndex]); // Название месяца
-            map.put("count", row[1]); // Количество
+            map.put("country", row[0]); // Exporter country
+            map.put("object", row[1]); // Exported object
+            map.put("month", monthNames[((Number) row[2]).intValue() - 1]); // Month name
+            map.put("total_quantity", row[3]); // Total quantity
             return map;
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
     }
-
-
-
-
 
 }
