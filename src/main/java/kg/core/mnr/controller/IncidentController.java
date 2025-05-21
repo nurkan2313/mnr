@@ -15,17 +15,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -234,7 +237,25 @@ public class IncidentController {
     @PostMapping
     public ModelAndView createIncident(@Valid @ModelAttribute IncidentFormRequest form,
                                        BindingResult bindingResult,
+                                       @RequestParam(value = "photo", required = false) MultipartFile photo,
                                        Model model) {
+        if (photo != null && !photo.isEmpty()) {
+            try {
+                String filename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+                Path uploadPath = Paths.get("uploads/files");
+
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                Files.copy(photo.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+
+                form.setPhotoPath("/uploads/files/" + filename);
+            } catch (IOException e) {
+                bindingResult.reject("photo", "Ошибка загрузки файла: " + e.getMessage());
+            }
+        }
+
         try {
             form.setRegisteredAt(LocalDateTime.parse(form.getRegisteredAtString(), formatter));
         } catch (DateTimeParseException e) {

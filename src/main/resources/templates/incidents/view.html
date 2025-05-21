@@ -19,58 +19,40 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Деталь</h4>
+                                <h4 class="card-title">Информация об инциденте</h4>
                             </div>
                         </div>
 
                         <div class="card-body">
-                            <div class="shadow-showcase text-center">
-                                <div class="table-responsive">
-                                    <table class="table table-striped" >
-                                        <thead>
-                                            <tr>
-                                                <th>Регистрационный номер</th>
-                                                <th>Дата изъятия</th>
-                                                <th>Виды</th>
-                                                <th>Описание образца</th>
-                                                <th>Количество</th>
-                                                <th>Единица измерения</th>
-                                                <th>Выявивший орган</th>
-                                                <th>Способ обнаружения</th>
-                                                <th>Причина изъятия</th>
-                                                <th>Способ транспортировки</th>
-                                                <th>Направление торговли</th>
-                                                <th>Способ сокрытия</th>
-                                                <th>Предполагаемая страна происхождения</th>
-                                                <th>Страна(ы) транзита</th>
-                                                <th>Предполагаемый конечный пункт назначения</th>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Регистрационный номер:</strong> {{incident.id}}</p>
+                                    <p><strong>Дата изъятия:</strong> {{incident.registeredAt}}</p>
+                                    <p><strong>Виды:</strong> {{incident.species}}</p>
+                                    <p><strong>Описание образца:</strong> {{incident.description}}</p>
+                                    <p><strong>Количество:</strong> {{incident.count}}</p>
+                                    <p><strong>Единица измерения:</strong> {{incident.unitOfMeasurement.unit}}</p>
+                                    <p><strong>Выявивший орган:</strong> {{incident.authority.name}}</p>
+                                    <p><strong>Способ обнаружения:</strong> {{incident.discoveryMethod.method}}</p>
+                                    <p><strong>Причина изъятия:</strong> {{incident.reasonForSeizure.reason}}</p>
+                                    <p><strong>Способ транспортировки:</strong> {{incident.transportMethod.method}}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Направление торговли:</strong> {{incident.tradeDirection.direction}}</p>
+                                    <p><strong>Способ сокрытия:</strong> {{incident.hidingMethod}}</p>
+                                    <p><strong>Предполагаемая страна происхождения:</strong> {{incident.suspectedOriginCountry.name}}</p>
+                                    <p><strong>Страна(ы) транзита:</strong> {{incident.transitCountries}}</p>
+                                    <p><strong>Конечный пункт назначения:</strong> {{incident.finalDestination}}</p>
+                                    <p><strong>Дополнительная информация:</strong> {{incident.additionalInfo}}</p>
 
-                                                <th class="text-right">Дополнительная информация</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                        <tr>
-                                            <td>{{incident.id}}</td>
-                                            <td>{{incident.registeredAt}}</td>
-                                            <td>{{incident.species}}</td>
-                                            <td>{{incident.description}}</td>
-                                            <td>{{incident.count}}</td>
-                                            <td>{{incident.unitOfMeasurement.unit}}</td>
-                                            <td>{{incident.authority.name}}</td>
-                                            <td>{{incident.discoveryMethod.method}}</td>
-                                            <td>{{incident.reasonForSeizure.reason }}</td>
-                                            <td>{{incident.transportMethod.method }}</td>
-                                            <td>{{incident.tradeDirection.direction }}</td>
-                                            <td>{{incident.hidingMethod }}</td>
-                                            <td>{{incident.suspectedOriginCountry }}</td>
-                                            <td>{{incident.transitCountries }}</td>
-                                            <td>{{incident.finalDestination }}</td>
-
-                                            <td class="text-right">{{incident.additionalInfo}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                    {{#incident.photoPath}}
+                                    <div class="mt-3">
+                                        <strong>Фото доказательства:</strong>
+                                        <div>
+                                            <img src="{{incident.photoPath}}" alt="Фото инцидента" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                                        </div>
+                                    </div>
+                                    {{/incident.photoPath}}
                                 </div>
                             </div>
                         </div>

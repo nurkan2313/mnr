@@ -22,6 +22,8 @@ public class IncidentFormRequest {
     @NotBlank(message = "Вид обязателен")
     private String species;
 
+    private String photoPath;
+
     @NotBlank(message = "Описание обязательно")
     private String description;
 

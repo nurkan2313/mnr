@@ -54,8 +54,11 @@
 
                                 <div class="form-group">
                                     <label for="object">Вид объекта:</label>
-                                    <input type="text" class="form-control" id="object" name="object" placeholder="">
+                                    <select id="object" name="object" class="form-control">
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="startDate">Начало даты:</label>
                                     <input type="date" id="startDate" class="form-control" name="startDate">
@@ -159,6 +162,41 @@
         document.getElementById("filterForm").reset();
     }
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const objectInput = document.getElementById('object');
+
+        const objectChoices = new Choices(objectInput, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Введите вид объекта...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных объектов'
+        });
+
+        objectInput.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) return;
+
+            fetch(`/incidents/search-products?species=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    objectChoices.clearChoices();
+                    data.forEach(item => {
+                        objectChoices.setChoices([{
+                            value: item.id,
+                            label: item.description,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка при загрузке видов объектов:', error));
+        });
+    });
+</script>
+
 <!-- Wrapper End-->
 {{> partials/footer }}
 </body>

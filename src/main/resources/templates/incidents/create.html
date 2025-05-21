@@ -35,7 +35,7 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="/incidents" method="post">
+                            <form action="/incidents" method="post" enctype="multipart/form-data">
 
                                 <div class="form-group">
                                     <label for="registeredAtString">Дата изъятия</label>
@@ -154,6 +154,11 @@
                                 <div class="form-group">
                                     <label for="additionalInfo">Дополнительная информация</label>
                                     <input name="additionalInfo" type="text" class="form-control" id="additionalInfo" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="photo">Фото доказательства (необязательно)</label>
+                                    <input type="file" class="form-control" name="photo" id="photo" accept="image/*">
                                 </div>
 
                                 <!-- Контейнер для скрытых полей -->

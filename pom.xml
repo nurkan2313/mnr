@@ -32,6 +32,20 @@
         <maven.compiler.target>17</maven.compiler.target>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>mav</id>
+            <name>Maven Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

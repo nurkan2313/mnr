@@ -44,8 +44,10 @@
                                     <input type="text" id="exporterCountry" class="form-control" placeholder="Введите страну-экспортера">
                                 </div>
                                 <div class="form-group">
-                                    <label for="object">Объект</label>
-                                    <input type="text" id="object" class="form-control" placeholder="Введите объект, например: козерог">
+                                    <label for="object">Вид объекта:</label>
+                                    <select id="object" name="object" class="form-control">
+                                        <option value="">Начните ввод для поиска</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="startDate">Дата начала</label>
@@ -71,7 +73,39 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const objectInput = document.getElementById('object');
 
+        const objectChoices = new Choices(objectInput, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Введите вид объекта...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных объектов'
+        });
+
+        objectInput.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) return;
+
+            fetch(`/incidents/search-products?species=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    objectChoices.clearChoices();
+                    data.forEach(item => {
+                        objectChoices.setChoices([{
+                            value: item.description,
+                            label: item.description,
+                            selected: false,
+                            disabled: false,
+                        }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка при загрузке видов объектов:', error));
+        });
+    });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('report-form');
@@ -91,6 +125,8 @@
                 exporter: document.getElementById('exporter').value,
             };
 
+            console.log(params)
+
             // Построение URL для API с параметрами
             const queryString = new URLSearchParams(params).toString();
             const apiUrl = `/api/reports/cites-permit/export-data?${queryString}`;
@@ -103,63 +139,58 @@
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Данные от api: ', data)
                     if (!data || data.length === 0) {
                         chartContainer.innerHTML = '<p>Нет данных для указанного запроса.</p>';
                         return;
                     }
 
-                    // Extract unique countries for the X-axis
-                    const countries = [...new Set(data.map(item => item.country))];
-
-                    // Prepare series data: group by country and objects
-                    const groupedData = {};
+                    // Группировка данных по стране
+                    const grouped = {};
                     data.forEach(item => {
-                        const key = `${item.country} (${item.object})`;
-                        if (!groupedData[key]) {
-                            groupedData[key] = 0;
-                        }
-                        groupedData[key] += parseFloat(item.total_quantity);
+                        const country = item.country;
+                        const object = item.object;
+                        const quantity = parseFloat(item.total_quantity);
+
+                        if (!grouped[country]) grouped[country] = {};
+                        if (!grouped[country][object]) grouped[country][object] = 0;
+
+                        grouped[country][object] += quantity;
                     });
 
-                    // Convert grouped data to series
-                    const seriesData = Object.entries(groupedData).map(([key, value]) => ({
-                        name: key,
-                        data: [value]
+                    const countries = Object.keys(grouped);
+                    const allObjects = new Set();
+                    countries.forEach(c => Object.keys(grouped[c]).forEach(o => allObjects.add(o)));
+
+                    const series = Array.from(allObjects).map(object => ({
+                        name: object,
+                        data: countries.map(country => grouped[country][object] || 0)
                     }));
 
-                    // Chart options
                     const options = {
                         chart: {
                             type: 'bar',
-                            height: 350,
                             stacked: true,
-                            tooltip: {
-                                shared: true,
-                                intersect: false,
-                                y: {
-                                    formatter: value => `${value} животных/растений`
-                                }
+                            height: 400,
+                            animations: {
+                                enabled: false
                             }
                         },
-                        series: seriesData,
+                        series: series,
                         xaxis: {
                             categories: countries,
-                            title: {
-                                text: 'Страна (Объект)'
-                            }
+                            title: { text: 'Страны-экспортеры' }
                         },
                         yaxis: {
-                            title: {
-                                text: 'Количество животных/растений'
-                            }
+                            title: { text: 'Количество объектов (животные/растения)' }
                         },
                         tooltip: {
                             y: {
-                                formatter: value => `${value} животных/растений`
+                                formatter: val => `${val} шт.`
                             }
                         },
                         title: {
-                            text: 'Экспорт по странам и объектам',
+                            text: 'Экспорт по странам и видам',
                             align: 'center'
                         },
                         legend: {
@@ -170,7 +201,12 @@
 
                     // Render the chart
                     const chart = new ApexCharts(chartContainer, options);
-                    chart.render();
+                    chart.render().then(() => {
+                        setTimeout(() => {
+                            chart.resize();
+                        }, 100);
+                    });
+
                 })
                 .catch(error => {
                     console.error('Ошибка при загрузке данных:', error);

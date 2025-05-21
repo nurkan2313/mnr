@@ -3,6 +3,7 @@ package kg.core.mnr.models.mapper;
 import jakarta.persistence.EntityNotFoundException;
 import kg.core.mnr.models.dto.requests.IncidentFormRequest;
 import kg.core.mnr.models.entity.Incident;
+import kg.core.mnr.models.entity.dict.Country;
 import kg.core.mnr.models.entity.dict.UnitOfMeasurement;
 import kg.core.mnr.repository.UnitOfMeasurementRepository;
 import org.mapstruct.Context;
@@ -24,4 +25,16 @@ public interface IncidentMapper {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("UnitOfMeasurement not found with id: " + id));
     }
+
+    default String map(Country country) {
+        return country != null ? country.getName() : null;
+    }
+
+    default Country map(String countryName) {
+        if (countryName == null) return null;
+        Country country = new Country();
+        country.setName(countryName);
+        return country;
+    }
+
 }

@@ -28,6 +28,8 @@ public class Incident {
     String description;
     @Column(name = "count")
     Double count;
+    @Column(name = "photo_path")
+    private String photoPath;
 
     @ManyToOne
     @JoinColumn(name = "unit_of_measurement_id")
@@ -56,8 +58,12 @@ public class Incident {
     @Column(name = "hiding_method")
     private String hidingMethod; // Способ сокрытия
 
-    @Column(name = "suspected_origin_country")
-    private String suspectedOriginCountry; // Предполагаемая страна происхождения
+//    @Column(name = "suspected_origin_country")
+//    private String suspectedOriginCountry; // Предполагаемая страна происхождения
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "suspected_origin_country")
+    private Country suspectedOriginCountry;
 
     @Column(name = "transit_countries")
     private String transitCountries;
