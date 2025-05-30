@@ -1,7 +1,9 @@
 package kg.core.mnr.service;
 
 import kg.core.mnr.models.entity.Incident;
+import kg.core.mnr.models.entity.dict.Country;
 import kg.core.mnr.models.entity.dict.UnitOfMeasurement;
+import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.IncidentRepository;
 import kg.core.mnr.repository.em.IncidentRepositoryImpl;
 import kg.core.mnr.repository.UnitOfMeasurementRepository;
@@ -25,7 +27,8 @@ public class IncidentService {
     private IncidentRepositoryImpl incidentRepositoryImpl;
     @Autowired
     private UnitOfMeasurementRepository unitOfMeasurementRepository;
-
+    @Autowired
+    private CountryRepository countryRepository;
 
     @Transactional(readOnly = true)
     public Page<Incident> getAllIncidents(Pageable pageable) {
@@ -52,12 +55,16 @@ public class IncidentService {
     public Incident createIncident(Incident incident) {
         incident.setId(UUID.randomUUID());
         UnitOfMeasurement unitOfMeasurement = incident.getUnitOfMeasurement();
-        System.out.println("incident: " +incident.getUnitOfMeasurement().getUnit());
 
         unitOfMeasurementRepository.findById(unitOfMeasurement.getId()).orElse(null);
         if (unitOfMeasurement.getId() == null) {
             unitOfMeasurementRepository.save(unitOfMeasurement);
         }
+        UUID countryId = UUID.fromString(incident.getSuspectedOriginCountry().getName());
+        Country country = countryRepository.findById(countryId)
+                .orElseThrow(() -> new IllegalArgumentException("Страна не найдена: " + countryId));
+        incident.setSuspectedOriginCountry(country);
+
         incidentRepository.save(incident);
         return incidentRepository.save(incident);
     }

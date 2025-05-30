@@ -14,5 +14,6 @@ public class ProductRequest {
     private String preferredUnit;
     private String alternativeBlock;
     private String explanation;
+    private String latinName;
     private MultipartFile image;
 }

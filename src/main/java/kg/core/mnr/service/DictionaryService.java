@@ -38,6 +38,10 @@ public class DictionaryService {
         }
     }
 
+    public Product findProductByDescription(String description) {
+        return productRepository.findFirstByDescription(description).orElse(null); // или другой подход
+    }
+
     public List<Product> getSimilarProducts(String species) {
         return productRepository.findSimilarProducts(species);
     }

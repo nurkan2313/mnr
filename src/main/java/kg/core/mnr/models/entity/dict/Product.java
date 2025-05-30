@@ -23,6 +23,9 @@ public class Product {
     @Column(name = "description", unique = true)
     private String description;
 
+    @Column(name = "latin_name")
+    private String latinName;
+
     @Column(name = "code")
     private String code;
 

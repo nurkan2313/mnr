@@ -1,6 +1,7 @@
 package kg.core.mnr.controller;
 
 import kg.core.mnr.models.breadcrumbs.Breadcrumb;
+import kg.core.mnr.models.dto.IncidentViewDto;
 import kg.core.mnr.models.dto.requests.IncidentFormRequest;
 import kg.core.mnr.models.entity.Incident;
 import kg.core.mnr.models.entity.dict.*;
@@ -122,18 +123,16 @@ public class IncidentController {
         List<Authority> allAuthorities = authorityService.getAllAuthorities();
         List<TransportMethod> transportMethods = dictionaryService.getTransportMethod();
 
-        Page<Incident> incidents;
-
+        Page<Incident> incidentsRaw;
         int totalPages;
         // Определяем начальную и конечную страницы для отображения
 
         // Проверка: если все параметры пустые, возвращаем все инциденты
         if (isNullOrEmpty(species, authority, transportMethod, suspectedOriginCountry, finalDestination, registeredAt)) {
-            incidents = incidentService.getAllIncidents(pageable);
-            totalPages = incidents.getTotalPages();
+            incidentsRaw = incidentService.getAllIncidents(pageable);
+            totalPages = incidentsRaw.getTotalPages();
         } else {
-            // Фильтруем инциденты по непустым параметрам
-            incidents = incidentService.filterIncidents(
+            incidentsRaw = incidentService.filterIncidents(
                     emptyToNull(species),
                     emptyToNull(authority),
                     emptyToNull(transportMethod),
@@ -142,8 +141,15 @@ public class IncidentController {
                     registeredAtDate,
                     pageable
             );
-            totalPages = incidents.getTotalPages();
+            totalPages = incidentsRaw.getTotalPages();
         }
+
+        Page<IncidentViewDto> incidents = incidentsRaw.map(incident -> {
+            String latinName = Optional.ofNullable(dictionaryService.findProductByDescription(incident.getSpecies()))
+                    .map(Product::getLatinName)
+                    .orElse("");
+            return new IncidentViewDto(incident, latinName);
+        });
 
         int startPage = Math.max(1, page + 1 - 1);  // Начальная страница
         int endPage = Math.min(totalPages, startPage + 2);  // Конечная страница (максимум 3)

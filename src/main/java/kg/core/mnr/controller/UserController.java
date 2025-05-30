@@ -9,6 +9,7 @@ import kg.core.mnr.service.UserService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,12 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-
+@Slf4j
 @Controller
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @GetMapping("/auth")
@@ -36,10 +36,11 @@ public class UserController {
 
     @PostMapping("/auth")
     public ModelAndView auth(@ModelAttribute LoginRequest loginRequest, Model model) {
-        log.info("Login request - Email or Phone: {}", loginRequest.getEmailOrPhone());
+        log.debug("Login request - Email or Phone: {}", loginRequest.getEmailOrPhone());
         Users users = userService.auth(loginRequest);
 
         if (users != null) {
+            log.debug("Login success - Email or Phone: {}", loginRequest.getEmailOrPhone());
             return new ModelAndView("redirect:/");  // Перенаправляем на профиль после успешного входа
         } else {
             model.addAttribute("error", "Invalid username or password");

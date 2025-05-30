@@ -61,6 +61,7 @@
                                     <thead>
                                     <tr>
                                         <th>Название</th>
+                                        <th>Название на латинском</th>
                                         <th>Опсание</th>
                                         <th>Изображение</th>
                                     </tr>
@@ -70,6 +71,9 @@
                                     <tr>
                                         <td contenteditable="false">
                                             <a href="/dictionary/products/{{id}}">{{#description}}{{description}}{{/description}}</a>
+                                        </td>
+                                        <td contenteditable="false">
+                                            <a href="/dictionary/products/{{id}}">{{#latinName}}{{latinName}}{{/latinName}}</a>
                                         </td>
                                         <td contenteditable="true">{{#explanation}} {{explanation}} {{/explanation}}</td>
                                         <td>

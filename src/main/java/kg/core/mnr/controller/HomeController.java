@@ -1,6 +1,7 @@
 package kg.core.mnr.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kg.core.mnr.models.dto.PageItem;
 import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.entity.CitesPermit;
 import kg.core.mnr.repository.ProductRepository;
@@ -15,9 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,10 +25,9 @@ import java.util.stream.IntStream;
 public class HomeController {
 
     private final DashboardService dashboardService;
-    private final ProductRepository productRepository;
 
-    @GetMapping("/")
-    public String homePage(HttpServletRequest request, Model model) {
+//    @GetMapping("/")
+//    public String homePage(HttpServletRequest request, Model model) {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //
 //        if (authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))) {
@@ -38,9 +35,36 @@ public class HomeController {
 //            model.addAttribute("username", user.getUsername());
 //        }
 //        model.addAttribute("title", "Система Регулирования Разрешений");
+//        return "home";
+//    }
+
+    @GetMapping("/")
+    public String homePage(@RequestParam(required = false, defaultValue = "month") String period,
+                           Model model) {
+
+        LocalDate now = LocalDate.now();
+        LocalDate startDate;
+
+        switch (period) {
+            case "year" -> startDate = now.withDayOfYear(1);
+            case "quarter" -> startDate = now.minusMonths(3);
+            default -> startDate = now.withDayOfMonth(1); // month
+        }
+
+        long totalPermits = dashboardService.countPermitsFrom(startDate);
+        long totalIncidents = dashboardService.countIncidentsFrom(startDate);
+        double importVolume = dashboardService.countImportVolumeFrom(startDate);
+
+        model.addAttribute("totalPermits", totalPermits);
+        model.addAttribute("totalIncidents", totalIncidents);
+        model.addAttribute("importVolume", importVolume);
+
+        model.addAttribute("isMonth", "month".equals(period));
+        model.addAttribute("isQuarter", "quarter".equals(period));
+        model.addAttribute("isYear", "year".equals(period));
+
         return "home";
     }
-
 
     @GetMapping("/dashboard")
     public String dashboardPage(
@@ -66,6 +90,12 @@ public class HomeController {
         int totalExportedSpeciesPages = topExportedSpecies.getTotalPages();
         List<Integer> pageNumbersEx = generatePageNumbers(page, totalExportedSpeciesPages);
 
+        List<PageItem> pageNumberList = pageNumbers.stream()
+                .map(PageItem::new)
+                .collect(Collectors.toList());
+
+        model.addAttribute("pageNumberList", pageNumberList);
+
         // Добавляем данные в модель
         addPaginationAttributes(model, page, totalPages, totalExportedSpeciesPages, pageNumbers, pageNumbersEx);
 
@@ -74,7 +104,6 @@ public class HomeController {
         model.addAttribute("lastPage", totalPages - 1);
         model.addAttribute("nextStepPage", Math.min(page + 10, totalPages - 1));
         model.addAttribute("previousStepPage", Math.max(page - 10, 0));
-        model.addAttribute("pageNumbers", pageNumbers);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("previousPage", (page > 0) ? page - 1 : 0);
@@ -90,12 +119,19 @@ public class HomeController {
     }
 
     private List<Integer> generatePageNumbers(int currentPage, int totalPages) {
-        int startPage = Math.max(1, currentPage + 1 - 1);  // Начальная страница
-        int endPage = Math.min(totalPages, startPage + 2);  // Конечная страница (максимум 3)
+        if (totalPages == 0) return Collections.emptyList();
+
+        int startPage = Math.max(0, currentPage - 1);
+        int endPage = Math.min(totalPages - 1, startPage + 2);
+
+        // 💡 Если startPage > endPage — вернём пусто
+        if (startPage > endPage) return Collections.emptyList();
+
         return IntStream.rangeClosed(startPage, endPage)
                 .boxed()
                 .collect(Collectors.toList());
     }
+
 
     private void addPaginationAttributes( Model model, int currentPage, int totalPages, int totalExportedSpeciesPages,
                                          List<Integer> pageNumbers, List<Integer> pageNumbersEx) {

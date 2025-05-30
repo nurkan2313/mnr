@@ -39,4 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             "(LOWER(description) LIKE LOWER(CONCAT('%', :description, '%')) OR :description IS NULL) ", nativeQuery = true)
     Optional<Product> findByDescription(String description);
 
+    @Query(value = "SELECT * FROM products WHERE LOWER(description) LIKE LOWER(CONCAT('%', :description, '%')) LIMIT 1", nativeQuery = true)
+    Optional<Product> findFirstByDescription(@Param("description") String description);
+
 }

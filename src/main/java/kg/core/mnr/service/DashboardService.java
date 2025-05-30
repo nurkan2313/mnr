@@ -44,6 +44,19 @@ public class DashboardService {
         return citesPermitRepository.findAll(pageable); // Assuming a JPA repository
     }
 
+    public long countPermitsFrom(LocalDate fromDate) {
+        return citesPermitRepository.countByIssueDateAfter(fromDate);
+    }
+
+    public long countIncidentsFrom(LocalDate fromDate) {
+        return incidentRepository.countByRegisteredAtAfter(fromDate);
+    }
+
+    public double countImportVolumeFrom(LocalDate fromDate) {
+        return citesPermitRepository.sumImportVolumeSince(fromDate);
+    }
+
+
     public double calculatePercentageChange(long current, long previous) {
         if (previous == 0) {
             return 100.0; // If previous is 0, return 100% change

@@ -5,7 +5,9 @@ import kg.core.mnr.models.dto.CitesPermitUpdateDTO;
 import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.dto.requests.CitesPermitFormRequest;
 import kg.core.mnr.models.entity.CitesPermit;
+import kg.core.mnr.models.entity.dict.BorderCheckpoint;
 import kg.core.mnr.models.entity.dict.Product;
+import kg.core.mnr.repository.BorderCheckpointRepository;
 import kg.core.mnr.repository.CountryRepository;
 import kg.core.mnr.repository.ProductRepository;
 import kg.core.mnr.service.CitesPermitService;
@@ -49,10 +51,13 @@ import java.util.stream.IntStream;
 @Controller
 public class PermitController {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
     private final CitesPermitService citesPermitService;
+    private final ExcelUploadService excelUploadService;
+
     private final ProductRepository productRepository;
     private final CountryRepository countryRepository;
-    private final ExcelUploadService excelUploadService;
+    private final BorderCheckpointRepository borderCheckpointRepository;
 
     @GetMapping("permission")
     public ModelAndView permissionAndFilter(@RequestParam(required = false) String permitNumber,
@@ -159,7 +164,9 @@ public class PermitController {
 //            List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
 //                    .boxed()
 //                    .collect(Collectors.toList());
+            List<BorderCheckpoint> checkpoints = borderCheckpointRepository.findAll();
 
+            model.addAttribute("checkpoints", checkpoints);
             model.addAttribute("permits", allPermits);
             model.addAttribute("totalPages", totalPages);
             model.addAttribute("lastPage", lastPage); // Передача индекса последней страницы

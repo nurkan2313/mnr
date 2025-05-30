@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -47,6 +48,8 @@ public class CitesPermit {
     private String protectionMarkNumber;
     @Column(name = "units_id")
     private Integer unitsId;
+    @OneToMany(mappedBy = "permit")
+    private List<BorderCrossing> borderCrossings;
     // Геттер для статуса
     @Setter
     @Getter

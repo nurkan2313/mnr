@@ -26,9 +26,9 @@ public class BorderCrossingController {
     @PostMapping("/{permitId}")
     public ResponseEntity<BorderCrossing> recordCrossing(
             @PathVariable String permitId,
-            @RequestParam String checkpoint) {
+            @RequestParam UUID checkpointId) {
         
-        BorderCrossing crossing = borderCrossingService.recordCrossing(permitId, checkpoint);
+        BorderCrossing crossing = borderCrossingService.recordCrossing(permitId, checkpointId);
         return ResponseEntity.ok(crossing);
     }
 

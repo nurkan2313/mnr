@@ -1,6 +1,7 @@
 package kg.core.mnr.service;
 
 import kg.core.mnr.models.dto.CitesPermitUpdateDTO;
+import kg.core.mnr.models.dto.PermitViewDto;
 import kg.core.mnr.models.entity.CitesPermit;
 import kg.core.mnr.repository.CitesPermitRepository;
 import kg.core.mnr.repository.em.CitesPermitRepositoryImpl;
@@ -123,6 +124,25 @@ public class CitesPermitService {
         // Присваиваем новое id объекту permit
         permit.setId(newId);
         citesPermitRepository.save(permit);
+    }
+
+    public PermitViewDto mapToDto(CitesPermit permit) {
+        PermitViewDto dto = new PermitViewDto();
+        dto.setId(permit.getId());
+        dto.setCompanyName(permit.getCompanyName());
+        dto.setObject(permit.getObject());
+        dto.setQuantity(permit.getQuantity());
+        dto.setProtectionMarkNumber(permit.getProtectionMarkNumber());
+        dto.setType(permit.getType());
+        dto.setIssueDate(permit.getIssueDate());
+        dto.setExpiryDate(permit.getExpiryDate());
+        dto.setStatusDescription(permit.getStatus().getDescription());
+        dto.setPurpose(permit.getPurpose());
+        dto.setRemarks(permit.getRemarks());
+        dto.setImporterCountry(permit.getImporterCountry());
+        dto.setExporterCountry(permit.getExporterCountry());
+        dto.setHasCrossing(permit.getBorderCrossings() != null && !permit.getBorderCrossings().isEmpty());
+        return dto;
     }
 
     // Метод для увеличения значения id

@@ -83,6 +83,7 @@
                                             <th>Регистрационный номер</th>
                                             <th>Дата изъятия</th>
                                             <th>Виды</th>
+                                            <th>Название на латинском</th>
                                             <th>Описание образца</th>
                                             <th>Количество</th>
                                             <th>Единица измерения</th>
@@ -106,16 +107,17 @@
                                             <td>{{ id }}</td>
                                             <td>{{ registeredAt }}</td>
                                             <td>{{ species }}</td>
+                                            <td>{{latinName}}</td>
                                             <td>{{ description }}</td>
                                             <td>{{ count }}</td>
-                                            <td>{{unitOfMeasurement.unit}}</td>
-                                            <td>{{ authority.name }}</td>
-                                            <td>{{ discoveryMethod.method }}</td>
-                                            <td>{{ reasonForSeizure.reason }}</td>
-                                            <td>{{ transportMethod.method }}</td>
-                                            <td>{{ tradeDirection.direction }}</td>
+                                            <td>{{unitOfMeasurement}}</td>
+                                            <td>{{ authority }}</td>
+                                            <td>{{ discoveryMethod }}</td>
+                                            <td>{{ reasonForSeizure }}</td>
+                                            <td>{{ transportMethod }}</td>
+                                            <td>{{ tradeDirection }}</td>
                                             <td>{{ hidingMethod }}</td>
-                                            <td>{{suspectedOriginCountry.name}}</td>
+                                            <td>{{suspectedOriginCountry}}</td>
                                             <td>{{transitCountries}}</td>
                                             <td>{{finalDestination}}</td>
                                             <td class="text-right">{{additionalInfo}}</td>

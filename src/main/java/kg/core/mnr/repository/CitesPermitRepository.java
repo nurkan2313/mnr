@@ -1,6 +1,5 @@
 package kg.core.mnr.repository;
 
-import kg.core.mnr.models.dto.enums.DocStatus;
 import kg.core.mnr.models.entity.CitesPermit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public interface CitesPermitRepository extends JpaRepository<CitesPermit, String> {
 
@@ -37,8 +35,11 @@ public interface CitesPermitRepository extends JpaRepository<CitesPermit, String
                                      @Param("startDate") LocalDateTime startDate,
                                      @Param("endDate") LocalDateTime endDate);
 
-//                                     @Param("status") DocStatus status);
+    @Query("SELECT COUNT(c) FROM CitesPermit c WHERE c.issueDate >= :fromDate")
+    long countByIssueDateAfter(@Param("fromDate") LocalDate fromDate);
 
+    @Query("SELECT COALESCE(SUM(CAST(c.quantity AS double)), 0) FROM CitesPermit c WHERE c.issueDate >= :fromDate")
+    double sumImportVolumeSince(@Param("fromDate") LocalDate fromDate);
 
     Page<CitesPermit> findAll(Pageable pageable);
 
