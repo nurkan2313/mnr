@@ -24,10 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -95,8 +91,8 @@ public class DictionaryController {
 
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Панель управления"));
-        breadcrumbs.add(new Breadcrumb("/dictionary/products", "Объекты"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dictionary/products", "объекты"));
 
         // Определяем начальную и конечную страницы для отображения
         int startPage = Math.max(1, page + 1 - 1);  // Начальная страница
@@ -145,9 +141,9 @@ public class DictionaryController {
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
 
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Панель управления"));
-        breadcrumbs.add(new Breadcrumb("/dictionary/products", "Объекты"));
-        breadcrumbs.add(new Breadcrumb("/dictionary/products/form", "Создать"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dictionary/products", "объекты"));
+        breadcrumbs.add(new Breadcrumb("/dictionary/products/form", "создать"));
 
         List<Product> productPage = dictionaryService.getProducts();
 
@@ -161,9 +157,9 @@ public class DictionaryController {
     public ModelAndView viewProduct(@PathVariable UUID id, Model model) {
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Панель управления"));
-        breadcrumbs.add(new Breadcrumb("/dictionary/products", "Объекты"));
-        breadcrumbs.add(new Breadcrumb("/dictionary/products/" + id, "Детали"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dictionary/products", "объекты"));
+        breadcrumbs.add(new Breadcrumb("/dictionary/products/" + id, "детали"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "Просмотр");
