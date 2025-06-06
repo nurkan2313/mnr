@@ -66,6 +66,11 @@ public class HomeController {
         return "home";
     }
 
+    @GetMapping("/about")
+    public String aboutPage() {
+        return "about";
+    }
+
     @GetMapping("/dashboard")
     public String dashboardPage(
             @RequestParam(required = false, name = "start") String startDate,

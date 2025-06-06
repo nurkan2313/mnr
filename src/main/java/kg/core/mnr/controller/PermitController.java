@@ -71,7 +71,7 @@ public class PermitController {
 
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
@@ -96,12 +96,22 @@ public class PermitController {
     }
 
     @GetMapping("/permission/report")
-    public String report() {
+    public String report(Model model) {
+        List<Breadcrumb> breadcrumbs = new ArrayList<>();
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute("currentPage", "отчеты");
+
         return "otchet/reports";
     }
 
     @GetMapping("/permission/report/export-data")
-    public String exportВata() {
+    public String exportВata(Model model) {
+        List<Breadcrumb> breadcrumbs = new ArrayList<>();
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute("currentPage", "статистика");
+
         return "otchet/export-data";
     }
 
@@ -122,7 +132,7 @@ public class PermitController {
 
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
@@ -196,7 +206,7 @@ public class PermitController {
                 .orElse(null);
 
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Главная"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         if(permitById.getStatus().equals(DocStatus.USED)) {

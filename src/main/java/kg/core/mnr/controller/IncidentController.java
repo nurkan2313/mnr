@@ -159,7 +159,7 @@ public class IncidentController {
 
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Панель управления"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
         breadcrumbs.add(new Breadcrumb("/incidents", "инциденты"));
 
         // Добавление данных в модель
@@ -219,7 +219,7 @@ public class IncidentController {
 
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Панель управления"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
         breadcrumbs.add(new Breadcrumb("/incidents", "инциденты"));
         breadcrumbs.add(new Breadcrumb("/incidents/create", "создать"));
 
@@ -288,7 +288,7 @@ public class IncidentController {
             return "error/404";
         }
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "Панель управления"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
         breadcrumbs.add(new Breadcrumb("/incidents", "инциденты"));
 
         // Добавление данных в модель
