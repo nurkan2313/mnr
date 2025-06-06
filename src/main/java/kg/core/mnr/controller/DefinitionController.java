@@ -96,8 +96,39 @@ public class DefinitionController {
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable UUID id, Model model) {
+        List<Breadcrumb> breadcrumbs = new ArrayList<>();
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/definitions", "определитиль СITES"));
+
+        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute("currentPage", "редактировать");
+
+        Definition def = service.getById(id);
+        model.addAttribute("id", def.getId());
+        model.addAttribute("name", def.getName());
+        model.addAttribute("type", def.getType());
+        model.addAttribute("latinName", def.getLatinName());
+        model.addAttribute("areal", def.getAreal());
+        model.addAttribute("citesApplication", def.getCitesApplication());
+        model.addAttribute("object", def.getObject() != null ? def.getObject().name() : null);
+        model.addAttribute("imagePath", def.getImagePath());
+        model.addAttribute("exportCountry", def.getExportCountry());
+        model.addAttribute("importCountry", def.getImportCountry());
+        model.addAttribute("transport", def.getTransport());
+        model.addAttribute("trade", def.getTrade());
+        model.addAttribute("checkProcess", def.getCheckProcess());
+
+        // Добавляем список ObjectType и выделенный selected
+        model.addAttribute("objectTypes", Arrays.stream(ObjectType.values())
+                .map(val -> Map.of(
+                        "value", val.name(),
+                        "selected", val == def.getObject()
+                ))
+                .collect(Collectors.toList()));
+
         model.addAttribute("definition", service.getById(id));
         model.addAttribute("objectTypes", ObjectType.values());
+
         return "definitions/form";
     }
 
