@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/root/.m2/repository \
 COPY src ./src
 
 # Build the application
-RUN mvn package -DskipTests
+RUN mvn package
 
 # Second Stage: Runtime
 FROM openjdk:17-jdk-slim
