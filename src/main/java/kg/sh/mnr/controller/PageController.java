@@ -1,5 +1,6 @@
 package kg.sh.mnr.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kg.sh.mnr.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,8 +17,10 @@ public class PageController {
     private final DashboardService dashboardService;
 
     @GetMapping("/")
-    public String index(@RequestParam(required = false, defaultValue = "month") String period,
-                        Model model) {
+    public String index(
+                HttpServletRequest request,
+                @RequestParam(required = false, defaultValue = "month") String period,
+                Model model) {
         LocalDate now = LocalDate.now();
         LocalDate startDate;
 
@@ -31,6 +34,7 @@ public class PageController {
         long totalIncidents = dashboardService.countIncidentsFrom(startDate);
         double importVolume = dashboardService.countImportVolumeFrom(startDate);
 
+        model.addAttribute("currentUrl", request.getRequestURI());
         model.addAttribute("totalPermits", totalPermits);
         model.addAttribute("totalIncidents", totalIncidents);
         model.addAttribute("importVolume", importVolume);

@@ -13,6 +13,9 @@ spring:
     username: nurkan
 #    password: password
     password: ei72X63L9b0q8hccoYzJHD6V2Grq0CaW
+  messages:
+    basename: messages
+    encoding: UTF-8
   jpa:
     hibernate:
       naming:

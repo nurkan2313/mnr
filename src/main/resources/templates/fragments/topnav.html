@@ -51,6 +51,30 @@
 
                     </ul>
                 </div>
+                <div class="dropdown d-inline-block">
+                    <th:block th:switch="${#locale.language}">
+                        <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img th:case="'en'" th:src="@{/assets/images/flags/us.jpg}" alt="English" height="16">
+                            <img th:case="'ru'" th:src="@{/assets/images/flags/russia.jpg}" alt="Russian" height="16">
+                            <img th:case="'kg'" th:src="@{/assets/images/flags/kyrgyzstan.png}" alt="Kyrgyz" height="20">
+                            <img th:case="*" th:src="@{/assets/images/flags/us.jpg}" alt="Default" height="16">
+                        </button>
+                    </th:block>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a th:href="@{${currentUrl}(lang='en')}"  class="dropdown-item notify-item language">
+                            <img th:src="@{/assets/images/flags/us.jpg}" alt="en" class="me-1" height="12">
+                            <span class="align-middle">English</span>
+                        </a>
+                        <a th:href="@{${currentUrl}(lang='kg')}"  class="dropdown-item notify-item language">
+                            <img th:src="@{/assets/images/flags/kyrgyzstan.png}" alt="kg" class="me-1" height="18">
+                            <span class="align-middle">Кыргызча</span>
+                        </a>
+                        <a th:href="@{${currentUrl}(lang='ru')}"  class="dropdown-item notify-item language">
+                            <img th:src="@{/assets/images/flags/russia.jpg}" alt="ru" class="me-1" height="12">
+                            <span class="align-middle">Русский</span>
+                        </a>
+                    </div>
+                </div>
             </nav>
         </div>
     </div>
