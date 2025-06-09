@@ -249,7 +249,12 @@ public class CitesPermitReportController {
             Map<String, Object> map = new HashMap<>();
             map.put("country", row[0]); // Exporter country
             map.put("object", row[1]); // Exported object
-            map.put("month", monthNames[((Number) row[2]).intValue() - 1]); // Month name
+            if (row[2] != null) {
+                int monthIndex = ((Number) row[2]).intValue() - 1;
+                map.put("month", monthNames[Math.max(0, Math.min(monthIndex, 11))]); // защита от выхода за пределы
+            } else {
+                map.put("month", "Без даты");
+            }
             map.put("total_quantity", row[3]); // Total quantity
             return map;
         }).collect(Collectors.toList());

@@ -5,6 +5,7 @@
     <script th:src="@{/assets/libs/simplebar/simplebar.min.js}"></script>
     <script th:src="@{/assets/libs/node-waves/waves.min.js}"></script>
     <script th:src="@{/assets/js/choices.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script th:if="${pageName == 'permitForm'}">
 
@@ -461,6 +462,117 @@
             setupCountrySearch('exportCountry');
             setupCountrySearch('importCountry');
             setupCountrySearch('suspectedOriginCountry');
+        });
+    </script>
+
+    <script th:if="${pageName == 'permitReportExportData'}">
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('report-form');
+
+            // Обработчик формы
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                // Получение значений из формы
+                const params = {
+                    region: document.getElementById('region').value,
+                    importerCountry: document.getElementById('importerCountry').value,
+                    exporterCountry: document.getElementById('exporterCountry').value,
+                    object: document.getElementById('object').value,
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    exporter: document.getElementById('exporter').value,
+                };
+
+                console.log(params)
+
+                // Построение URL для API с параметрами
+                const queryString = new URLSearchParams(params).toString();
+                const apiUrl = `/api/reports/cites-permit/export-data?${queryString}`;
+
+                // Очистка предыдущего графика
+                const chartContainer = document.querySelector("#apex-column");
+                chartContainer.innerHTML = '';
+
+                // Загрузка данных и построение графика
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Данные от api: ', data)
+                        if (!data || data.length === 0) {
+                            chartContainer.innerHTML = '<p>Нет данных для указанного запроса.</p>';
+                            return;
+                        }
+
+                        // Группировка данных по стране
+                        const grouped = {};
+                        data.forEach(item => {
+                            const country = item.country;
+                            const object = item.object;
+                            const quantity = parseFloat(item.total_quantity);
+
+                            if (!grouped[country]) grouped[country] = {};
+                            if (!grouped[country][object]) grouped[country][object] = 0;
+
+                            grouped[country][object] += quantity;
+                        });
+
+                        const countries = Object.keys(grouped);
+                        const allObjects = new Set();
+                        countries.forEach(c => Object.keys(grouped[c]).forEach(o => allObjects.add(o)));
+
+                        const series = Array.from(allObjects).map(object => ({
+                            name: object,
+                            data: countries.map(country => grouped[country][object] || 0)
+                        }));
+
+                        const options = {
+                            chart: {
+                                type: 'bar',
+                                stacked: true,
+                                height: 400,
+                                animations: {
+                                    enabled: false
+                                }
+                            },
+                            series: series,
+                            xaxis: {
+                                categories: countries,
+                                title: { text: 'Страны-экспортеры' }
+                            },
+                            yaxis: {
+                                title: { text: 'Количество объектов (животные/растения)' }
+                            },
+                            tooltip: {
+                                y: {
+                                    formatter: val => `${val} шт.`
+                                }
+                            },
+                            title: {
+                                text: 'Экспорт по странам и видам',
+                                align: 'center'
+                            },
+                            legend: {
+                                position: 'top',
+                                horizontalAlign: 'center'
+                            }
+                        };
+
+                        // Render the chart
+                        const chart = new ApexCharts(chartContainer, options);
+                        chart.render().then(() => {
+                            setTimeout(() => {
+
+                            }, 100);
+                        });
+
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при загрузке данных:', error);
+                        chartContainer.innerHTML = '<p>Ошибка при загрузке данных. Попробуйте позже.</p>';
+                    });
+
+            });
         });
     </script>
 

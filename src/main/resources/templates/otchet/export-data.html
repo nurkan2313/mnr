@@ -1,227 +1,83 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head }}
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12 col-lg-6">
 
-                    {{> partials/breadcrumbs}}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Выгрузка отчетов</h4>
+<section layout:fragment="content">
+    <div class="container-xxl py-5">
+        <div class="container">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Выгрузка отчетов</li>
+                </ol>
+            </nav>
+
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Выгрузка отчетов</h4>
+                        <p class="card-title-desc">Заполните параметры для фильтрации данных</p>
+
+                        <form id="report-form" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="region" class="form-label">Регион</label>
+                                <select id="region" name="region" class="form-select">
+                                    <option value="">Все регионы</option>
+                                    <option value="Азия">Азия</option>
+                                    <option value="Европа">Европа</option>
+                                    <option value="Африка">Африка</option>
+                                    <option value="Северная Америка">Северная Америка</option>
+                                    <option value="Южная Америка">Южная Америка</option>
+                                    <option value="Океания">Океания</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <!-- Форма для выбора параметров -->
-                            <form id="report-form">
-                                <div class="form-group">
-                                    <label for="region">Регион</label>
-                                    <select id="region" name="region" class="form-control">
-                                        <option value="">Все регионы</option>
-                                        <option value="Азия">Азия</option>
-                                        <option value="Европа">Европа</option>
-                                        <option value="Африка">Африка</option>
-                                        <option value="Северная Америка">Северная Америка</option>
-                                        <option value="Южная Америка">Южная Америка</option>
-                                        <option value="Океания">Океания</option>
-                                    </select>
-                                </div>
 
-                                <div class="form-group">
-                                    <label for="importerCountry">Страна-импортер</label>
-                                    <input type="text" id="importerCountry" class="form-control" placeholder="Введите страну-импортера">
-                                </div>
-                                <div class="form-group">
-                                    <label for="exporterCountry">Страна-экспортер</label>
-                                    <input type="text" id="exporterCountry" class="form-control" placeholder="Введите страну-экспортера">
-                                </div>
-                                <div class="form-group">
-                                    <label for="object">Вид объекта:</label>
-                                    <select id="object" name="object" class="form-control">
-                                        <option value="">Начните ввод для поиска</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="startDate">Дата начала</label>
-                                    <input type="date" id="startDate" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="endDate">Дата окончания</label>
-                                    <input type="date" id="endDate" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="exporter">Экспортер</label>
-                                    <input type="text" id="exporter" class="form-control" placeholder="Введите экспортера">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Сгенерировать отчет</button>
-                            </form>
+                            <div class="col-md-4">
+                                <label for="importerCountry" class="form-label">Страна-импортер</label>
+                                <input type="text" id="importerCountry" class="form-control" placeholder="Введите страну-импортера">
+                            </div>
 
-                            <div id="apex-column" class="mt-4"></div>
-                        </div>
+                            <div class="col-md-4">
+                                <label for="exporterCountry" class="form-label">Страна-экспортер</label>
+                                <input type="text" id="exporterCountry" class="form-control" placeholder="Введите страну-экспортера">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="object" class="form-label">Вид объекта</label>
+                                <select id="object" name="object" class="form-select">
+                                    <option value="">Начните ввод для поиска</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="startDate" class="form-label">Дата начала</label>
+                                <input type="date" id="startDate" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="endDate" class="form-label">Дата окончания</label>
+                                <input type="date" id="endDate" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="exporter" class="form-label">Экспортер</label>
+                                <input type="text" id="exporter" class="form-control" placeholder="Введите экспортера">
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn btn-primary w-md">Сгенерировать отчет</button>
+                            </div>
+                        </form>
+
+                        <div id="apex-column" class="mt-5"></div>
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const objectInput = document.getElementById('object');
-
-        const objectChoices = new Choices(objectInput, {
-            searchEnabled: true,
-            searchPlaceholderValue: 'Введите вид объекта...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных объектов'
-        });
-
-        objectInput.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) return;
-
-            fetch(`/incidents/search-products?species=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    objectChoices.clearChoices();
-                    data.forEach(item => {
-                        objectChoices.setChoices([{
-                            value: item.description,
-                            label: item.description,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка при загрузке видов объектов:', error));
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('report-form');
-
-        // Обработчик формы
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            // Получение значений из формы
-            const params = {
-                region: document.getElementById('region').value,
-                importerCountry: document.getElementById('importerCountry').value,
-                exporterCountry: document.getElementById('exporterCountry').value,
-                object: document.getElementById('object').value,
-                startDate: document.getElementById('startDate').value,
-                endDate: document.getElementById('endDate').value,
-                exporter: document.getElementById('exporter').value,
-            };
-
-            console.log(params)
-
-            // Построение URL для API с параметрами
-            const queryString = new URLSearchParams(params).toString();
-            const apiUrl = `/api/reports/cites-permit/export-data?${queryString}`;
-
-            // Очистка предыдущего графика
-            const chartContainer = document.querySelector("#apex-column");
-            chartContainer.innerHTML = '';
-
-            // Загрузка данных и построение графика
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Данные от api: ', data)
-                    if (!data || data.length === 0) {
-                        chartContainer.innerHTML = '<p>Нет данных для указанного запроса.</p>';
-                        return;
-                    }
-
-                    // Группировка данных по стране
-                    const grouped = {};
-                    data.forEach(item => {
-                        const country = item.country;
-                        const object = item.object;
-                        const quantity = parseFloat(item.total_quantity);
-
-                        if (!grouped[country]) grouped[country] = {};
-                        if (!grouped[country][object]) grouped[country][object] = 0;
-
-                        grouped[country][object] += quantity;
-                    });
-
-                    const countries = Object.keys(grouped);
-                    const allObjects = new Set();
-                    countries.forEach(c => Object.keys(grouped[c]).forEach(o => allObjects.add(o)));
-
-                    const series = Array.from(allObjects).map(object => ({
-                        name: object,
-                        data: countries.map(country => grouped[country][object] || 0)
-                    }));
-
-                    const options = {
-                        chart: {
-                            type: 'bar',
-                            stacked: true,
-                            height: 400,
-                            animations: {
-                                enabled: false
-                            }
-                        },
-                        series: series,
-                        xaxis: {
-                            categories: countries,
-                            title: { text: 'Страны-экспортеры' }
-                        },
-                        yaxis: {
-                            title: { text: 'Количество объектов (животные/растения)' }
-                        },
-                        tooltip: {
-                            y: {
-                                formatter: val => `${val} шт.`
-                            }
-                        },
-                        title: {
-                            text: 'Экспорт по странам и видам',
-                            align: 'center'
-                        },
-                        legend: {
-                            position: 'top',
-                            horizontalAlign: 'center'
-                        }
-                    };
-
-                    // Render the chart
-                    const chart = new ApexCharts(chartContainer, options);
-                    chart.render().then(() => {
-                        setTimeout(() => {
-                            chart.resize();
-                        }, 100);
-                    });
-
-                })
-                .catch(error => {
-                    console.error('Ошибка при загрузке данных:', error);
-                    chartContainer.innerHTML = '<p>Ошибка при загрузке данных. Попробуйте позже.</p>';
-                });
-
-        });
-    });
-</script>
-
-
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
-</html>
+</section>

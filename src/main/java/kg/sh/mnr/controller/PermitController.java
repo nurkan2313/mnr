@@ -112,6 +112,7 @@ public class PermitController {
     public String exportВata(Model model) {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
         breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        model.addAttribute("pageName", "permitReportExportData");
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "статистика");
 
