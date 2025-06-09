@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:include="~{fragments/head :: head}"></head>
+
+<body data-layout="horizontal" data-topbar="dark">
+
+<!-- Весь layout-wrapper растягивается по высоте -->
+<div id="layout-wrapper">
+
+    <div th:replace="~{fragments/page-topbar :: pageTopbar}"></div>
+    <div th:replace="~{fragments/topnav :: topNav}"></div>
+
+    <div class="main-content overflow-hidden">
+        <div class="page-content">
+            <div class="container-fluid">
+                <!-- Your content block here -->
+                <section layout:fragment="content"></section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер всегда снизу -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</div>
+
+<div th:include="~{fragments/scripts :: scripts}"></div>
+</body>
+</html>

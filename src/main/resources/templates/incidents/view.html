@@ -1,70 +1,91 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head }}
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12 col-lg-12">
-                    {{> partials/breadcrumbs}}
+<section layout:fragment="content">
+    <div class="container-xxl py-5">
+        <div class="container">
 
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Информация об инциденте</h4>
-                            </div>
-                        </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/incidents}">Инциденты</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Просмотр записи об инциденте</li>
+                </ol>
+            </nav>
 
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Регистрационный номер:</strong> {{incident.id}}</p>
-                                    <p><strong>Дата изъятия:</strong> {{incident.registeredAt}}</p>
-                                    <p><strong>Виды:</strong> {{incident.species}}</p>
-                                    <p><strong>Описание образца:</strong> {{incident.description}}</p>
-                                    <p><strong>Количество:</strong> {{incident.count}}</p>
-                                    <p><strong>Единица измерения:</strong> {{incident.unitOfMeasurement.unit}}</p>
-                                    <p><strong>Выявивший орган:</strong> {{incident.authority.name}}</p>
-                                    <p><strong>Способ обнаружения:</strong> {{incident.discoveryMethod.method}}</p>
-                                    <p><strong>Причина изъятия:</strong> {{incident.reasonForSeizure.reason}}</p>
-                                    <p><strong>Способ транспортировки:</strong> {{incident.transportMethod.method}}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>Направление торговли:</strong> {{incident.tradeDirection.direction}}</p>
-                                    <p><strong>Способ сокрытия:</strong> {{incident.hidingMethod}}</p>
-                                    <p><strong>Предполагаемая страна происхождения:</strong> {{incident.suspectedOriginCountry.name}}</p>
-                                    <p><strong>Страна(ы) транзита:</strong> {{incident.transitCountries}}</p>
-                                    <p><strong>Конечный пункт назначения:</strong> {{incident.finalDestination}}</p>
-                                    <p><strong>Дополнительная информация:</strong> {{incident.additionalInfo}}</p>
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Информация об инциденте</h4>
+                        <p class="card-title-desc">Подробная информация об изъятом объекте и обстоятельствах инцидента.</p>
 
-                                    {{#incident.photoPath}}
-                                    <div class="mt-3">
-                                        <strong>Фото доказательства:</strong>
-                                        <div>
-                                            <img src="{{incident.photoPath}}" alt="Фото инцидента" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
-                                        </div>
-                                    </div>
-                                    {{/incident.photoPath}}
-                                </div>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm m-0 table-bordered">
+                                <tbody>
+                                <tr>
+                                    <th scope="row">Регистрационный номер</th>
+                                    <td th:text="${incident.id}"></td>
+                                    <th>Дата изъятия</th>
+                                    <td th:text="${incident.registeredAt}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Виды</th>
+                                    <td th:text="${incident.species}"></td>
+                                    <th>Описание образца</th>
+                                    <td th:text="${incident.description}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Количество</th>
+                                    <td th:text="${incident.count}"></td>
+                                    <th>Единица измерения</th>
+                                    <td th:text="${incident.unitOfMeasurement.unit}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Выявивший орган</th>
+                                    <td th:text="${incident.authority.name}"></td>
+                                    <th>Способ обнаружения</th>
+                                    <td th:text="${incident.discoveryMethod.method}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Причина изъятия</th>
+                                    <td th:text="${incident.reasonForSeizure.reason}"></td>
+                                    <th>Способ транспортировки</th>
+                                    <td th:text="${incident.transportMethod.method}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Направление торговли</th>
+                                    <td th:text="${incident.tradeDirection.direction}"></td>
+                                    <th>Способ сокрытия</th>
+                                    <td th:text="${incident.hidingMethod}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Страна происхождения</th>
+                                    <td th:text="${incident.suspectedOriginCountry.name}"></td>
+                                    <th>Страна(ы) транзита</th>
+                                    <td th:text="${incident.transitCountries}"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Конечный пункт назначения</th>
+                                    <td th:text="${incident.finalDestination}"></td>
+                                    <th>Доп. информация</th>
+                                    <td th:text="${incident.additionalInfo}"></td>
+                                </tr>
+                                <tr th:if="${incident.photoPath != null}">
+                                    <th scope="row">Фото доказательства</th>
+                                    <td colspan="3">
+                                        <img th:src="@{${incident.photoPath}}" alt="Фото инцидента" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
 
                     </div>
-
                 </div>
             </div>
+
         </div>
     </div>
-</div>
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
-</html>
+</section>

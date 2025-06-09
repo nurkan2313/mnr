@@ -1,206 +1,91 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head }}
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12 col-lg-6">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-                    {{> partials/breadcrumbs}}
+<section layout:fragment="content">
+    <div class="container-xxl py-5">
+        <div class="container">
 
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Выгрузка отчетов</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Выгрузка отчетов</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow rounded">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Выгрузка отчетов</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/api/reports/cites-permit}" method="get" id="filterForm">
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label for="region" class="form-label">Регион</label>
+                                <select id="region" name="region" class="form-select" th:value="${region}">
+                                    <option value="">Все регионы</option>
+                                    <option value="Азия">Азия</option>
+                                    <option value="Европа">Европа</option>
+                                    <option value="Африка">Африка</option>
+                                    <option value="Северная Америка">Северная Америка</option>
+                                    <option value="Южная Америка">Южная Америка</option>
+                                    <option value="Океания">Океания</option>
+                                </select>
                             </div>
+
+                            <div class="col-md-4">
+                                <label for="importerCountry" class="form-label">Страна импортер</label>
+                                <select id="importerCountry" name="importerCountry" class="form-select" th:value="${importerCountry}">
+                                    <option value="">Начните ввод для поиска</option>
+                                    <option th:each="country : ${countries}" th:value="${country}" th:text="${country}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="exporterCountry" class="form-label">Страна экспортер</label>
+                                <select id="exporterCountry" name="exporterCountry" class="form-select" th:value="${exporterCountry}">
+                                    <option value="">Начните ввод для поиска</option>
+                                    <option th:each="country : ${countries}" th:value="${country}" th:text="${country}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="exporter" class="form-label">Организация Экспортер/Импортер</label>
+                                <input type="text" id="exporter" name="exporter" class="form-control" th:value="${exporter}">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="object" class="form-label">Вид объекта</label>
+                                <select id="object" name="object" class="form-select" th:value="${object}">
+                                    <option value="">Начните ввод для поиска</option>
+                                    <option th:each="obj : ${objectTypes}" th:value="${obj}" th:text="${obj}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Начало даты</label>
+                                <input type="date" id="startDate" name="startDate" class="form-control" th:value="${startDate}">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">Конец даты</label>
+                                <input type="date" id="endDate" name="endDate" class="form-control" th:value="${endDate}">
+                            </div>
+
+                            <div class="col-12 text-end mt-3">
+                                <button type="submit" class="btn btn-success me-2">
+                                    <i class="bi bi-search"></i> Скачать
+                                </button>
+                            </div>
+
                         </div>
-                        <div class="card-body">
-                            <form action="/api/reports/cites-permit" method="get" id="filterForm">
-                                <div class="form-group">
-                                    <label for="region">Регион</label>
-                                    <select id="region" name="region" class="form-control">
-                                        <option value="">Все регионы</option>
-                                        <option value="Азия">Азия</option>
-                                        <option value="Европа">Европа</option>
-                                        <option value="Африка">Африка</option>
-                                        <option value="Северная Америка">Северная Америка</option>
-                                        <option value="Южная Америка">Южная Америка</option>
-                                        <option value="Океания">Океания</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="importerCountry">Страна импортер</label>
-                                    <select id="importerCountry" name="importerCountry" class="form-control">
-                                        <option value="">Начните ввод для поиска</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="exporterCountry">Страна экспортер</label>
-                                    <select id="exporterCountry" name="exporterCountry" class="form-control">
-                                        <option value="">Начните ввод для поиска</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="exporter">Экспортер/Импортер</label>
-                                    <input type="text" class="form-control" id="exporter" name="exporter" placeholder="">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="object">Вид объекта:</label>
-                                    <select id="object" name="object" class="form-control">
-                                        <option value="">Начните ввод для поиска</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="startDate">Начало даты:</label>
-                                    <input type="date" id="startDate" class="form-control" name="startDate">
-                                </div>
-                                <div class="form-group">
-                                    <label for="endDate">Конец даты:</label>
-                                    <input type="date" id="endDate" class="form-control" name="endDate">
-                                </div>
-                                <button type="submit">Начать поиск</button>
-                                <button type="button" onclick="resetForm()">Очистить</button>
-                            </form>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-
-<script>
-    //иморт
-    document.addEventListener('DOMContentLoaded', function() {
-        const suspectedOriginCountry = document.getElementById('importerCountry');
-
-        // Инициализация Choices.js
-        const countryChoices = new Choices(suspectedOriginCountry, {
-            searchEnabled: true,        // Включаем поиск
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        suspectedOriginCountry.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
-            }
-
-            // Выполняем запрос к серверу для поиска по введённой строке
-            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    countryChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        countryChoices.setChoices([{
-                            value: item.id,
-                            label: item.name,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-    });
-    //экспорт
-    document.addEventListener('DOMContentLoaded', function() {
-        const suspectedOriginCountry = document.getElementById('exporterCountry');
-
-        // Инициализация Choices.js
-        const countryChoices = new Choices(suspectedOriginCountry, {
-            searchEnabled: true,        // Включаем поиск
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        suspectedOriginCountry.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
-            }
-
-            // Выполняем запрос к серверу для поиска по введённой строке
-            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    countryChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        countryChoices.setChoices([{
-                            value: item.id,
-                            label: item.name,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-    });
-</script>
-
-<script>
-    // Функция для очистки формы
-    function resetForm() {
-        document.getElementById("filterForm").reset();
-    }
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const objectInput = document.getElementById('object');
-
-        const objectChoices = new Choices(objectInput, {
-            searchEnabled: true,
-            searchPlaceholderValue: 'Введите вид объекта...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных объектов'
-        });
-
-        objectInput.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) return;
-
-            fetch(`/incidents/search-products?species=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    objectChoices.clearChoices();
-                    data.forEach(item => {
-                        objectChoices.setChoices([{
-                            value: item.id,
-                            label: item.description,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка при загрузке видов объектов:', error));
-        });
-    });
-</script>
-
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
+</section>
 </html>

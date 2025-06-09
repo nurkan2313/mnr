@@ -1,23 +1,100 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head }}
-<style>
-    body, * {
-        font-family: 'Roboto', Arial, sans-serif !important;
-    }
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-</style>
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    {{> dashboard/content-dashboard }}
-</div>
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
+<section layout:fragment="content">
+    <div class="row">
+
+        <div class="col-lg-4">
+            <div class="card bg-success text-white-50">
+                <div class="card-body">
+                    <a th:href="@{/permission/list}">
+                        <h5 class="mb-4 text-white"><i class="mdi mdi-check-all me-3"></i>Разрешения</h5>
+                    </a>
+                    <p class="card-text">Лист разрешений придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-dark text-light">
+                <div class="card-body">
+                    <a th:href="@{/incidents}">
+                        <h5 class="mb-4 text-light">
+                            <i class="mdi mdi-alert-circle-outline me-3"></i>Нелегальные изъятия
+                        </h5>
+                    </a>
+                    <p class="card-text">придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-primary text-white-50">
+                <div class="card-body">
+                    <a th:href="@{/dashboard}">
+                        <h5 class="mb-4 text-white"><i class="mdi mdi-bullseye-arrow me-3"></i>
+                            Дешборд
+                        </h5>
+                    </a>
+                    <p class="card-text">придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-danger text-white-50">
+                <div class="card-body">
+                    <a th:href="@{/definitions}">
+                        <h5 class="mb-4 text-white"><i class="mdi mdi-bullseye-arrow me-3"></i>
+                            Определитель
+                        </h5>
+                    </a>
+                    <p class="card-text">придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-danger text-white-50">
+                <div class="card-body">
+                    <a th:href="@{/cites-template}">
+                        <h5 class="mb-4 text-white"><i class="mdi mdi-bullseye-arrow me-3"></i>
+                            Образец разрешения СITES
+                        </h5>
+                    </a>
+                    <p class="card-text">придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-warning text-white-50">
+                <div class="card-body">
+                    <a th:href="@{/permission/report}">
+                        <h5 class="mb-4 text-white"><i class="mdi mdi-bullseye-arrow me-3"></i>
+                            Формирование отчета
+                        </h5>
+                    </a>
+                    <p class="card-text">придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-warning text-white-50">
+                <div class="card-body">
+                    <a th:href="@{/permission/report/export-data}">
+                        <h5 class="mb-4 text-white"><i class="mdi mdi-bullseye-arrow me-3"></i>
+                            Статистика
+                        </h5>
+                    </a>
+                    <p class="card-text">придумать описание</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
 </html>

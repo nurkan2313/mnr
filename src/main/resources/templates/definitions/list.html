@@ -1,167 +1,62 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head-incident }}
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12 col-lg-12">
-                    {{> partials/breadcrumbs}}
-                    <!-- Ошибки валидации -->
-                    {{#errors}}
-                    <div class="error-message">
-                        {{defaultMessage}}
-                    </div>
-                    {{/errors}}
 
-                    <!-- Форма для фильтров -->
-                    <!--                    <form method="GET" action="/incidents">-->
-                    <!--                        <div class="card">-->
-                    <!--                            <div class="card-header d-flex justify-content-between">-->
-                    <!--                                <div class="header-title">-->
-                    <!--                                    <h4 class="card-title">Фильтры для поиска инцидентов</h4>-->
-                    <!--                                </div>-->
-                    <!--                            </div>-->
-                    <!--                            <div class="card-body">-->
-                    <!--                                <div class="row">-->
-                    <!--                                    <div class="col-md-4">-->
-                    <!--                                        <div class="form-group">-->
-                    <!--                                            <label for="speciesSelect">Виды</label>-->
-                    <!--                                            <select id="speciesSelect" name="species" class="form-control">-->
-                    <!--                                                <option value="">Начните ввод для поиска</option>-->
-                    <!--                                            </select>-->
-                    <!--                                        </div>-->
-                    <!--                                    </div>-->
-                    <!--                                    <div class="col-md-4">-->
-                    <!--                                        <div class="form-group">-->
-                    <!--                                            <label>Выявивший орган</label>-->
-                    <!--                                            <select name="authority" id="authority" class="form-control mb-3">-->
-                    <!--                                                <option value="">выберите</option>-->
-                    <!--                                                {{#allAuthorities}}-->
-                    <!--                                                <option value="{{id}}">{{name}}</option>-->
-                    <!--                                                {{/allAuthorities}}-->
-                    <!--                                            </select>-->
-                    <!--                                        </div>-->
-                    <!--                                    </div>-->
-                    <!--                                    <div class="col-md-4">-->
-                    <!--                                        <div class="form-group">-->
-                    <!--                                            <label for="registeredAt">Дата изъятия</label>-->
-                    <!--                                            <input type="datetime-local" name="registeredAt" class="form-control" id="registeredAt">-->
-                    <!--                                        </div>-->
-                    <!--                                    </div>-->
-                    <!--                                </div>-->
-                    <!--                                <button type="submit" class="btn btn-primary">Искать</button>-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                    </form>-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-<!--                            <div class="header-title">-->
-<!--                                <h4 class="card-title">Инциденты</h4>-->
-<!--                            </div>-->
-                        </div>
-                        <div class="card-body">
-                            <div class="shadow-showcase text-center">
-                                <span class="table-add float-right mb-3 mr-2">
-                                   <button class="btn btn-sm bg-primary" type="button" onclick="location.href='/definitions/create'">
-                                        <i class="ri-add-fill"></i><span class="pl-1">Добавить</span>
-                                    </button>
-                                </span>
-                                <div class="table-responsive">
-                                    <table class="table table-striped" >
-                                        <thead>
-                                        <tr>
-                                            <th>Название</th>
-                                            <th>Тип</th>
-                                            <th>Объект</th>
-                                            <th>Действия</th>
-                                        </tr>
-                                        </thead>
+<section layout:fragment="content">
+    <div class="container-xxl py-5">
+        <div class="container">
 
-                                        <tbody>
-                                        {{#definitions}}
-                                        <tr>
-                                            <td>{{name}}</td>
-                                            <td>{{type}}</td>
-                                            <td>{{object}}</td>
-                                            <td>
-                                                <a class="btn btn-sm btn-warning" href="/definitions/edit/{{id}}">Редактировать</a>
-                                                <a class="btn btn-sm btn-danger" href="/definitions/delete/{{id}}">Удалить</a>
-                                            </td>
-                                        </tr>
-                                        {{/definitions}}
-                                        {{^definitions}}
-                                        <tr>
-                                            <td colspan="4">Нет данных</td>
-                                        </tr>
-                                        {{/definitions}}
-                                        </tbody>
-                                    </table>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Определитель</li>
+                </ol>
+            </nav>
 
+            <div class="col-xl-10">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Список объектов CITES</h4>
+                        <p class="card-title-desc">Вы можете просмотреть, изменить или удалить объекты.</p>
 
-                                </div>
-
-                            </div>
+                        <div class="d-flex justify-content-end mb-3">
+                            <a class="btn btn-sm btn-primary" th:href="@{/definitions/create}">
+                                <i class="ri-add-fill"></i> <span class="pl-1">Добавить</span>
+                            </a>
                         </div>
 
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered align-middle mb-0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Тип</th>
+                                    <th>Объект</th>
+                                    <th class="text-center">Действия</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="definition : ${definitions}">
+                                    <td th:text="${definition.name}">Название</td>
+                                    <td th:text="${definition.type}">Тип</td>
+                                    <td th:text="${definition.object}">Объект</td>
+                                    <td class="text-center">
+                                        <a th:href="@{/definitions/edit/{id}(id=${definition.id})}" class="btn btn-sm btn-warning">Редактировать</a>
+                                        <a th:href="@{/definitions/delete/{id}(id=${definition.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Удалить объект?')">Удалить</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${definitions.size() == 0}">
+                                    <td colspan="4" class="text-center">Нет данных</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
-</div>
-
-<script>
-    // Поиск видов
-    document.addEventListener('DOMContentLoaded', function() {
-        const speciesSelect = document.getElementById('speciesSelect');
-
-        // Инициализация Choices.js
-        const speciesChoices = new Choices(speciesSelect, {
-            searchEnabled: true,        // Включаем поиск
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        speciesSelect.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
-            }
-
-            // Выполняем запрос к серверу для поиска по введённой строке
-            fetch(`/incidents/search-species?species=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    speciesChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        speciesChoices.setChoices([{
-                            value: item.description,
-                            label: item.description,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-    });
-
-
-</script>
-
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
-</html>
+</section>

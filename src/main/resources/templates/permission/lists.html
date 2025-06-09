@@ -1,321 +1,92 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head }}
-<body>
-<!-- Loader -->
-{{> partials/loading }}
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            {{> partials/breadcrumbs}}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-            <!-- Validation Errors -->
-            {{#errors}}
-            <div class="alert alert-danger" role="alert">
-                {{defaultMessage}}
+<section layout:fragment="content">
+
+    <div class="row">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Разрешения</li>
+            </ol>
+        </nav>
+
+        <h2 class="mb-3">Разрешения CITES. Эта вкладка включает выданные разрешения СИТЕС
+            за период с 2020 года по сегодняшний день</h2>
+
+        <form class="row mb-4" method="get" th:action="@{/permission/list}">
+            <div class="col-md-3">
+                <input type="text" name="permitNumber" class="form-control" placeholder="Номер разрешения" th:value="${param.permitNumber}">
             </div>
-            {{/errors}}
+            <div class="col-md-3">
+                <input type="text" name="companyName" class="form-control" placeholder="Организация" th:value="${param.companyName}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="object" class="form-control" placeholder="Объект" th:value="${param.object}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+            </div>
+        </form>
 
-            <!-- Filter Form -->
-            <form action="/permission/list" method="get" id="filterForm">
-                <div class="card mb-4">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Поиск разрешений</h5>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Добавить новое разрешение</h4>
+                <div class="row">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-success waves-effect btn-label waves-light w-100" th:href="@{/permission}">
+                            <i class="bx bx-check-double label-icon"></i> добавить
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label for="permitNumber" class="form-label">Номер разрешения</label>
-                                <input type="text" name="permitNumber" class="form-control" id="permitNumber">
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="type" class="form-label">Тип</label>
-                                    <select id="type" name="type" class="form-select">
-                                        <option value="">Выберите тип</option>
-                                        <option value="CITES">CITES</option>
-                                        <option value="Флора">Флора</option>
-                                        <option value="Фауна">Фауна</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="protectionNumber" class="form-label">Номер защитной марки</label>
-                                <input type="text" name="protectionNumber" class="form-control" id="protectionNumber">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="companyName" class="form-label">Наименование пользователя</label>
-                                <input type="text" name="companyName" class="form-control" id="companyName">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="object" class="form-label">Наименование объекта</label>
-                                <input type="text" name="object" class="form-control" id="object">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="quantity" class="form-label">Количество объекта</label>
-                                <input type="text" name="quantity" class="form-control" id="quantity">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="startDate" class="form-label">Дата начала</label>
-                                <input type="date" name="startDate" class="form-control" id="startDate">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="endDate" class="form-label">Дата окончания</label>
-                                <input type="date" name="endDate" class="form-control" id="endDate">
-                            </div>
-                        </div>
-                        <div class="mt-4 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 5px;">Найти</button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="resetForm()">Очистить</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <!-- Permissions Table -->
-            <div class="card">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Разрешения</h5>
-                    <button class="btn btn-success btn-sm" onclick="location.href='/permission'">
-                        <i class="ri-add-line"></i> Добавить
-                    </button>
-                </div>
-                <div class="card-body table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                        <tr>
-                            <th>Отметка</th>
-                            <th>Номер</th>
-                            <th>Выдано</th>
-                            <th>Истекает</th>
-                            <th>Пользователь</th>
-                            <th>Объект</th>
-                            <th>Кол-во</th>
-                            <th>Импортер</th>
-                            <th>Экспортер</th>
-                            <th>Цель</th>
-                            <th>Примечания</th>
-                            <th>Марка</th>
-                            <th>Статус</th>
-                            <th>Тип</th>
-                            <th>Действие</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {{#permits}}
-                        <tr>
-                            <td>
-                                <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#exampleModal-{{id}}">
-                                    Сделать отметку
-                                </button>
-                            </td>
-                            <td style="color: #6a6e67;">{{ id }}</td>
-                            <td style="color: #6a6e67;">{{ issueDate }}</td>
-                            <td style="color: #6a6e67;">{{#expiryDate }} {{expiryDate}} {{/expiryDate }}</td>
-                            <td style="color: #6a6e67;">{{ companyName }}</td>
-                            <td style="color: #6a6e67;">{{ object }}</td>
-                            <td style="color: #6a6e67;">{{ quantity }}</td>
-                            <td style="color: #6a6e67;">{{ importerCountry }}</td>
-                            <td style="color: #6a6e67;">{{ exporterCountry }}</td>
-                            <td style="color: #6a6e67;">{{ purpose }}</td>
-                            <td style="color: #6a6e67;">{{ remarks }}</td>
-                            <td style="color: #6a6e67;">{{ protectionMarkNumber }}</td>
-                            <td style="color: #6a6e67;">{{ statusDescription }}</td>
-                            <td style="color: #6a6e67;">{{ type }}</td>
-                            <td><a href="/permission/{{id}}" class="btn btn-link">Посмотреть</a></td>
-                        </tr>
-                        <!-- Модальное окно -->
-                        <div class="modal fade" id="exampleModal-{{id}}" tabindex="-1" aria-labelledby="modalLabel-{{id}}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modalLabel-{{id}}">Отметка: {{id}}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="borderCrossForm-{{id}}" action="/api/crossings/{{id}}" method="POST">
-                                            <label for="checkpoint-{{id}}">Пункт пропуска</label>
-                                            <select class="form-select" id="checkpoint-{{id}}" name="checkpointId" required>
-                                                {{#checkpoints}}
-                                                <option value="{{id}}">{{name}}</option>
-                                                {{/checkpoints}}
-                                            </select>
-                                        </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" onclick="submitBorderCrossForm('{{id}}')">Сохранить</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {{/permits}}
-                        </tbody>
-                    </table>
-                    <!-- Pagination -->
-                    {{#totalPages}}
-                    <nav aria-label="Page navigation" {{^totalPages}}style="display:none;"{{/totalPages}}>
-                    <ul class="pagination justify-content-center">
-                        <!-- Кнопка "Шаг назад на 10 страниц" -->
-
-                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
-                            <a class="page-link" href="?page={{firstPage}}&size=10" aria-label="First">
-                                <span aria-hidden="true">Первая</span>
-                            </a>
-                        </li>
-
-                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
-                            <a class="page-link" href="?page={{stepBack10}}&size=10" aria-label="Step Back 10">
-                                <span aria-hidden="true">&laquo;</span><span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-
-                        <!-- Кнопка "Предыдущая страница" -->
-                        <li class="page-item {{#previousPage}}active{{/previousPage}} {{^previousPage}}disabled{{/previousPage}}">
-                            <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-
-                        <!-- Список страниц -->
-                        {{#pageNumbers}}
-                        <li class="page-item {{#isActive}}{{isActive}}{{/isActive}}">
-                            <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
-                        </li>
-                        {{/pageNumbers}}
-
-                        <!-- Кнопка "Следующая страница" -->
-                        <li class="page-item {{#nextPage}}active{{/nextPage}} {{^nextPage}}disabled{{/nextPage}}">
-                            <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                        <!-- Кнопка "Шаг вперед на 10 страниц" -->
-                        <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
-                            <a class="page-link" href="?page={{stepForward10}}&size=10" aria-label="Step Forward 10">
-                                <span aria-hidden="true">&raquo;</span><span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{lastPage}}&size=10">Последняя</a>
-                        </li>
-                    </ul>
-                    </nav>
-                    {{/totalPages}}
                 </div>
             </div>
         </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Организация</th>
+                <th>Объект</th>
+                <th>Кол-во</th>
+                <th>Тип</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="permit : ${permits}">
+                <td th:text="${permit.id}"></td>
+                <td th:text="${permit.companyName}"></td>
+                <td th:text="${permit.object}"></td>
+                <td th:text="${permit.quantity}"></td>
+                <td th:text="${permit.type}"></td>
+                <td th:text="${permit.statusDescription}" class="text-capitalize"></td>
+                <td>
+                    <a th:href="@{'/permission/' + ${permit.id}}" class="btn btn-sm btn-outline-primary">Просмотр</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav th:if="${totalPages > 1}" aria-label="Pagination">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${previousDisabled} ? 'disabled'">
+                    <a class="page-link" th:href="@{|/permission/list?page=${previousPage}|}">Назад</a>
+                </li>
+                <li class="page-item" th:each="pageNum : ${pageNumbers}" th:classappend="${pageNum == currentPage} ? 'active'">
+                    <a class="page-link" th:text="${pageNum}" th:href="@{|/permission/list?page=${pageNum}|}"></a>
+                </li>
+                <li class="page-item" th:classappend="${nextDisabled} ? 'disabled'">
+                    <a class="page-link" th:href="@{|/permission/list?page=${nextPage}|}">Вперёд</a>
+                </li>
+            </ul>
+        </nav>
+
     </div>
-</div>
-<script>
-    function resetForm() {
-        document.getElementById("filterForm").reset();
-    }
-</script>
-<script>
-    function submitBorderCrossForm(id) {
-        const form = document.getElementById(`borderCrossForm-${id}`);
-        const formData = new FormData(form);
 
-        fetch(form.action, {
-            method: 'POST',
-            body: new URLSearchParams(formData)
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert("Отметка успешно сохранена");
-                    // Закрытие модального окна
-                    $(`#exampleModal-${id}`).modal('hide');
-                } else {
-                    alert("Ошибка при сохранении отметки");
-                }
-            })
-            .catch(error => console.error('Ошибка:', error));
-    }
-</script>
-<script>
-    // Поиск стран
-    document.addEventListener('DOMContentLoaded', function() {
-        const suspectedOriginCountry = document.getElementById('importerCountry');
-
-        // Инициализация Choices.js
-        const countryChoices = new Choices(suspectedOriginCountry, {
-            searchEnabled: true,        // Включаем поиск
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        suspectedOriginCountry.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
-            }
-
-            // Выполняем запрос к серверу для поиска по введённой строке
-            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                .then(data => {
-                    countryChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        countryChoices.setChoices([{
-                            value: item.id,
-                            label: item.name,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-    });
-</script>
-<script>
-    // Поиск стран
-    document.addEventListener('DOMContentLoaded', function() {
-        const exporterCountry = document.getElementById('exporterCountry');
-
-        // Инициализация Choices.js
-        const countryChoices = new Choices(exporterCountry, {
-            searchEnabled: true,        // Включаем поиск
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        exporterCountry.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
-            }
-
-            // Выполняем запрос к серверу для поиска по введённой строке
-            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-                .then(data => {
-                    countryChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        countryChoices.setChoices([{
-                            value: item.id,
-                            label: item.name,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-    });
-</script>
-
-{{> partials/footer }}
-</body>
+</section>
 </html>

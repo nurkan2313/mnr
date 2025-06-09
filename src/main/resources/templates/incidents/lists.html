@@ -1,210 +1,103 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head-incident }}
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12 col-lg-12">
-                    {{> partials/breadcrumbs}}
-                    <!-- Ошибки валидации -->
-                    {{#errors}}
-                    <div class="error-message">
-                        {{defaultMessage}}
-                    </div>
-                    {{/errors}}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-                    <!-- Форма для фильтров -->
-<!--                    <form method="GET" action="/incidents">-->
-<!--                        <div class="card">-->
-<!--                            <div class="card-header d-flex justify-content-between">-->
-<!--                                <div class="header-title">-->
-<!--                                    <h4 class="card-title">Фильтры для поиска инцидентов</h4>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div class="card-body">-->
-<!--                                <div class="row">-->
-<!--                                    <div class="col-md-4">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="speciesSelect">Виды</label>-->
-<!--                                            <select id="speciesSelect" name="species" class="form-control">-->
-<!--                                                <option value="">Начните ввод для поиска</option>-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-md-4">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label>Выявивший орган</label>-->
-<!--                                            <select name="authority" id="authority" class="form-control mb-3">-->
-<!--                                                <option value="">выберите</option>-->
-<!--                                                {{#allAuthorities}}-->
-<!--                                                <option value="{{id}}">{{name}}</option>-->
-<!--                                                {{/allAuthorities}}-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <div class="col-md-4">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="registeredAt">Дата изъятия</label>-->
-<!--                                            <input type="datetime-local" name="registeredAt" class="form-control" id="registeredAt">-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <button type="submit" class="btn btn-primary">Искать</button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </form>-->
+<section layout:fragment="content">
+    <div class="container-xxl py-5">
+        <div class="container">
 
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Инциденты</h4>
-                            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Инциденты</li>
+                </ol>
+            </nav>
+
+            <div class="container-xxl py-5">
+                <div class="container">
+                    <div class="card shadow rounded">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                            <h4 class="mb-0">Инциденты</h4>
+                            <button class="btn btn-sm btn-primary" type="button" onclick="location.href='/incidents/create'">
+                                <i class="bi bi-plus-circle me-1"></i> Добавить
+                            </button>
                         </div>
+
                         <div class="card-body">
-                            <div class="shadow-showcase text-center">
-                                <span class="table-add float-right mb-3 mr-2">
-                                   <button class="btn btn-sm bg-primary" type="button" onclick="location.href='/incidents/create'">
-                                        <i class="ri-add-fill"></i><span class="pl-1">Добавить</span>
-                                    </button>
-                                </span>
-                                <div class="table-responsive">
-                                    <table class="table table-striped" >
-                                        <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Регистрационный номер</th>
-                                            <th>Дата изъятия</th>
-                                            <th>Виды</th>
-                                            <th>Название на латинском</th>
-                                            <th>Описание образца</th>
-                                            <th>Количество</th>
-                                            <th>Единица измерения</th>
-                                            <th>Выявивший орган</th>
-                                            <th>Способ обнаружения</th>
-                                            <th>Причина изъятия</th>
-                                            <th>Способ транспортировки</th>
-                                            <th>Направление торговли</th>
-                                            <th>Способ сокрытия</th>
-                                            <th>Предполагаемая страна происхождения</th>
-                                            <th>Страна(ы) транзита</th>
-                                            <th>Предполагаемый конечный пункт назначения</th>
-                                            <th class="text-right">Дополнительная информация</th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody>
-                                        {{#incidents}}
-                                        <tr>
-                                            <td><a href="/incidents/{{id}}">посмотреть</a></td>
-                                            <td>{{ id }}</td>
-                                            <td>{{ registeredAt }}</td>
-                                            <td>{{ species }}</td>
-                                            <td>{{latinName}}</td>
-                                            <td>{{ description }}</td>
-                                            <td>{{ count }}</td>
-                                            <td>{{unitOfMeasurement}}</td>
-                                            <td>{{ authority }}</td>
-                                            <td>{{ discoveryMethod }}</td>
-                                            <td>{{ reasonForSeizure }}</td>
-                                            <td>{{ transportMethod }}</td>
-                                            <td>{{ tradeDirection }}</td>
-                                            <td>{{ hidingMethod }}</td>
-                                            <td>{{suspectedOriginCountry}}</td>
-                                            <td>{{transitCountries}}</td>
-                                            <td>{{finalDestination}}</td>
-                                            <td class="text-right">{{additionalInfo}}</td>
-
-                                        </tr>
-                                    {{/incidents}}
+                            <div class="table-responsive">
+                                <table class="table table-striped align-middle">
+                                    <thead class="table-light text-center">
+                                    <tr>
+                                        <th></th>
+                                        <th>Дата изъятия</th>
+                                        <th>Виды</th>
+                                        <th>Название на латинском</th>
+                                        <th>Описание образца</th>
+                                        <th>Количество</th>
+                                        <th>Единица измерения</th>
+                                        <th>Выявивший орган</th>
+                                        <th>Способ обнаружения</th>
+                                        <th>Причина изъятия</th>
+                                        <th>Способ транспортировки</th>
+                                        <th>Направление торговли</th>
+                                        <th>Способ сокрытия</th>
+                                        <th>Страна происхождения</th>
+                                        <th>Страны транзита</th>
+                                        <th>Конечный пункт назначения</th>
+                                        <th>Доп. информация</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="incident : ${incidents}">
+                                        <td><a th:href="@{/incidents/{id}(id=${incident.id})}">Посмотреть</a></td>
+                                        <td th:text="${incident.registeredAt}"></td>
+                                        <td th:text="${incident.species}"></td>
+                                        <td th:text="${incident.latinName}"></td>
+                                        <td th:text="${incident.description}"></td>
+                                        <td th:text="${incident.count}"></td>
+                                        <td th:text="${incident.unitOfMeasurement}"></td>
+                                        <td th:text="${incident.authority}"></td>
+                                        <td th:text="${incident.discoveryMethod}"></td>
+                                        <td th:text="${incident.reasonForSeizure}"></td>
+                                        <td th:text="${incident.transportMethod}"></td>
+                                        <td th:text="${incident.tradeDirection}"></td>
+                                        <td th:text="${incident.hidingMethod}"></td>
+                                        <td th:text="${incident.suspectedOriginCountry}"></td>
+                                        <td th:text="${incident.transitCountries}"></td>
+                                        <td th:text="${incident.finalDestination}"></td>
+                                        <td class="text-end" th:text="${incident.additionalInfo}"></td>
+                                    </tr>
                                     </tbody>
                                 </table>
-
-
                             </div>
 
-                                <!-- Пагинация -->
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-center">
-                                        <li class="page-item {{#previousDisabled}}disabled{{/previousDisabled}}">
-                                            <a class="page-link" href="?page={{previousPage}}&size=10" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
+                            <!-- Пагинация -->
+                            <nav aria-label="Пагинация" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" th:classappend="${previousDisabled} ? 'disabled'">
+                                        <a class="page-link" th:href="@{|?page=${previousPage}&size=10|}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
 
-                                        {{#pageNumbers}}
-                                        <li class="page-item {{#isActive}}active{{/isActive}}">
-                                            <a class="page-link" href="?page={{.}}&size=10">{{.}}</a>
-                                        </li>
-                                        {{/pageNumbers}}
+                                    <li th:each="i : ${pageNumbers}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                        <a class="page-link" th:href="@{|?page=${i}&size=10|}" th:text="${i}"></a>
+                                    </li>
 
-                                        <li class="page-item {{#nextDisabled}}disabled{{/nextDisabled}}">
-                                            <a class="page-link" href="?page={{nextPage}}&size=10" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                    <li class="page-item" th:classappend="${nextDisabled} ? 'disabled'">
+                                        <a class="page-link" th:href="@{|?page=${nextPage}&size=10|}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
-                    </div>
-
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
-</div>
-
-<script>
-    // Поиск видов
-    document.addEventListener('DOMContentLoaded', function() {
-        const speciesSelect = document.getElementById('speciesSelect');
-
-        // Инициализация Choices.js
-        const speciesChoices = new Choices(speciesSelect, {
-            searchEnabled: true,        // Включаем поиск
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        speciesSelect.addEventListener('search', function(event) {
-            const query = event.detail.value;
-
-            if (!query || query.length < 1) {
-                return; // Прекращаем выполнение, если строка слишком короткая
-            }
-
-            // Выполняем запрос к серверу для поиска по введённой строке
-            fetch(`/incidents/search-species?species=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    speciesChoices.clearChoices();  // Очистить старые результаты
-                    // Добавляем новые результаты в список
-                    data.forEach(item => {
-                        speciesChoices.setChoices([{
-                            value: item.description,
-                            label: item.description,
-                            selected: false,
-                            disabled: false,
-                        }], 'value', 'label', false);
-                    });
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-    });
-
-
-</script>
-
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
+</section>
 </html>

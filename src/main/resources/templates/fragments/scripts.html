@@ -1,0 +1,467 @@
+<div th:fragment="scripts">
+    <script th:src="@{/assets/libs/jquery/jquery.min.js}"></script>
+    <script th:src="@{/assets/libs/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/assets/libs/metismenu/metisMenu.min.js}"></script>
+    <script th:src="@{/assets/libs/simplebar/simplebar.min.js}"></script>
+    <script th:src="@{/assets/libs/node-waves/waves.min.js}"></script>
+    <script th:src="@{/assets/js/choices.min.js}"></script>
+
+    <script th:if="${pageName == 'permitForm'}">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            function setupCountrySearch(selectId) {
+                    const element = document.getElementById(selectId);
+                    const choices = new Choices(element, {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Введите для поиска...',
+                    noResultsText: 'Не найдено',
+                    noChoicesText: 'Нет доступных вариантов',
+                    shouldSort: false
+                });
+
+                element.addEventListener('search', function (event) {
+                    const query = event.detail.value;
+                    if (!query || query.length < 1) return;
+
+                    fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                                choices.clearChoices();
+                                choices.setChoices(data.map(country => ({
+                                value: country.id,
+                                label: country.name
+                            })), 'value', 'label', false);
+                        })
+                        .catch(error => console.error('Ошибка при поиске страны:', error));
+                    });
+            }
+
+        setupCountrySearch('importerCountry');
+        setupCountrySearch('exporterCountry');
+        });
+
+        function setupDefinitionSearch(selectId) {
+            const element = document.getElementById(selectId);
+            const choices = new Choices(element, {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено',
+                noChoicesText: 'Нет доступных вариантов',
+                shouldSort: false
+            });
+
+            element.addEventListener('search', function (event) {
+                const query = event.detail.value;
+                if (!query || query.length < 1) return;
+
+                fetch(`/definitions/search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        choices.clearChoices();
+                        choices.setChoices(data.map(obj => ({
+                            value: obj.id,
+                            label: obj.name
+                        })), 'value', 'label', false);
+                    })
+                    .catch(error => console.error('Ошибка при поиске объекта:', error));
+            });
+        }
+        setupDefinitionSearch('speciesSelect');
+
+    </script>
+
+    <script th:if="${pageName == 'permitReport'}">
+        //импорт
+        document.addEventListener('DOMContentLoaded', function() {
+            const suspectedOriginCountry = document.getElementById('importerCountry');
+
+            // Инициализация Choices.js
+            const countryChoices = new Choices(suspectedOriginCountry, {
+                searchEnabled: true,        // Включаем поиск
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено',
+                noChoicesText: 'Нет доступных вариантов'
+            });
+
+            suspectedOriginCountry.addEventListener('search', function(event) {
+            const query = event.detail.value;
+
+            if (!query || query.length < 1) {
+                return; // Прекращаем выполнение, если строка слишком короткая
+            }
+
+            // Выполняем запрос к серверу для поиска по введённой строке
+            fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                        countryChoices.setChoices([{
+                        value: item.id,
+                        label: item.name,
+                        selected: false,
+                        disabled: false,
+                    }], 'value', 'label', false);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+            });
+        });
+
+        //экспорт
+        document.addEventListener('DOMContentLoaded', function() {
+        const suspectedOriginCountry = document.getElementById('exporterCountry');
+
+        // Инициализация Choices.js
+        const countryChoices = new Choices(suspectedOriginCountry, {
+            searchEnabled: true,        // Включаем поиск
+            searchPlaceholderValue: 'Введите для поиска...',
+            noResultsText: 'Не найдено',
+            noChoicesText: 'Нет доступных вариантов'
+        });
+
+        suspectedOriginCountry.addEventListener('search', function(event) {
+        const query = event.detail.value;
+
+        if (!query || query.length < 1) {
+            return; // Прекращаем выполнение, если строка слишком короткая
+        }
+
+        // Выполняем запрос к серверу для поиска по введённой строке
+        fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                    countryChoices.clearChoices();  // Очистить старые результаты
+                    // Добавляем новые результаты в список
+                    data.forEach(item => {
+                    countryChoices.setChoices([{
+                    value: item.id,
+                    label: item.name,
+                    selected: false,
+                    disabled: false,
+                }], 'value', 'label', false);
+                });
+            })
+            .catch(error => console.error('Ошибка:', error));
+        });
+        });
+
+        function setupDefinitionSearch(selectId) {
+            const element = document.getElementById(selectId);
+            const choices = new Choices(element, {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено',
+                noChoicesText: 'Нет доступных вариантов',
+                shouldSort: false
+            });
+
+            element.addEventListener('search', function (event) {
+                const query = event.detail.value;
+                if (!query || query.length < 1) return;
+
+                fetch(`/definitions/search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        choices.clearChoices();
+                        choices.setChoices(data.map(obj => ({
+                            value: obj.name,
+                            label: obj.name
+                        })), 'value', 'label', false);
+                    })
+                    .catch(error => console.error('Ошибка при поиске объекта:', error));
+            });
+        }
+        setupDefinitionSearch('object');
+    </script>
+
+    <script th:if="${pageName == 'incidentPage'}" >
+        document.addEventListener('DOMContentLoaded', function () {
+            function setupCountrySearch(selectId) {
+                const element = document.getElementById(selectId);
+                const choices = new Choices(element, {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Введите для поиска...',
+                    noResultsText: 'Не найдено',
+                    noChoicesText: 'Нет доступных вариантов',
+                    shouldSort: false
+                });
+
+                element.addEventListener('search', function (event) {
+                    const query = event.detail.value;
+                    if (!query || query.length < 1) return;
+
+                    fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            choices.clearChoices();
+                            choices.setChoices(data.map(country => ({
+                                value: country.id,
+                                label: country.name
+                            })), 'value', 'label', false);
+                        })
+                        .catch(error => console.error('Ошибка при поиске страны:', error));
+                });
+            }
+
+            setupCountrySearch('importerCountry');
+            setupCountrySearch('exporterCountry');
+        });
+
+        // Поиск стран
+        document.addEventListener('DOMContentLoaded', function() {
+            const suspectedOriginCountry = document.getElementById('suspectedOriginCountry');
+
+            // Инициализация Choices.js
+            const countryChoices = new Choices(suspectedOriginCountry, {
+                searchEnabled: true,        // Включаем поиск
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено',
+                noChoicesText: 'Нет доступных вариантов'
+            });
+
+            suspectedOriginCountry.addEventListener('search', function(event) {
+                const query = event.detail.value;
+
+                if (!query || query.length < 1) {
+                    return; // Прекращаем выполнение, если строка слишком короткая
+                }
+
+                // Выполняем запрос к серверу для поиска по введённой строке
+                fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        countryChoices.clearChoices();  // Очистить старые результаты
+                        // Добавляем новые результаты в список
+                        data.forEach(item => {
+                            countryChoices.setChoices([{
+                                value: item.id,
+                                label: item.name,
+                                selected: false,
+                                disabled: false,
+                            }], 'value', 'label', false);
+                        });
+                    })
+                    .catch(error => console.error('Ошибка:', error));
+            });
+        });
+
+        // ед. изм.
+        document.addEventListener('DOMContentLoaded', function() {
+            const unitSelect = document.getElementById('unitOfMeasurement');
+            const choices = new Choices(unitSelect, {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено. Нажмите "Создать новую единицу"',
+                noChoicesText: 'Нет доступных вариантов'
+            });
+
+            let lastSearchTerm = ''; // Сохраняет последний поисковый запрос
+
+            unitSelect.addEventListener('search', function(event) {
+                const searchTerm = event.detail.value;
+                lastSearchTerm = searchTerm;
+
+                if (searchTerm.length < 2) {
+                    return; // Прерываем поиск, если запрос короче 2 символов
+                }
+
+                fetch(`/incidents/search-units?unit=${encodeURIComponent(searchTerm)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        choices.clearChoices(); // Очистка старых результатов
+
+                        if (data.length === 0) {
+                            // Если результаты не найдены, добавляем опцию для создания новой единицы
+                            choices.setChoices([{
+                                value: 'create-new',
+                                label: `Создать новую единицу "${searchTerm}"`,
+                                customProperties: { createNew: true }
+                            }], 'value', 'label', false);
+                        } else {
+                            // Если результаты найдены, добавляем их в список выбора
+                            data.forEach(item => {
+                                choices.setChoices([{
+                                    value: item.id,
+                                    label: item.unit,
+                                    selected: false,
+                                    disabled: false,
+                                }], 'value', 'label', false);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Ошибка:', error));
+            });
+
+            unitSelect.addEventListener('change', function(event) {
+                if (event.target.value === 'create-new') {
+                    // Используем последний введенный запрос для создания новой единицы
+                    const unitName = lastSearchTerm;
+
+                    if (!unitName) {
+                        console.error('Название единицы измерения отсутствует.');
+                        return;
+                    }
+
+                    // Отправка запроса на создание новой единицы
+                    fetch('/incidents/create-unit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ unit: unitName })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(`Новая единица измерения создана: ${data.unit}`);
+
+                            // Добавляем созданную единицу в список выбора и выбираем её
+                            choices.setChoices([{
+                                value: data.id,
+                                label: data.unit,
+                                selected: true,
+                                disabled: false
+                            }], 'value', 'label', false);
+
+                            choices.setChoiceByValue(data.id); // Устанавливаем новую единицу как выбранную
+                        })
+                        .catch(error => console.error('Ошибка создания единицы измерения:', error));
+                }
+            });
+        });
+
+        function setupDefinitionSearch(selectId) {
+            const element = document.getElementById(selectId);
+            const choices = new Choices(element, {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено',
+                noChoicesText: 'Нет доступных вариантов',
+                shouldSort: false
+            });
+
+            element.addEventListener('search', function (event) {
+                const query = event.detail.value;
+                if (!query || query.length < 1) return;
+
+                fetch(`/definitions/search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        choices.clearChoices();
+                        choices.setChoices(data.map(obj => ({
+                            value: obj.name,
+                            label: obj.name
+                        })), 'value', 'label', false);
+                    })
+                    .catch(error => console.error('Ошибка при поиске объекта:', error));
+            });
+        }
+        setupDefinitionSearch('speciesSelect');
+
+        const transitInput = document.getElementById('transitCountries');
+        const suggestionsList = document.getElementById('transitCountrySuggestions');
+        const selectedCountriesContainer = document.getElementById('selectedCountries');
+        const hiddenCountryInputs = document.getElementById('hiddenCountryInputs'); // Контейнер для скрытых полей
+
+        transitInput.oninput = function() {
+            const query = this.value;
+
+            if (query.length > 1) {
+                // Отправка запроса на сервер для получения списка стран
+                fetch(`/incidents/searchCountries?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsList.innerHTML = '';  // Очистить предыдущие результаты
+
+                        data.forEach(country => {
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item';
+                            li.textContent = country.name;
+
+                            // Добавление страны в список выбранных
+                            li.onclick = function() {
+                                addSelectedCountry(country.name);
+                                suggestionsList.style.display = 'none'; // Скрыть предложения
+                                transitInput.value = ''; // Очистить поле ввода
+                            };
+
+                            suggestionsList.appendChild(li);
+                        });
+
+                        suggestionsList.style.display = 'block';  // Показать предложения
+                    });
+            } else {
+                suggestionsList.style.display = 'none';
+            }
+        };
+
+        function addSelectedCountry(countryName) {
+            // Проверка, что страна еще не добавлена
+            if (!document.querySelector(`#selectedCountries .country[data-name="${countryName}"]`)) {
+                const div = document.createElement('div');
+                div.className = 'country';
+                div.dataset.name = countryName;
+                div.textContent = countryName;
+
+                // Добавление кнопки для удаления
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'btn btn-danger btn-sm ml-2';
+                removeBtn.textContent = 'Удалить';
+                removeBtn.onclick = function() {
+                    div.remove(); // Удаление страны из списка
+                    document.querySelector(`input[name="transitCountries[]"][value="${countryName}"]`).remove(); // Удаление скрытого поля
+                };
+
+                div.appendChild(removeBtn);
+                selectedCountriesContainer.appendChild(div);
+
+                // Создание скрытого поля для отправки выбранной страны
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'transitCountries[]'; // Использование массива для передачи нескольких стран
+                hiddenInput.value = countryName;
+                hiddenCountryInputs.appendChild(hiddenInput);
+            }
+        }
+    </script>
+
+    <script th:if="${pageName == 'definitionForm'}">
+        document.addEventListener('DOMContentLoaded', function () {
+            function setupCountrySearch(selectId) {
+                const element = document.getElementById(selectId);
+                const choices = new Choices(element, {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Введите для поиска...',
+                    noResultsText: 'Не найдено',
+                    noChoicesText: 'Нет доступных вариантов',
+                    shouldSort: false
+                });
+
+                element.addEventListener('search', function (event) {
+                    const query = event.detail.value;
+                    if (!query || query.length < 1) return;
+
+                    fetch(`/incidents/search-countries?country=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            choices.clearChoices();
+                            choices.setChoices(data.map(country => ({
+                                value: country.id,
+                                label: country.name
+                            })), 'value', 'label', false);
+                        })
+                        .catch(error => console.error('Ошибка при поиске страны:', error));
+                });
+            }
+
+            setupCountrySearch('exportCountry');
+            setupCountrySearch('importCountry');
+            setupCountrySearch('suspectedOriginCountry');
+        });
+    </script>
+
+</div>

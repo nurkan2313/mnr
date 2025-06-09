@@ -1,112 +1,116 @@
-<!doctype html>
-<html lang="ru">
-{{> partials/head-incident }}
-<body>
-{{> partials/loading }}
-<div class="wrapper">
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12 col-lg-12">
-                    {{> partials/breadcrumbs}}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-                    {{#errors}}
-                    <div class="alert alert-danger">
-                        {{defaultMessage}}
-                    </div>
-                    {{/errors}}
+<section layout:fragment="content">
+    <div class="container-xxl py-5">
+        <div class="container">
 
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Форма объекта (Definition)</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Форма объекта</li>
+                </ol>
+            </nav>
+
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Форма объекта (Definition)</h4>
+                        <p class="card-title-desc">Заполните или отредактируйте данные объекта.</p>
+
+                        <form th:action="@{/definitions/save}" method="post">
+
+                            <input type="hidden" name="id" th:value="${id}"/>
+
+                            <div class="form-group">
+                                <label>Название</label>
+                                <input type="text" name="name" th:value="${name}" class="form-control" required>
                             </div>
-                        </div>
 
-                        <div class="card-body">
-                            <form action="/definitions/save" method="post">
-                                {{#id}}
-                                <input type="hidden" name="id" value="{{id}}">
-                                {{/id}}
+                            <div class="form-group">
+                                <label>Тип</label>
+                                <input type="text" name="type" th:value="${type}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Название</label>
-                                    <input type="text" name="name" value="{{name}}" class="form-control" required>
-                                </div>
+                            <div class="form-group">
+                                <label>Латинское название</label>
+                                <input type="text" name="latinName" th:value="${latinName}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Тип</label>
-                                    <input type="text" name="type" value="{{type}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Ареал</label>
+                                <input type="text" name="areal" th:value="${areal}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Латинское название</label>
-                                    <input type="text" name="latinName" value="{{latinName}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Заявка CITES</label>
+                                <input type="text" name="citesApplication" th:value="${citesApplication}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Ареал</label>
-                                    <input type="text" name="areal" value="{{areal}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Объект</label>
+                                <select name="object" class="form-control">
+                                    <option th:each="type : ${objectTypes}"
+                                            th:value="${type}"
+                                            th:text="${type}"
+                                            th:selected="${type == object}">
+                                    </option>
+                                </select>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Заявка CITES</label>
-                                    <input type="text" name="citesApplication" value="{{citesApplication}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Путь к изображению</label>
+                                <input type="text" name="imagePath" th:value="${imagePath}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Объект (object)</label>
-                                    <select name="object" class="form-control">
-                                        {{#objectTypes}}
-                                        <option value="{{.}}" {{#isSelectedObject}}{{.}}{{/isSelectedObject}}>{{.}}</option>
-                                        {{/objectTypes}}
-                                    </select>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="suspectedOriginCountry" class="form-label">Страна происхождения</label>
+                                <select required class="form-select" id="suspectedOriginCountry" name="suspectedOriginCountry">
+                                    <option value="">Начните ввод для поиска</option>
+                                </select>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Путь к изображению</label>
-                                    <input type="text" name="imagePath" value="{{imagePath}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Страна экспорта</label>
+                                <select required class="form-select" id="exportCountry" name="exportCountry">
+                                    <option value="">Начните ввод для поиска</option>
+                                </select>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Страна экспорта</label>
-                                    <input type="text" name="exportCountry" value="{{exportCountry}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Страна импорта</label>
+                                <select required class="form-select" id="importCountry" name="importCountry">
+                                    <option value="">Начните ввод для поиска</option>
+                                </select>
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Страна импорта</label>
-                                    <input type="text" name="importCountry" value="{{importCountry}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Транспорт</label>
+                                <input type="text" name="transport" th:value="${transport}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Транспорт</label>
-                                    <input type="text" name="transport" value="{{transport}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Торговля</label>
+                                <input type="text" name="trade" th:value="${trade}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Торговля</label>
-                                    <input type="text" name="trade" value="{{trade}}" class="form-control">
-                                </div>
+                            <div class="form-group">
+                                <label>Процесс проверки</label>
+                                <input type="text" name="checkProcess" th:value="${checkProcess}" class="form-control">
+                            </div>
 
-                                <div class="form-group">
-                                    <label>Процесс проверки</label>
-                                    <input type="text" name="checkProcess" value="{{checkProcess}}" class="form-control">
-                                </div>
-
+                            <div class="mt-4">
                                 <button type="submit" class="btn btn-primary">Сохранить</button>
-                                <a href="/definitions" class="btn btn-secondary">Отмена</a>
-                            </form>
+                                <a th:href="@{/definitions}" class="btn btn-secondary ml-2">Отмена</a>
+                            </div>
 
-                        </div>
+                        </form>
                     </div>
-
                 </div>
             </div>
+
         </div>
     </div>
-</div>
-{{> partials/footer }}
-</body>
-</html>
+</section>

@@ -1,188 +1,78 @@
-<!doctype html>
-<html lang="en">
-{{> partials/head }}
-<body class="  ">
-<!-- loader Start -->
-{{> partials/loading }}
-<!-- loader END -->
-<!-- Wrapper Start -->
-<div class="wrapper">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-    {{> partials/iq-sidebar }}
-    {{> partials/iq-top-navbar }}
-    <div class="content-page">
-        <div class="container-fluid">
+<section layout:fragment="content">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/permission/lists}">Все разрешения</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Деталь</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4">Информация о разрешении</h2>
+    <form th:action="@{/permission}" th:object="${permitForm}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Номер защитной марки</label>
+                <input type="text" th:field="*{protectionMarkNumber}" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Компания</label>
+                <input type="text" th:field="*{companyName}" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Объект</label>
+                <input type="text" th:field="*{object}" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Количество</label>
+                <input type="text" th:field="*{quantity}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Тип</label>
+                <input type="text" th:field="*{type}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Цель</label>
+                <input type="text" th:field="*{purpose}" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Примечания</label>
+                <textarea th:field="*{remarks}" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ограничитель</label>
+                <input type="number" th:field="*{limiter}" class="form-control"/>
+            </div>
+
             <div class="row">
-                <div class="col-sm-12 col-lg-12">
-
-                    {{> partials/breadcrumbs}}
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">Редактировать разрешение</h5>
-                        </div>
-                        <div class="card-body">
-                            <form action="/permission/update/{{permit.id}}" method="post">
-                                <div class="form-group">
-                                    <label for="issueDate">Дата выдачи</label>
-                                    <input type="datetime-local" class="form-control" name="issueDate" id="issueDate" value="{{#permit.issueDate}} {{permit.issueDate}} {{/permit.issueDate}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="expiryDate">Дата окончания</label>
-                                    <input type="datetime-local" class="form-control" name="expiryDate" id="expiryDate" value="{{#permit.expiryDate}}{{permit.expiryDate}}{{/permit.expiryDate}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="companyName">Наименование компании</label>
-                                    <input type="text" class="form-control" name="companyName" id="companyName" value="{{#permit.companyName}} {{permit.companyName}} {{/permit.companyName}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="object">Объект пользования</label>
-                                    <input type="text" class="form-control" name="object" id="object" value="{{#permit.object}} {{permit.object}} {{/permit.object}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="quantity">Количество</label>
-                                    <input type="number" class="form-control" name="quantity" id="quantity" value="{{#permit.quantity}} {{permit.quantity}} {{/permit.quantity}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="measure">Ед измерения</label>
-                                    <select class="form-control" name="measure" id="measure" required>
-                                        <option value="" disabled>Введите или выберите единицу измерения</option>
-                                       <option value="" selected> {{#measure}} {{measure}} {{/measure}}</option> <!-- Значение по умолчанию -->
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="limiter">Лимит</label>
-                                    <input type="number" class="form-control" name="quantity" id="limiter" value="{{#permit.limiter}}{{permit.limiter}}{{/permit.limiter}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="importerCountry">Страна импортера</label>
-                                    <input type="text" class="form-control" name="importerCountry" id="importerCountry" value="{{#permit.importerCountry}}{{permit.importerCountry}}{{/permit.importerCountry}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="exporterCountry">Страна экспортера</label>
-                                    <input type="text" class="form-control" name="exporterCountry" id="exporterCountry" value="{{#permit.exporterCountry}}{{permit.exporterCountry}}{{/permit.exporterCountry}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="purpose">Цель</label>
-                                    <input type="text" class="form-control" name="purpose" id="purpose" value="{{#permit.purpose}}{{permit.purpose}}{{/permit.purpose}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="remarks">Примечания</label>
-                                    <textarea class="form-control" name="remarks" id="remarks">{{#permit.remarks}}{{permit.remarks}}{{/permit.remarks}}</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="protectionMarkNumber">Номер защитной марки</label>
-                                    <input type="text" class="form-control" name="protectionMarkNumber" id="protectionMarkNumber" value="{{#permit.protectionMarkNumber}} {{permit.protectionMarkNumber}} {{/permit.protectionMarkNumber}}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="status">Статус</label>
-                                    <select class="form-control" name="status" id="status">
-                                        <option value="USED" {{#stat}} selected {{/stat}}>Использовано</option>
-                                        <option value="UNUSED" {{#stat}} selected {{/stat}} >Не использовано</option>
-                                    </select>
-                                </div>
-                                <!-- Отображение изображения -->
-                                <div class="form-group">
-                                    {{#imagePath}}
-                                    <img src="{{#imagePath}}{{imagePath}}{{/imagePath}}" alt="Изображение" style="max-width: 100%; height: auto;">
-                                    {{/imagePath}}
-                                </div>
-                                <div class="form-group">
-                                    <a href="/download/{{#permit.pdfFileName}}{{permit.pdfFileName}}{{/permit.pdfFileName}}" class="mt-2 badge badge-primary" download>скачать PDF</a>
-                                </div>
-                                <button type="submit" class="btn btn-success">Сохранить изменения</button>
-                            </form>
-                        </div>
-                    </div>
-
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Страна импортера</label>
+                    <input type="text" th:field="*{importerCountry}" class="form-control"/>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Страна экспортера</label>
+                    <input type="text" th:field="*{exporterCountry}" class="form-control"/>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const measureSelect = document.getElementById('measure');
-        let lastSearchQuery = '';  // Переменная для хранения последнего введенного запроса
+            <div class="mb-3">
+                <label class="form-label">PDF файл разрешения</label>
+                <input type="file" name="pdfFile" accept="application/pdf" class="form-control"/>
+            </div>
 
-        const measureChoices = new Choices(measureSelect, {
-            searchEnabled: true,
-            searchPlaceholderValue: 'Введите для поиска...',
-            noResultsText: 'Не найдено. Нажмите "Создать новую единицу измерения".',
-            noChoicesText: 'Нет доступных вариантов'
-        });
-
-        // Устанавливаем значение по умолчанию, если оно есть
-        const defaultMeasure = measureSelect.value;
-        if (defaultMeasure) {
-            measureChoices.setChoiceByValue(defaultMeasure);
-        }
-
-        // Обработчик события поиска
-        measureSelect.addEventListener('search', function(event) {
-            const query = event.detail.value;
-            lastSearchQuery = query;  // Сохраняем последний поисковый запрос
-
-            if (!query || query.length < 1) return;
-
-            fetch(`/dictionary/units/search?unit=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    measureChoices.clearChoices();
-
-                    if (data.length === 0) {
-                        // Добавляем опцию для создания новой единицы
-                        measureChoices.setChoices([{
-                            value: 'create-new',
-                            label: `Создать новую единицу измерения "${query}"`,
-                            customProperties: { createNew: true }
-                        }], 'value', 'label', false);
-                    } else {
-                        // Заполняем результаты поиска
-                        data.forEach(unit => {
-                            measureChoices.setChoices([{
-                                value: unit.unit,
-                                label: unit.unit,
-                                selected: unit.unit === defaultMeasure,
-                                disabled: false
-                            }], 'value', 'label', false);
-                        });
-                    }
-                })
-                .catch(error => console.error('Ошибка:', error));
-        });
-
-        // Обработчик выбора
-        measureSelect.addEventListener('change', function(event) {
-            if (event.target.value === 'create-new') {
-                const unitName = lastSearchQuery;  // Используем последний введенный поисковый запрос
-
-                if (!unitName) {
-                    console.error('Описание единицы измерения отсутствует.');
-                    return;
-                }
-
-                // Создаем новую единицу измерения на сервере
-                fetch('/dictionary/units/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ unit: unitName })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert('Новая единица измерения создана: ' + data.unit);
-                        measureChoices.setChoiceByValue(data.unit); // Устанавливаем новую единицу измерения
-                    })
-                    .catch(error => console.error('Ошибка создания единицы измерения:', error));
-            }
-        });
-    });
-
-</script>
-<!-- Wrapper End-->
-{{> partials/footer }}
-</body>
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <a th:href="@{/permission/list}" class="btn btn-secondary ms-2">Отмена</a>
+        </form>
+</section>
 </html>
