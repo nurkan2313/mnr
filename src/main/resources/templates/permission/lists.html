@@ -9,13 +9,12 @@
 
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дешборд</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/dashboard}">Дэшборд</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Разрешения</li>
             </ol>
         </nav>
 
-        <h2 class="mb-3">Разрешения CITES. Эта вкладка включает выданные разрешения СИТЕС
-            за период с 2020 года по сегодняшний день</h2>
+        <h2 class="mb-3">Разрешения CITES, выданные за период с 2020 г. по сегодняшний день</h2>
 
         <form class="row mb-4" method="get" th:action="@{/permission/list}">
             <div class="col-md-3">

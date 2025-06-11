@@ -24,7 +24,7 @@ public class DefinitionController {
     @GetMapping
     public String list(Model model) {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/definitions", "определитиль СITES"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
@@ -37,7 +37,7 @@ public class DefinitionController {
     @GetMapping("/create")
     public String createForm(Model model) {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/definitions", "определитиль СITES"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
@@ -92,7 +92,7 @@ public class DefinitionController {
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable UUID id, Model model) {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/definitions", "определитиль СITES"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);

@@ -85,7 +85,7 @@ public class DictionaryController {
 
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/dictionary/products", "объекты"));
 
         // Определяем начальную и конечную страницы для отображения
@@ -135,7 +135,7 @@ public class DictionaryController {
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
 
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/dictionary/products", "объекты"));
         breadcrumbs.add(new Breadcrumb("/dictionary/products/form", "создать"));
 
@@ -151,7 +151,7 @@ public class DictionaryController {
     public ModelAndView viewProduct(@PathVariable UUID id, Model model) {
         // Хлебные крошки
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/dictionary/products", "объекты"));
         breadcrumbs.add(new Breadcrumb("/dictionary/products/" + id, "детали"));
 

@@ -72,7 +72,7 @@ public class PermitController {
 
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("pageName", "permitForm");
@@ -100,7 +100,7 @@ public class PermitController {
     @GetMapping("/permission/report")
     public String report(Model model) {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         model.addAttribute("pageName", "permitReport");
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "отчеты");
@@ -111,7 +111,7 @@ public class PermitController {
     @GetMapping("/permission/report/export-data")
     public String exportВata(Model model) {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         model.addAttribute("pageName", "permitReportExportData");
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("currentPage", "статистика");
@@ -136,7 +136,7 @@ public class PermitController {
 
         // Добавление хлебных крошек
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         model.addAttribute("breadcrumbs", breadcrumbs);
@@ -154,7 +154,10 @@ public class PermitController {
                     endDate,
                     type);
 
-            filteredPermits.forEach(permit -> permit.setStatusDescription(permit.getStatus().getDescription()));
+            filteredPermits.forEach(permit -> {
+                String description = permit.getStatus() != null ? permit.getStatus().getDescription() : "";
+                permit.setStatusDescription(description);
+            });
 
             model.addAttribute("permits", filteredPermits);
             return "permission/lists"; // Возвращаем список отфильтрованных данных
@@ -180,10 +183,7 @@ public class PermitController {
             int firstPage = 1;
             int stepBack10 = Math.max(0, page - 10); // Шаг назад на 10 страниц
             int stepForward10 = Math.min(lastPage, page + 10); // Шаг вперед на 10 страниц
-            int endPage = Math.min(totalPages, startPage + 9); // Конечная страница (максимум 3)
-//            List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
-//                    .boxed()
-//                    .collect(Collectors.toList());
+
             List<BorderCheckpoint> checkpoints = borderCheckpointRepository.findAll();
 
             model.addAttribute("checkpoints", checkpoints);
@@ -216,7 +216,7 @@ public class PermitController {
         CitesPermit permitById = permitOptional.get();
 
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дешборд"));
+        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
         breadcrumbs.add(new Breadcrumb("/permission/list", "разрешения"));
 
         if (DocStatus.USED.equals(permitById.getStatus())) {
