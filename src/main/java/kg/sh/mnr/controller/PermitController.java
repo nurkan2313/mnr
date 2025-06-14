@@ -9,6 +9,7 @@ import kg.sh.mnr.model.CitesPermitUpdateDTO;
 import kg.sh.mnr.model.enums.DocStatus;
 import kg.sh.mnr.model.requests.CitesPermitFormRequest;
 import kg.sh.mnr.repository.BorderCheckpointRepository;
+import kg.sh.mnr.repository.CitesPermitRepository;
 import kg.sh.mnr.repository.CountryRepository;
 import kg.sh.mnr.repository.ProductRepository;
 import kg.sh.mnr.service.CitesPermitService;
@@ -24,6 +25,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +61,7 @@ public class PermitController {
     private final CountryRepository countryRepository;
     private final DefinitionService definitionService;
     private final BorderCheckpointRepository borderCheckpointRepository;
+    private final CitesPermitRepository citesPermitRepository;
 
     @GetMapping("permission")
     public ModelAndView permissionAndFilter(@RequestParam(required = false) String permitNumber,
@@ -128,6 +131,8 @@ public class PermitController {
                               @RequestParam(required = false) String object,
                               @RequestParam(required = false) String quantity,
                               @RequestParam(required = false) String type,
+                              @RequestParam(required = false) String purpose,
+                              @RequestParam(required = false) String source,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                               @RequestParam(defaultValue = "1") int page,
@@ -145,13 +150,15 @@ public class PermitController {
         model.addAttribute("currentPage", "форма для создания разрешения");
         // Если присутствуют параметры фильтрации, выполняем фильтрацию
         if (permitNumber != null || protectionNumber != null || companyName != null || object != null
-                || quantity != null || startDate != null || endDate != null || type != null) {
+                || quantity != null || startDate != null || endDate != null || type != null || purpose != null) {
             List<CitesPermit> filteredPermits = citesPermitService.filterPermits(
                     permitNumber,
                     protectionNumber,
                     companyName,
                     object,
                     quantity,
+                    purpose,
+                    source,
                     startDate,
                     endDate,
                     type);
@@ -276,6 +283,7 @@ public class PermitController {
         citesPermit.setImporterCountry(dto.getImporterCountry());
         citesPermit.setExporterCountry(dto.getExporterCountry());
         citesPermit.setCompanyName(dto.getCompanyName());
+        citesPermit.setPurpose(dto.getPurpose());
 
         if (dto.getQuantity() != null) {
             citesPermit.setQuantity(String.valueOf(dto.getQuantity()));
@@ -343,13 +351,12 @@ public class PermitController {
         try {
             List<CitesPermit> permits = excelUploadService.parseExcelFile(file);
 
-            // Удаляем пустые/некорректные записи
             List<CitesPermit> validPermits = permits.stream()
                     .filter(this::isValidPermit)
                     .toList();
 
             if (!validPermits.isEmpty()) {
-                citesPermitService.saveAll(validPermits);
+                citesPermitService.saveInBatches(validPermits, 100);
                 redirectAttributes.addFlashAttribute("message", "Файл успешно загружен и данные сохранены!");
             } else {
                 redirectAttributes.addFlashAttribute("message", "Не найдено валидных записей в файле.");

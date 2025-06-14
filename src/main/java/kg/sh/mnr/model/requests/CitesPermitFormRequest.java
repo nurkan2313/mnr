@@ -27,7 +27,7 @@ public class CitesPermitFormRequest {
     private UUID importId;
     private UUID exportId;
     private String type;
-
+    private String source;
     private Double quantity;
 
     private Double limiter;

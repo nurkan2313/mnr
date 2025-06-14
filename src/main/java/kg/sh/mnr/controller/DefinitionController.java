@@ -3,6 +3,7 @@ package kg.sh.mnr.controller;
 import kg.sh.mnr.entity.dict.Definition;
 import kg.sh.mnr.model.Breadcrumb;
 import kg.sh.mnr.model.enums.ObjectType;
+import kg.sh.mnr.repository.CitesPermitRepository;
 import kg.sh.mnr.service.DefinitionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,15 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/definitions")
 public class DefinitionController {
 
     private final DefinitionService service;
+    private final CitesPermitRepository citesPermitRepository;
 
-    public DefinitionController(DefinitionService service) {
+    public DefinitionController(DefinitionService service, CitesPermitRepository citesPermitRepository) {
         this.service = service;
+        this.citesPermitRepository = citesPermitRepository;
     }
 
     @GetMapping
@@ -136,12 +140,24 @@ public class DefinitionController {
     @GetMapping("/search")
     @ResponseBody
     public List<Map<String, String>> searchObjects(@RequestParam("query") String query) {
-        return service.getAll().stream()
-                .filter(def -> def.getName() != null && def.getName().toLowerCase().contains(query.toLowerCase()))
-                .map(def -> Map.of(
-                        "id", def.getId().toString(),
-                        "name", def.getName()
-                ))
+        String q = query.toLowerCase();
+
+        // 1. Получаем из основной справочной таблицы
+        List<String> fromDict = service.getAll().stream()
+                .map(Definition::getName)
+                .filter(Objects::nonNull)
+                .filter(name -> name.toLowerCase().contains(q))
+                .toList();
+
+        // 2. Получаем уникальные объекты из разрешений, если не нашли ничего или мало
+        List<String> fromPermits = citesPermitRepository.findDistinctObjectContaining(q);
+
+        // 3. Объединяем + убираем дубликаты
+        return Stream.concat(fromDict.stream(), fromPermits.stream())
+                .distinct()
+                .limit(20)
+                .map(name -> Map.of("id", name, "name", name))
                 .toList();
     }
+
 }

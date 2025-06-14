@@ -16,29 +16,74 @@
 
         <h2 class="mb-3">Разрешения CITES, выданные за период с 2020 г. по сегодняшний день</h2>
 
-        <form class="row mb-4" method="get" th:action="@{/permission/list}">
+        <form class="row g-2 mb-4 align-items-end" method="get" th:action="@{/permission/list}">
             <div class="col-md-3">
                 <input type="text" name="permitNumber" class="form-control" placeholder="Номер разрешения" th:value="${param.permitNumber}">
             </div>
+
+            <div class="col-md-3">
+                <select id="type" name="type" class="form-select">
+                    <option value="" th:selected="${param.type == null or param.type == ''}">Выберите тип</option>
+                    <option value="CITES" th:selected="${param.type == 'CITES'}">CITES</option>
+                    <option value="Флора" th:selected="${param.type == 'Флора'}">Флора</option>
+                    <option value="Фауна" th:selected="${param.type == 'Фауна'}">Фауна</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select id="source" name="source" class="form-select">
+                    <option value="" th:selected="${param.source == null or param.source == ''}">Выберите источник</option>
+                    <option value="дик" th:selected="${param.source == 'дикая'}">W — Дикая природа (экземпляр изъят из природы)</option>
+                    <option value="вылов" th:selected="${param.source == 'вылов'}">R — Выловленные в дикой природе, но выращенные в контролируемых условиях (например, рыба или растения)</option>
+                    <option value="выведен" th:selected="${param.source == 'выведен'}">D — Животные, выведенные в неволе в соответствии с положениями Резолюции CITES Conf. 10.16 (Rev.)</option>
+                    <option value="контрол" th:selected="${param.source == 'контрол'}">C — Животные, выведенные в неволе, не полностью соответствующие критериям кода D</option>
+                    <option value="выращен" th:selected="${param.source == 'выращен'}">F — Животные, выращенные в контролируемых условиях (в неволе, но не полностью в соответствии с CITES)</option>
+                    <option value="растен" th:selected="${param.source == 'растен'}">A — Искусственно размноженные растения</option>
+                    <option value="питомник" th:selected="${param.source == 'питомник'}">Y — Растения из питомников</option>
+                    <option value="гибрид" th:selected="${param.source == 'гибрид'}">X — Гибридные экземпляры</option>
+                    <option value="неизвестен" th:selected="${param.source == 'неизвестен'}">U — Источник неизвестен</option>
+                    <option value="конфиск" th:selected="${param.source == 'конфиск'}">I — Конфискованные или изъятые государственными органами</option>
+                    <option value="до вступления" th:selected="${param.source == 'до вступления'}">O — Экземпляры, полученные до вступления CITES в силу для соответствующей страны (т. е. до того как начали действовать ограничения)</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select id="purpose" name="purpose" class="form-select">
+                    <option value="" th:selected="${param.purpose == null or param.purpose == ''}">Выберите цель</option>
+                    <option value="коммер">T — Коммерческая (торговля)</option>
+                    <option value="зоо">Z — Зоопарк</option>
+                    <option value="ботан">G — Ботанический сад</option>
+                    <option value="цирк">Q — Цирк или гастролирующая выставка</option>
+                    <option value="научн">S — Научная</option>
+                    <option value="троф">H — Охотничьи трофеи</option>
+                    <option value="личн">P — Личное пользование</option>
+                    <option value="медицин">M — Медицинская (включая биомедицинские исследования)</option>
+                    <option value="образ">E — Образовательная</option>
+                    <option value="реинт">N — Реинтродукция или интродукция в дикую природу</option>
+                    <option value="развед">B — Разведение в неволе или искусственное размножение</option>
+                    <option value="судебн">L — Правоохранительная / судебная / криминалистическая</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="quantity" class="form-label">Количество / Ед. изм.</label>
+                <input type="text" id="quantity" name="quantity" class="form-control"
+                       placeholder="например: кг, тонн, 20" th:value="${param.quantity}">
+            </div>
+
             <div class="col-md-3">
                 <input type="text" name="companyName" class="form-control" placeholder="Организация" th:value="${param.companyName}">
             </div>
-            <div class="col-md-3">
-                <input type="text" name="object" class="form-control" placeholder="Объект" th:value="${param.object}">
-            </div>
 
             <div class="col-md-3">
                 <input type="text" name="object" class="form-control" placeholder="Объект" th:value="${param.object}">
             </div>
-            <div class="col-md-3">
-                <input type="text" name="object" class="form-control" placeholder="Объект" th:value="${param.object}">
-            </div>
-
 
             <div class="col-md-3">
                 <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
             </div>
         </form>
+
 
         <div class="card">
             <div class="card-body">

@@ -1,5 +1,6 @@
 package kg.sh.mnr.service;
 
+import com.github.pjfanning.xlsx.StreamingReader;
 import kg.sh.mnr.entity.CitesPermit;
 import kg.sh.mnr.entity.dict.Country;
 import kg.sh.mnr.entity.dict.Product;
@@ -14,12 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
 public class ExcelUploadService {
 
@@ -29,18 +27,39 @@ public class ExcelUploadService {
     private final ProductRepository productRepository;
     private final CountryRepository countryRepository;
 
+    private Map<String, UUID> countryCache = new HashMap<>();
+
+    public ExcelUploadService(ProductRepository productRepository, CountryRepository countryRepository) {
+        this.productRepository = productRepository;
+        this.countryRepository = countryRepository;
+    }
+
     public List<CitesPermit> parseExcelFile(MultipartFile file) throws IOException {
         List<CitesPermit> permits = new ArrayList<>();
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
 
+        // 1. Собираем все уникальные страны из Excel
+        Set<String> countryNames = new HashSet<>();
+
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
-
             for (Row row : sheet) {
-                if (row.getRowNum() < 3) continue;
+                if (row.getRowNum() < 3 || isRowEmpty(row)) continue;
+                String importer = parseStringCell(row.getCell(6));
+                String exporter = parseStringCell(row.getCell(7));
+                if (importer != null) countryNames.add(importer.trim());
+                if (exporter != null) countryNames.add(exporter.trim());
+            }
+        }
 
-                // Проверка: если строка полностью пустая — пропускаем
-                if (isRowEmpty(row)) continue;
+        // 2. Загружаем или создаём страны (кэш)
+        Map<String, UUID> countryMap = preloadOrInsertCountries(countryNames);
+
+        // 3. Снова проходимся по строкам — уже с кэшем
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            for (Row row : sheet) {
+                if (row.getRowNum() < 3 || isRowEmpty(row)) continue;
 
                 CitesPermit permit = new CitesPermit();
 
@@ -53,18 +72,16 @@ public class ExcelUploadService {
                 String importerCountryName = parseStringCell(row.getCell(6));
                 String exporterCountryName = parseStringCell(row.getCell(7));
 
-                UUID importerCountryId = checkAndCreateCountry(importerCountryName);
-                UUID exporterCountryId = checkAndCreateCountry(exporterCountryName);
-
                 permit.setImporterCountry(importerCountryName);
                 permit.setExporterCountry(exporterCountryName);
 
-                permit.setExportId(exporterCountryId);
-                permit.setImportId(importerCountryId);
+                permit.setImportId(getCountryIdSafe(importerCountryName, countryMap));
+                permit.setExportId(getCountryIdSafe(exporterCountryName, countryMap));
 
                 permit.setPurpose(parseStringCell(row.getCell(8)));
-                permit.setRemarks(parseStringCell(row.getCell(9)));
-                permit.setProtectionMarkNumber(parseStringCell(row.getCell(10)));
+                permit.setSource(parseStringCell(row.getCell(9)));
+                permit.setRemarks(parseStringCell(row.getCell(10)));
+                permit.setProtectionMarkNumber(parseStringCell(row.getCell(11)));
                 permit.setStatus(DocStatus.USED);
 
                 permits.add(permit);
@@ -73,6 +90,53 @@ public class ExcelUploadService {
 
         workbook.close();
         return permits;
+    }
+
+    private UUID getCountryIdSafe(String name, Map<String, UUID> map) {
+        if (name == null) return null;
+        String key = name.trim().toLowerCase();
+        return map.getOrDefault(key, null);
+    }
+
+    private Map<String, UUID> preloadOrInsertCountries(Set<String> countryNames) {
+        Map<String, UUID> result = new HashMap<>();
+
+        // Приводим имена к нижнему регистру для поиска
+        Set<String> normalized = countryNames.stream()
+                .filter(Objects::nonNull)
+                .map(s -> s.trim().toLowerCase())
+                .collect(Collectors.toSet());
+
+        // Загружаем уже существующие
+        List<Country> existing = countryRepository.findByNameInIgnoreCase(normalized);
+        for (Country c : existing) {
+            result.put(c.getName().trim().toLowerCase(), c.getId());
+        }
+
+        // Определяем, какие нужно создать
+        List<Country> toInsert = new ArrayList<>();
+        for (String original : countryNames) {
+            if (original == null) continue;
+            String key = original.trim().toLowerCase();
+            if (!result.containsKey(key)) {
+                UUID id = UUID.randomUUID();
+                Country newCountry = new Country();
+                newCountry.setId(id);
+                newCountry.setName(original.trim());
+                newCountry.setRegion(null);      // можно задать значение по умолчанию
+                newCountry.setShortName(null);   // или оставить пустым
+                newCountry.setCode(null);
+
+                toInsert.add(newCountry);
+                result.put(key, id);
+            }
+        }
+
+        if (!toInsert.isEmpty()) {
+            countryRepository.saveAll(toInsert);
+        }
+
+        return result;
     }
 
     private boolean isRowEmpty(Row row) {
@@ -164,6 +228,12 @@ public class ExcelUploadService {
         return null;
     }
 
+    private void preloadCountries() {
+        countryCache = new HashMap<>();
+        for (Country c : countryRepository.findAll()) {
+            countryCache.put(c.getName().toLowerCase(), c.getId());
+        }
+    }
 
     private UUID checkAndCreateProduct(Cell cell) {
         if (cell == null) return null;
@@ -194,21 +264,22 @@ public class ExcelUploadService {
             return null;
         }
 
-        // Проверка существования страны по названию
-        Optional<Country> existingCountry = countryRepository.findByName(countryName);
+        String key = countryName.trim().toLowerCase();
 
-        if (existingCountry.isPresent()) {
-            // Если страна уже существует, возвращаем её ID
-            return existingCountry.get().getId();
-        } else {
-            // Если страны нет, создаем новую с новым UUID
-            UUID id = UUID.randomUUID();
-            Country newCountry = new Country();
-            newCountry.setId(id);
-            newCountry.setName(countryName); // Установите другие свойства при необходимости
-
-            countryRepository.save(newCountry); // Сохраняем новую страну
-            return id; // Возвращаем ID новой страны
+        // Сначала ищем в кэше
+        if (countryCache.containsKey(key)) {
+            return countryCache.get(key);
         }
+
+        // Если нет — создаём и добавляем в кэш
+        UUID id = UUID.randomUUID();
+        Country newCountry = new Country();
+        newCountry.setId(id);
+        newCountry.setName(countryName);
+        countryRepository.save(newCountry);
+
+        countryCache.put(key, id); // добавить в кэш
+        return id;
     }
+
 }

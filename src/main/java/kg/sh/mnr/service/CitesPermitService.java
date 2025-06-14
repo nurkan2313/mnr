@@ -40,6 +40,8 @@ public class CitesPermitService {
             String companyName,
             String object,
             String quantity,
+            String purpose,
+            String source,
             LocalDate startDate,
             LocalDate endDate,
             String type) {
@@ -50,6 +52,8 @@ public class CitesPermitService {
                 companyName,
                 object,
                 quantity,
+                purpose,
+                source,
                 startDate,
                 endDate,
                 type);
@@ -127,6 +131,16 @@ public class CitesPermitService {
             permit.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         }
         citesPermitRepository.save(permit);
+    }
+
+    @Transactional
+    public void saveInBatches(List<CitesPermit> permits, int batchSize) {
+        for (int i = 0; i < permits.size(); i += batchSize) {
+            int end = Math.min(i + batchSize, permits.size());
+            List<CitesPermit> batch = permits.subList(i, end);
+            citesPermitRepository.saveAll(batch);
+            citesPermitRepository.flush();
+        }
     }
 
     public PermitViewDto mapToDto(CitesPermit permit) {

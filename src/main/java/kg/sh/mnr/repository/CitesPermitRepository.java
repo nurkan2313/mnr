@@ -18,6 +18,9 @@ public interface CitesPermitRepository extends JpaRepository<CitesPermit, String
     @Query("select count(c.importerCountry) from CitesPermit c ")
     Long countByImporter();
 
+    @Query("SELECT DISTINCT c.object FROM CitesPermit c WHERE LOWER(c.object) LIKE %:query%")
+    List<String> findDistinctObjectContaining(@Param("query") String query);
+
     @Query(value = "SELECT object AS species, COUNT(*) AS totalCount FROM cites_permit GROUP BY object ORDER BY totalCount DESC",
             countQuery = "SELECT COUNT(DISTINCT object) FROM cites_permit ",
             nativeQuery = true)

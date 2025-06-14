@@ -23,6 +23,8 @@ public class CitesPermitRepositoryImpl {
             String companyName,
             String object,
             String quantity,
+            String purpose,
+            String source,
             LocalDate startDate, LocalDate endDate,
             String type) {
 
@@ -45,13 +47,19 @@ public class CitesPermitRepositoryImpl {
             predicates.add(cb.like(cb.lower(permit.get("object")), "%" + object.toLowerCase() + "%"));
         }
         if (quantity != null && !quantity.isEmpty()) {
-            predicates.add(cb.equal(permit.get("quantity"), quantity));
+            predicates.add(cb.like(cb.lower(permit.get("quantity")), "%" + quantity.toLowerCase() + "%"));
         }
         if (startDate != null && endDate != null) {
             predicates.add(cb.between(permit.get("issueDate"), startDate, endDate));
         }
         if (type != null && !type.isEmpty()) {
             predicates.add(cb.equal(cb.lower(permit.get("type")), type.toLowerCase()));
+        }
+        if (purpose != null && !purpose.isEmpty()) {
+            predicates.add(cb.like(cb.lower(permit.get("purpose")), "%" + purpose.toLowerCase() + "%"));
+        }
+        if (source != null && !source.isEmpty()) {
+            predicates.add(cb.like(cb.lower(permit.get("source")), "%" + source.toLowerCase() + "%"));
         }
 
         query.select(permit).where(cb.and(predicates.toArray(new Predicate[0])));

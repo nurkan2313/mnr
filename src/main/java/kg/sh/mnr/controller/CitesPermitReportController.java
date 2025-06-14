@@ -17,13 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -133,7 +131,7 @@ public class CitesPermitReportController {
 
         // Base SQL query
         StringBuilder sqlBuilder = new StringBuilder(
-                "SELECT p.exporter_country AS country, p.object AS object, EXTRACT(MONTH FROM p.issue_date) AS month, SUM(CAST(p.quantity AS NUMERIC)) AS total_quantity " +
+                "SELECT p.exporter_country AS country, p.object AS object, EXTRACT(MONTH FROM p.issue_date) AS month, p.quantity " +
                         "FROM cites_permit p WHERE 1=1 "
         );
 
@@ -211,8 +209,10 @@ public class CitesPermitReportController {
         }
 
         // Grouping and sorting
-        sqlBuilder.append("GROUP BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date) ");
-        sqlBuilder.append("ORDER BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date)");
+        // Группировка будет в Java, а не в SQL — так что GROUP BY НЕ НУЖЕН!
+
+        sqlBuilder.append("ORDER BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date) ");
+//        sqlBuilder.append("GROUP BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date) ");
 
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
 
@@ -241,25 +241,59 @@ public class CitesPermitReportController {
             query.setParameter("companyName", "%" + companyName.toLowerCase() + "%");
         }
 
-        // Execute query
         List<Object[]> results = query.getResultList();
 
-        // Transform results for response
-        List<Map<String, Object>> response = results.stream().map(row -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("country", row[0]); // Exporter country
-            map.put("object", row[1]); // Exported object
-            if (row[2] != null) {
-                int monthIndex = ((Number) row[2]).intValue() - 1;
-                map.put("month", monthNames[Math.max(0, Math.min(monthIndex, 11))]); // защита от выхода за пределы
-            } else {
-                map.put("month", "Без даты");
+        // Группировка: страна → объект → месяц → сумма
+        Map<String, Map<String, Map<Integer, BigDecimal>>> grouped = new HashMap<>();
+
+        for (Object[] row : results) {
+            String country = Objects.toString(row[0], "");
+            String objectName = Objects.toString(row[1], "");
+            Integer month = row[2] != null ? ((Number) row[2]).intValue() : null;
+            String quantityRaw = Objects.toString(row[3], "");
+
+            BigDecimal quantityValue = extractNumericValue(quantityRaw);
+
+            grouped
+                .computeIfAbsent(country, k -> new HashMap<>())
+                .computeIfAbsent(objectName, k -> new HashMap<>())
+                .merge(month, quantityValue, BigDecimal::add);
+        }
+
+        // Формируем список для ответа
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (var countryEntry : grouped.entrySet()) {
+            String country = countryEntry.getKey();
+            for (var objectEntry : countryEntry.getValue().entrySet()) {
+                String objectName = objectEntry.getKey();
+                for (var monthEntry : objectEntry.getValue().entrySet()) {
+                    Integer month = monthEntry.getKey();
+                    BigDecimal total = monthEntry.getValue();
+
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("country", country);
+                    row.put("object", objectName);
+                    row.put("month", (month != null ? monthNames[month - 1] : "Без даты"));
+                    row.put("total_quantity", total);
+                    response.add(row);
+                }
             }
-            map.put("total_quantity", row[3]); // Total quantity
-            return map;
-        }).collect(Collectors.toList());
+        }
 
         return ResponseEntity.ok(response);
+    }
+
+    private BigDecimal extractNumericValue(String raw) {
+        if (raw == null || raw.isBlank()) return BigDecimal.ZERO;
+
+        // Удаляем всё, кроме цифр, точек, запятых
+        String cleaned = raw.replaceAll("[^\\d.,]", "").replace(",", ".");
+
+        try {
+            return new BigDecimal(cleaned.trim());
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO;
+        }
     }
 
 }

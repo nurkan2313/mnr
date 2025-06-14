@@ -466,33 +466,67 @@
     </script>
 
     <script th:if="${pageName == 'permitReportExportData'}">
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('report-form');
 
-            // Обработчик формы
-            form.addEventListener('submit', (event) => {
-                event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function () {
+            const objectElement = document.getElementById('object');
 
-                // Получение значений из формы
-                const params = {
-                    region: document.getElementById('region').value,
-                    importerCountry: document.getElementById('importerCountry').value,
-                    exporterCountry: document.getElementById('exporterCountry').value,
-                    object: document.getElementById('object').value,
-                    startDate: document.getElementById('startDate').value,
-                    endDate: document.getElementById('endDate').value,
-                    exporter: document.getElementById('exporter').value,
-                };
+            const choices = new Choices(objectElement, {
+                searchEnabled: true,
+                placeholder: true,
+                searchPlaceholderValue: 'Введите для поиска...',
+                noResultsText: 'Не найдено',
+                noChoicesText: 'Нет доступных вариантов',
+                shouldSort: false,
+                itemSelectText: ''
+            });
 
-                console.log(params)
+            let searchTimeout = null;
 
-                // Построение URL для API с параметрами
-                const queryString = new URLSearchParams(params).toString();
-                const apiUrl = `/api/reports/cites-permit/export-data?${queryString}`;
+            objectElement.addEventListener('search', function (event) {
+                    const query = event.detail.value;
+                    if (!query || query.length < 2) return;
 
-                // Очистка предыдущего графика
-                const chartContainer = document.querySelector("#apex-column");
-                chartContainer.innerHTML = '';
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                    fetch(`/definitions/search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                    choices.clearChoices();
+                    choices.setChoices(data.map(obj => ({
+                    value: obj.name,  // значение, которое подставится в form
+                    label: obj.name
+                })), 'value', 'label', false);
+                })
+                    .catch(error => console.error('Ошибка при поиске объекта:', error));
+                }, 300); // debounce
+            });
+        });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('report-form');
+
+    // Обработчик формы
+    form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    // Получение значений из формы
+    const params = {
+        region: document.getElementById('region').value,
+        importerCountry: document.getElementById('importerCountry').value,
+        exporterCountry: document.getElementById('exporterCountry').value,
+        object: document.getElementById('object').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        exporter: document.getElementById('exporter').value,
+    };
+
+    // Построение URL для API с параметрами
+    const queryString = new URLSearchParams(params).toString();
+    const apiUrl = `/api/reports/cites-permit/export-data?${queryString}`;
+
+    // Очистка предыдущего графика
+    const chartContainer = document.querySelector("#apex-column");
+    chartContainer.innerHTML = '';
 
                 // Загрузка данных и построение графика
                 fetch(apiUrl)

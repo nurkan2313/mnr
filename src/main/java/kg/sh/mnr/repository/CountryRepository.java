@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -19,6 +20,9 @@ public interface CountryRepository extends JpaRepository<Country, UUID> {
             where u.name like %:name% or u.shortName like %:name% or u.code like %:name%
             """)
     Page<Country> searchBy(String name, Pageable pageable);
+
+    @Query("SELECT c FROM Country c WHERE LOWER(TRIM(c.name)) IN :names")
+    List<Country> findByNameInIgnoreCase(@Param("names") Set<String> names);
 
     @Query(value = "SELECT * FROM country WHERE LOWER(name) LIKE LOWER(CONCAT('%', :country, '%')) LIMIT 10", nativeQuery = true)
     List<Country> getSimilarCountries(@Param("country") String country);

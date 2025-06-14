@@ -42,6 +42,7 @@ public class CitesPermit {
     @Column(name = "exporter_country")
     private String exporterCountry;
     private String purpose;
+    private String source;
     private String remarks;
     @Column(name = "protection_mark_number")
     private String protectionMarkNumber;
