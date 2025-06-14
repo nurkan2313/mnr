@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="pageTopbar">
-    <header id="page-topbar" style="background-color: #223b03!important;">
-        <div class="navbar-header">
+    <header id="page-topbar" style="background-color: #325408!important;">
+        <div class="navbar-header" style="height: 100px;">
             <div class="d-flex">
                 <!-- LOGO -->
                 <div class="navbar-brand-box">
                     <a href="/" class="logo logo-dark">
                         <span class="logo-sm">
-                            <img th:src="@{/assets/images/logomin.png}" alt="logo-sm" height="64">
+                            <img th:src="@{/assets/images/logomin.png}" alt="logo-sm" height="94">
                         </span>
                         <span class="logo-lg">
-                            <img th:src="@{/assets/images/logomin.png}" alt="logo-dark" height="64">
+                            <img th:src="@{/assets/images/logomin.png}" alt="logo-dark" height="94">
                         </span>
                     </a>
 
                     <a href="/" class="logo logo-light">
                         <span class="logo-sm">
-                            <img th:src="@{/assets/images/logomin.png}" alt="logo-light-sm" height="64">
+                            <img th:src="@{/assets/images/logomin.png}" alt="logo-light-sm" height="94">
                         </span>
                         <span class="logo-lg">
-                            <img th:src="@{/assets/images/logomin.png}" alt="logo-light-lg" height="64">
+                            <img th:src="@{/assets/images/logomin.png}" alt="logo-light-lg" height="94">
                         </span>
                     </a>
                 </div>
@@ -87,7 +87,7 @@
                 <!-- User -->
                 <div class="dropdown d-inline-block">
                     <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
+                            aria-haspopup="true" aria-expanded="false" style="height: 70px;!important;">
                         <img class="rounded-circle header-profile-user"
                              th:src="@{/assets/images/users/user-dummy-img.jpg}" alt="Avatar">
                         <span class="d-none d-xl-inline-block ms-1">Пользователь</span>

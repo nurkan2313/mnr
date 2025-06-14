@@ -83,4 +83,17 @@ public class PageController {
     public String getCitesTemplate() {
         return "cites-template";
     }
+
+    @GetMapping("/cites")
+    public String cites(Model model) {
+        return "cites";
+    }
+
+    @GetMapping("/cites-instruction")
+    public String citesInstr(Model model) {
+        return "instructions-cites";
+    }
+
+
+
 }

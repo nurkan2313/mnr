@@ -66,6 +66,8 @@ public class PermitController {
                                             @RequestParam(required = false) String companyName,
                                             @RequestParam(required = false) String object,
                                             @RequestParam(required = false) String quantity,
+                                            @RequestParam(required = false) String exportCountry,
+                                            @RequestParam(required = false) String importCountry,
                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                             Model model) {

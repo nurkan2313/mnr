@@ -7,33 +7,26 @@
                     <div class="row mt-4">
                         <!--Grid column-->
                         <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-                            <h5 class="text-uppercase mb-4">Контакты</h5>
-                            <p>
-                                При возникновении вопросов по базе данных обращаться в отдел Цифровизации Министерства природных ресурсов, экологии и технического надзора Кыргызской Республики
-                            </p>
-                            <p>
-                                Телефон: (+996) 0552 100 182
-                            </p>
-                            <p>
-                                При обнаружении случаев нелегальной торговли и по вопросам разрешений CITES обращаться в отдел Животного мира управления Биоресурсов Министерства природных ресурсов, экологии и технического надзора Кыргызской Республики по горячей линии 108 или 0559 301 120
-                            </p>
-
+                            <h5 class="text-uppercase mb-4" th:text="#{footer.contacts}"></h5>
+                            <p th:text="#{footer.contacts.description1}"></p>
+                            <p th:text="#{footer.contacts.phone}"></p>
+                            <p th:text="#{footer.contacts.description2}"></p>
                         </div>
                         <!--Grid column-->
 
                         <!--Grid column-->
                         <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                            <h5 class="text-uppercase mb-4 pb-1">Адрес</h5>
+                            <h5 class="text-uppercase mb-4 pb-1" th:text="#{footer.address}"></h5>
 
                             <ul class="fa-ul" style="margin-left: 1.65em;">
                                 <li class="mb-3">
-                                    <span class="fa-li"><i class="fas fa-home"></i></span><span>Г. Бишкек, Первомайский район, Бульвар Эркиндик, 2</span>
+                                    <span class="fa-li"><i class="fas fa-home"></i></span><span th:text="#{footer.address.full}"></span>
                                 </li>
                                 <li class="mb-3">
                                     <span class="fa-li"><i class="fas fa-envelope"></i></span><span>info@mnr.gov.kg</span>
                                 </li>
                                 <li class="mb-3">
-                                    <span class="fa-li"><i class="fas fa-phone"></i></span><span>(+996) 0312 30 06 67 (1714)</span>
+                                    <span class="fa-li"><i class="fas fa-phone"></i></span><span>(+996) 312 30 06 67 (1714)</span>
                                 </li>
                                 <li class="mb-3">
                                     <span class="fa-li"><i class="fas fa-print"></i></span><span>(0312) 300667</span>
@@ -44,12 +37,12 @@
 
                         <!--Grid column-->
                         <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                            <h5 class="text-uppercase mb-4">Приемные дни</h5>
+                            <h5 class="text-uppercase mb-4" th:text="#{footer.reception.days}"></h5>
 
                             <table class="table text-center text-white">
                                 <tbody class="font-weight-normal">
                                 <tr>
-                                    <td>понедельник - пятница:</td>
+                                    <td th:text="#{footer.reception.days.schedule}"></td>
                                     <td>09:00 - 18:00</td>
                                 </tr>
                                 </tbody>

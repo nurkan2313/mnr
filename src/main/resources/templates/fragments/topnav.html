@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="topNav">
-    <div class="topnav">
+    <div class="topnav" style="margin-top: 97px;">
         <div class="container-fluid">
             <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
                 <div class="collapse navbar-collapse" id="topnav-menu-content">
                     <ul class="navbar-nav">
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle arrow-none" th:href="@{/dashboard}">
+                            <a class="nav-link dropdown-toggle arrow-none" th:href="@{/dashboard}" style="font-size: 20px;">
                                 <i class="bx bx-home-circle me-2"></i>
                                 <span>Меню</span>
                                 <div class="arrow-down"></div>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
-                                <a th:href="@{/dashboard}" class="dropdown-item">Дэшборд</a>
-                                <a th:href="@{/permission/lists}" class="dropdown-item">Разрешения</a>
-                                <a th:href="@{/incidents}" class="dropdown-item">Нелегальные изъятия</a>
+                                <a th:href="@{/dashboard}" class="dropdown-item" style="font-size: 20px;">Дэшборд</a>
+                                <a th:href="@{/permission/lists}" class="dropdown-item" style="font-size: 20px;">Разрешения</a>
+                                <a th:href="@{/incidents}" class="dropdown-item" style="font-size: 20px;">Нелегальные изъятия</a>
                             </div>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-uielement" role="button">
+                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-uielement" role="button" style="font-size: 20px;">
                                 <i class="bx bx-tone me-2"></i>
                                 <span>Справочники</span>
                                 <div class="arrow-down"></div>
@@ -30,23 +30,48 @@
                                  aria-labelledby="topnav-uielement">
                                 <div class="row">
                                     <div class="col-lg-4">
-                                        <a th:href="@{/definitions}" class="dropdown-item">Определитель</a>
-                                        <a th:href="@{/cites-template}" class="dropdown-item">Образец разрешения СITES</a>
+                                        <a th:href="@{/definitions}" class="dropdown-item" style="font-size: 20px;">Определитель</a>
+                                        <a th:href="@{/cites-template}" class="dropdown-item" style="font-size: 20px;">Образец разрешения СITES</a>
+                                        <a th:href="@{/assets/files/cites_templ.pdf}" class="dropdown-item" style="font-size: 20px;">Образец разрешения СИТЕС КР</a>
+                                        <a th:href="@{/assets/files/red_book.docx}" class="dropdown-item" style="font-size: 20px;">Красная книга КР</a>
+                                        <a th:href="@{/assets/files/appendices.pdf}" class="dropdown-item" style="font-size: 20px;">Справочник СИТЕС</a>
+                                        <a th:href="@{/assets/files/cites.pdf}" class="dropdown-item" style="font-size: 20px;">Определитель Института Биологии НАН КР</a>
+                                        <a th:href="@{/assets/files/short_def.pdf}" class="dropdown-item" style="font-size: 20px;">Краткий определитель</a>
+
                                     </div>
                                 </div>
                             </div>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-layout" role="button">
+                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-layout" role="button" style="font-size: 20px;">
                                 <i class="bx bx-layout me-2"></i>
                                 <span>Отчеты</span>
                                 <div class="arrow-down"></div>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="topnav-layout-hori">
-                                <a th:href="@{/permission/report}" class="dropdown-item">Формирование отчета</a>
-                                <a th:href="@{/permission/report/export-data}" class="dropdown-item">Статистика</a>
+                                <a th:href="@{/permission/report}" class="dropdown-item" style="font-size: 20px;">Формирование отчета</a>
+                                <a th:href="@{/permission/report/export-data}" class="dropdown-item" style="font-size: 20px;">Статистика</a>
                             </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-layout" role="button" style="font-size: 20px;">
+                                <i class="bx bx-layout me-2"></i>
+                                <span>CITES</span>
+                                <div class="arrow-down"></div>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="topnav-layout-hori">
+                                <a th:href="@{/cites}" class="dropdown-item" style="font-size: 20px;">Про CITES</a>
+                                <a th:href="@{/cites-instruction}" class="dropdown-item" style="font-size: 20px;">Инструкция для проверки разрешений CITES</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link arrow-none"  th:href="@{/about}" style="font-size: 20px;">
+                                <i class="bx bx-layout me-2"></i>
+                                <span>О нас</span>
+                            </a>
                         </li>
 
                     </ul>
@@ -56,8 +81,8 @@
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img th:case="'en'" th:src="@{/assets/images/flags/us.jpg}" alt="English" height="16">
                             <img th:case="'ru'" th:src="@{/assets/images/flags/russia.jpg}" alt="Russian" height="16">
-                            <img th:case="'kg'" th:src="@{/assets/images/flags/kyrgyzstan.png}" alt="Kyrgyz" height="20">
-                            <img th:case="*" th:src="@{/assets/images/flags/us.jpg}" alt="Default" height="16">
+                             <img th:case="'kg'" th:src="@{/assets/images/flags/kyrgyzstan.png}" alt="Kyrgyz" height="20">
+                             <img th:case="*" th:src="@{/assets/images/flags/us.jpg}" alt="Default" height="16">
                         </button>
                     </th:block>
                     <div class="dropdown-menu dropdown-menu-end">
