@@ -22,7 +22,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.thymeleaf.util.StringUtils.capitalizeWords;
 
 @RestController
 @AllArgsConstructor
@@ -113,29 +117,14 @@ public class CitesPermitReportController {
             @RequestParam(required = false) String companyName) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = null;
-        LocalDate end = null;
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate, formatter) : null;
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate, formatter) : null;
 
-        // Parse dates if provided
-        if (startDate != null && !startDate.isEmpty()) {
-            start = LocalDate.parse(startDate, formatter);
-        }
-        if (endDate != null && !endDate.isEmpty()) {
-            end = LocalDate.parse(endDate, formatter);
-        }
-
-        String[] monthNames = {
-                "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-                "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
-        };
-
-        // Base SQL query
         StringBuilder sqlBuilder = new StringBuilder(
                 "SELECT p.exporter_country AS country, p.object AS object, EXTRACT(MONTH FROM p.issue_date) AS month, p.quantity " +
                         "FROM cites_permit p WHERE 1=1 "
         );
 
-        // Add date range filters if dates are provided
         if (start != null) {
             sqlBuilder.append("AND (p.issue_date >= :startDate OR p.issue_date IS NULL) ");
         }
@@ -143,7 +132,6 @@ public class CitesPermitReportController {
             sqlBuilder.append("AND (p.issue_date <= :endDate OR p.issue_date IS NULL) ");
         }
 
-        // Region filter
         if (region != null && !region.isEmpty()) {
             sqlBuilder.append(
                     "AND (p.importer_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region) " +
@@ -151,85 +139,41 @@ public class CitesPermitReportController {
             );
         }
 
-        // Object filter
         if (object != null && !object.isEmpty()) {
-            sqlBuilder.append("AND LOWER(p.object) LIKE :object ");
+            sqlBuilder.append("AND to_tsvector('russian', p.object) @@ to_tsquery('russian', :objectQuery) ");
         }
 
-        // Importer country filter
         if (importerCountry != null && !importerCountry.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.importer_country) LIKE :importerCountry ");
         }
 
-        // Exporter country filter
         if (exporterCountry != null && !exporterCountry.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.exporter_country) LIKE :exporterCountry ");
         }
 
-        // Exporter filter
         if (companyName != null && !companyName.isEmpty()) {
             sqlBuilder.append("AND LOWER(p.company_name) LIKE :companyName ");
         }
-
-
-        // Add date range filters if dates are provided
-        if (start != null) {
-            sqlBuilder.append("AND (p.issue_date >= :startDate OR p.issue_date IS NULL) ");
-        }
-        if (end != null) {
-            sqlBuilder.append("AND (p.issue_date <= :endDate OR p.issue_date IS NULL) ");
-        }
-
-        // Region filter
-        if (region != null && !region.isEmpty()) {
-            sqlBuilder.append(
-                    "AND (p.importer_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region) " +
-                            "OR p.exporter_country IN (SELECT c.name FROM country c WHERE LOWER(c.region) = :region)) "
-            );
-        }
-
-        // Object filter
-        if (object != null && !object.isEmpty()) {
-            sqlBuilder.append("AND LOWER(p.object) LIKE :object ");
-        }
-
-        // Importer country filter
-        if (importerCountry != null && !importerCountry.isEmpty()) {
-            sqlBuilder.append("AND LOWER(p.importer_country) LIKE :importerCountry ");
-        }
-
-        // Exporter country filter
-        if (exporterCountry != null && !exporterCountry.isEmpty()) {
-            sqlBuilder.append("AND LOWER(p.exporter_country) LIKE :exporterCountry ");
-        }
-
-        // Exporter filter
-        if (companyName != null && !companyName.isEmpty()) {
-            sqlBuilder.append("AND LOWER(p.company_name) LIKE :companyName ");
-        }
-
-        // Grouping and sorting
-        // Группировка будет в Java, а не в SQL — так что GROUP BY НЕ НУЖЕН!
 
         sqlBuilder.append("ORDER BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date) ");
-//        sqlBuilder.append("GROUP BY p.exporter_country, p.object, EXTRACT(MONTH FROM p.issue_date) ");
 
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
 
-        // Set parameters for date filters
         if (start != null) {
             query.setParameter("startDate", java.sql.Date.valueOf(start));
         }
         if (end != null) {
             query.setParameter("endDate", java.sql.Date.valueOf(end));
         }
-
-        // Set parameters for other filters
         if (region != null && !region.isEmpty()) {
             query.setParameter("region", region.toLowerCase());
         }
         if (object != null && !object.isEmpty()) {
-            query.setParameter("object", "%" + object.toLowerCase() + "%");
+            String tsQuery = Arrays.stream(object.toLowerCase().split("\\s+"))
+                    .filter(s -> !s.isBlank())
+                    .map(word -> word + ":*")
+                    .collect(Collectors.joining(" & "));
+            query.setParameter("objectQuery", tsQuery);
         }
         if (importerCountry != null && !importerCountry.isEmpty()) {
             query.setParameter("importerCountry", "%" + importerCountry.toLowerCase() + "%");
@@ -242,41 +186,39 @@ public class CitesPermitReportController {
         }
 
         List<Object[]> results = query.getResultList();
-
-        // Группировка: страна → объект → месяц → сумма
-        Map<String, Map<String, Map<Integer, BigDecimal>>> grouped = new HashMap<>();
+        Map<String, Map<String, BigDecimal>> grouped = new HashMap<>();
+        Map<String, String> displayNames = new HashMap<>();
 
         for (Object[] row : results) {
-            String country = Objects.toString(row[0], "");
-            String objectName = Objects.toString(row[1], "");
-            Integer month = row[2] != null ? ((Number) row[2]).intValue() : null;
+            String rawCountry = Objects.toString(row[0], "");
+            String rawObject = Objects.toString(row[1], "");
             String quantityRaw = Objects.toString(row[3], "");
 
+            String country = clusterCountryName(rawCountry);
+
+            String objectKey = normalizeObjectSmart(rawObject);
+            displayNames.putIfAbsent(objectKey, capitalizeWords(rawObject));
+
             BigDecimal quantityValue = extractNumericValue(quantityRaw);
+            if (quantityValue == null) continue;
 
             grouped
-                .computeIfAbsent(country, k -> new HashMap<>())
-                .computeIfAbsent(objectName, k -> new HashMap<>())
-                .merge(month, quantityValue, BigDecimal::add);
+                    .computeIfAbsent(country, k -> new HashMap<>())
+                    .merge(objectKey, quantityValue, BigDecimal::add);
         }
 
-        // Формируем список для ответа
         List<Map<String, Object>> response = new ArrayList<>();
         for (var countryEntry : grouped.entrySet()) {
             String country = countryEntry.getKey();
             for (var objectEntry : countryEntry.getValue().entrySet()) {
-                String objectName = objectEntry.getKey();
-                for (var monthEntry : objectEntry.getValue().entrySet()) {
-                    Integer month = monthEntry.getKey();
-                    BigDecimal total = monthEntry.getValue();
+                String objectKey = objectEntry.getKey();
+                BigDecimal total = objectEntry.getValue();
 
-                    Map<String, Object> row = new HashMap<>();
-                    row.put("country", country);
-                    row.put("object", objectName);
-                    row.put("month", (month != null ? monthNames[month - 1] : "Без даты"));
-                    row.put("total_quantity", total);
-                    response.add(row);
-                }
+                Map<String, Object> row = new HashMap<>();
+                row.put("country", country);
+                row.put("object", displayNames.get(objectKey));
+                row.put("total_quantity", total);
+                response.add(row);
             }
         }
 
@@ -284,16 +226,97 @@ public class CitesPermitReportController {
     }
 
     private BigDecimal extractNumericValue(String raw) {
-        if (raw == null || raw.isBlank()) return BigDecimal.ZERO;
+        if (raw == null || raw.isBlank()) return null;
 
-        // Удаляем всё, кроме цифр, точек, запятых
-        String cleaned = raw.replaceAll("[^\\d.,]", "").replace(",", ".");
-
-        try {
-            return new BigDecimal(cleaned.trim());
-        } catch (NumberFormatException e) {
-            return BigDecimal.ZERO;
+        // Извлекаем только первое число (целое или с точкой/запятой)
+        Matcher matcher = Pattern.compile("(\\d+[.,]?\\d*)").matcher(raw);
+        if (matcher.find()) {
+            String numberStr = matcher.group(1).replace(",", ".");
+            try {
+                return new BigDecimal(numberStr);
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
+
+        return null;
+    }
+
+    private String normalizeCountryName(Object raw) {
+        if (raw == null) return "неизвестно";
+        return raw.toString().trim().replaceAll("\\s+", " ").toLowerCase();
+    }
+
+    private String clusterCountryName(String raw) {
+        if (raw == null || raw.isBlank()) return "Неизвестно";
+
+        // Приводим к нижнему регистру, удаляем лишнее
+        String cleaned = raw
+                .toLowerCase()
+                .replaceAll("[^а-яa-zё\\s\\-]", "") // оставляем буквы, пробелы, дефисы
+                .replaceAll("\\s+", " ") // нормализуем пробелы
+                .trim();
+
+        // Разбиваем строку по дефису или пробелам
+        String[] parts = cleaned.split("[- ]");
+
+        // Пытаемся взять последнее слово (вероятнее — страна)
+        String lastWord = parts.length > 0 ? parts[parts.length - 1] : cleaned;
+
+        // Кластеры
+        if (lastWord.contains("кыргыз") || lastWord.contains("kirgiz") || lastWord.contains("kyrgyz")) {
+            return "Кыргызская Республика";
+        }
+        if (lastWord.contains("казахстан")) {
+            return "Республика Казахстан";
+        }
+        if (lastWord.contains("узбекистан")) {
+            return "Республика Узбекистан";
+        }
+        if (lastWord.contains("таджикистан")) {
+            return "Республика Таджикистан";
+        }
+        if (lastWord.contains("туркменистан")) {
+            return "Республика Туркменистан";
+        }
+        if (lastWord.contains("россия") || lastWord.contains("рф")) {
+            return "Российская Федерация";
+        }
+        if (lastWord.contains("сауд") && lastWord.contains("аравия")) {
+            return "Саудовская Аравия";
+        }
+        if (lastWord.contains("оаэ")) {
+            return "Объединенные Арабские Эмираты";
+        }
+        if (lastWord.contains("сша")) {
+            return "Соединенные Штаты Америки";
+        }
+        if (lastWord.contains("румын")) return "Румыния";
+        if (lastWord.contains("польш")) return "Польша";
+        if (lastWord.contains("герман") || lastWord.contains("german")) return "Германия";
+        if (lastWord.contains("france") || lastWord.contains("франц")) return "Франция";
+        if (lastWord.contains("china") || lastWord.contains("китай")) return "Китайская Народная Республика";
+
+        // fallback
+        return capitalizeWords(cleaned);
+    }
+
+
+    private String normalizeObjectSmart(String raw) {
+        if (raw == null || raw.isBlank()) return "неизвестно";
+
+        // Удаляем запятые, точки, тире, косые черты, дублирующие пробелы
+        String cleaned = raw
+                .toLowerCase()
+                .replaceAll("[,./\\-]", " ")     // заменяем на пробел
+                .replaceAll("[^а-яa-zё\\s]", "") // удаляем всё, кроме букв
+                .replaceAll("\\s+", " ")         // нормализуем пробелы
+                .trim();
+
+        // Разбиваем, удаляем дубликаты, сортируем
+        Set<String> uniqueWords = new TreeSet<>(Arrays.asList(cleaned.split(" ")));
+
+        return String.join(" ", uniqueWords);
     }
 
 }
