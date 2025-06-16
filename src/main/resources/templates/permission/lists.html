@@ -79,11 +79,12 @@
                 <input type="text" name="object" class="form-control" placeholder="Объект" th:value="${param.object}">
             </div>
 
+            <input type="hidden" name="size" value="10"/>
+
             <div class="col-md-3">
                 <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
             </div>
         </form>
-
 
         <div class="card">
             <div class="card-body">
@@ -112,7 +113,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="permit : ${permits}">
+            <tr th:each="permit : ${permits.content}">
                 <td>
                     <button type="button"
                             class="btn btn-outline-primary btn-sm"
@@ -177,13 +178,13 @@
         <nav th:if="${totalPages > 1}" aria-label="Pagination">
             <ul class="pagination">
                 <li class="page-item" th:classappend="${previousDisabled} ? 'disabled'">
-                    <a class="page-link" th:href="@{|/permission/list?page=${previousPage}|}">Назад</a>
+                    <a class="page-link" th:href="@{|/permission/list?page=${previousPage}&size=${size}|}">Назад</a>
                 </li>
                 <li class="page-item" th:each="pageNum : ${pageNumbers}" th:classappend="${pageNum == currentPage} ? 'active'">
-                    <a class="page-link" th:text="${pageNum}" th:href="@{|/permission/list?page=${pageNum}|}"></a>
+                    <a class="page-link" th:href="@{|/permission/list?page=${pageNum}&size=${size}|}" th:text="${pageNum}"></a>
                 </li>
                 <li class="page-item" th:classappend="${nextDisabled} ? 'disabled'">
-                    <a class="page-link" th:href="@{|/permission/list?page=${nextPage}|}">Вперёд</a>
+                    <a class="page-link" th:href="@{|/permission/list?page=${nextPage}&size=${size}|}">Вперёд</a>
                 </li>
             </ul>
         </nav>

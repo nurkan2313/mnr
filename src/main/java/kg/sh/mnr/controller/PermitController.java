@@ -136,7 +136,7 @@ public class PermitController {
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                               @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                               @RequestParam(defaultValue = "1") int page,
-                              @RequestParam(defaultValue = "15") int size,
+                              @RequestParam(defaultValue = "10") int size,
                               Model model) {
 
         int zeroBasedPage = (page > 0) ? page - 1 : 0;
@@ -195,6 +195,7 @@ public class PermitController {
 
             List<BorderCheckpoint> checkpoints = borderCheckpointRepository.findAll();
 
+            model.addAttribute("size", size);
             model.addAttribute("pageName", "permit");
             model.addAttribute("checkpoints", checkpoints);
             model.addAttribute("permits", allPermits);

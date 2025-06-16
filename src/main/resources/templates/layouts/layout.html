@@ -11,9 +11,11 @@
     <div th:replace="~{fragments/page-topbar :: pageTopbar}"></div>
     <div th:replace="~{fragments/topnav :: topNav}"></div>
 
+    <section layout:fragment="fullwidth-section"></section>
+
     <div class="main-content overflow-hidden">
-        <div class="page-content" style="margin-top: 94px;">
-            <section layout:fragment="fullwidth-section"></section>
+        <div class="page-content">
+
             <div class="container-fluid">
                 <!-- Your content block here -->
                 <section layout:fragment="content"></section>
