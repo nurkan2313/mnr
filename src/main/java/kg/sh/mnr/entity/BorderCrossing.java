@@ -1,5 +1,6 @@
 package kg.sh.mnr.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kg.sh.mnr.entity.dict.BorderCheckpoint;
 import lombok.Getter;
@@ -26,5 +27,6 @@ public class BorderCrossing {
 
     @ManyToOne
     @JoinColumn(name = "permit_id", nullable = false)
+    @JsonIgnore
     private CitesPermit permit;
 }

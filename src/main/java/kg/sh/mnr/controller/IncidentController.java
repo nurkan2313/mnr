@@ -6,8 +6,11 @@ import kg.sh.mnr.mapper.IncidentMapper;
 import kg.sh.mnr.model.Breadcrumb;
 import kg.sh.mnr.model.IncidentViewDto;
 import kg.sh.mnr.model.requests.IncidentFormRequest;
+import kg.sh.mnr.repository.DiscoveryMethodRepository;
 import kg.sh.mnr.service.*;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ import java.util.stream.IntStream;
 @RequestMapping("/incidents")
 public class IncidentController {
 
+    private static final Logger log = LoggerFactory.getLogger(IncidentController.class);
     private final IncidentMapper incidentMapper;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private final IncidentService incidentService;
@@ -44,6 +48,7 @@ public class IncidentController {
     private final DictionaryService dictionaryService;
     private final ProductService productService;
     private final AuthorityService authorityService;
+    private final DiscoveryMethodRepository discoveryMethodRepository;
 
     @GetMapping("/search-products")
     @ResponseBody
@@ -179,33 +184,6 @@ public class IncidentController {
         return "incidents/lists";
     }
 
-    private LocalDate parseDate(String registeredAt, Model model) {
-        if (registeredAt != null && !registeredAt.isEmpty()) {
-            try {
-                // Используем форматер для LocalDate
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                return LocalDate.parse(registeredAt, formatter);
-            } catch (DateTimeParseException e) {
-                model.addAttribute("error", "Invalid date format for registeredAt");
-            }
-        }
-        return null;
-    }
-
-
-    private boolean isNullOrEmpty(String... values) {
-        for (String value : values) {
-            if (value != null && !value.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private String emptyToNull(String value) {
-        return (value == null || value.isEmpty()) ? null : value;
-    }
-
     // Форма для создания нового инцидента
     @GetMapping("/create")
     public String showCreateIncidentForm(Model model) {
@@ -242,40 +220,34 @@ public class IncidentController {
 
     // Обработка формы создания инцидента
     @PostMapping
-    public ModelAndView createIncident(@ModelAttribute IncidentFormRequest form,
-                                       BindingResult bindingResult,
+    public ModelAndView createIncident(IncidentFormRequest form,
                                        @RequestParam(value = "photo", required = false) MultipartFile photo,
-                                       Model model) {
+                                       Model model) throws IOException {
         if (photo != null && !photo.isEmpty()) {
-            try {
-                String filename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-                Path uploadPath = Paths.get("uploads/files");
+            String filename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads/files");
 
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                Files.copy(photo.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
-
-                form.setPhotoPath("/uploads/files/" + filename);
-            } catch (IOException e) {
-                bindingResult.reject("photo", "Ошибка загрузки файла: " + e.getMessage());
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
+
+            Files.copy(photo.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+
+            form.setPhotoPath("/uploads/files/" + filename);
         }
 
-        try {
-            form.setRegisteredAt(LocalDateTime.parse(form.getRegisteredAtString(), formatter));
-        } catch (DateTimeParseException e) {
-            bindingResult.rejectValue("registeredAtString", "error.registeredAtString", "Неверный формат даты");
-        }
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
-            return new ModelAndView("incidents/create");  // Вернуть форму для исправления ошибок
-        }
+        form.setRegisteredAt(LocalDateTime.parse(form.getRegisteredAtString(), formatter));
 
         form.setTransitCountries(String.join(",", form.getTransitCountries()));
         form.setSpecies(form.getSpecies());
+
+        if ("other".equals(form.getDiscoveryMethodId()) && form.getCustomDiscoveryMethod() != null) {
+            DiscoveryMethod method = new DiscoveryMethod();
+            method.setMethod(form.getCustomDiscoveryMethod().trim());
+            discoveryMethodRepository.save(method);
+            form.setDiscoveryMethodId(method.getId().toString());
+        }
+
         incidentService.createIncident(incidentMapper.toIncident(form));
 
         return new ModelAndView("redirect:/incidents");
@@ -298,5 +270,31 @@ public class IncidentController {
 
         model.addAttribute("incident", incident);
         return "incidents/view";
+    }
+
+    private LocalDate parseDate(String registeredAt, Model model) {
+        if (registeredAt != null && !registeredAt.isEmpty()) {
+            try {
+                // Используем форматер для LocalDate
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                return LocalDate.parse(registeredAt, formatter);
+            } catch (DateTimeParseException e) {
+                model.addAttribute("error", "Invalid date format for registeredAt");
+            }
+        }
+        return null;
+    }
+
+    private boolean isNullOrEmpty(String... values) {
+        for (String value : values) {
+            if (value != null && !value.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String emptyToNull(String value) {
+        return (value == null || value.isEmpty()) ? null : value;
     }
 }

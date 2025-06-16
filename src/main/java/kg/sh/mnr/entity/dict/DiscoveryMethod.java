@@ -15,7 +15,7 @@ import lombok.Setter;
 public class DiscoveryMethod {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "method", nullable = false, unique = true)

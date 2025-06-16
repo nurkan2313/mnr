@@ -101,6 +101,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
+                <th></th>
                 <th>Номер</th>
                 <th>Организация</th>
                 <th>Объект</th>
@@ -112,6 +113,14 @@
             </thead>
             <tbody>
             <tr th:each="permit : ${permits}">
+                <td>
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal"
+                            th:attr="data-bs-target='#exampleModal-' + ${permit.id}">
+                        Сделать отметку
+                    </button>
+                </td>
                 <td th:text="${permit.id}"></td>
                 <td th:text="${permit.companyName}"></td>
                 <td th:text="${permit.object}"></td>
@@ -121,6 +130,46 @@
                 <td>
                     <a th:href="@{'/permission/' + ${permit.id}}" class="btn btn-sm btn-outline-primary">Просмотр</a>
                 </td>
+
+                <!-- Модальное окно -->
+                <div class="modal fade" th:id="'exampleModal-' + ${permit.id}" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <form th:id="'borderCrossForm-' + ${permit.id}"
+                              th:action="@{/api/crossings/{id}(id=${permit.id})}"
+                              method="post">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Отметка о пересечении</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Выберите пограничный контрольный пункт (КПП) для разрешения
+                                        <strong th:text="${permit.id}"></strong>:</p>
+
+                                    <div class="mb-3">
+                                        <label for="checkpointSelect" class="form-label">Контрольный пункт</label>
+                                        <select name="checkpointId" class="form-select" required>
+                                            <option value="">Выберите КПП</option>
+                                            <option th:each="cp : ${checkpoints}"
+                                                    th:value="${cp.id}"
+                                                    th:text="${cp.name}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button"
+                                            class="btn btn-primary"
+                                            th:attr="onclick=|submitBorderCrossForm('${permit.id}')|">
+                                        Сохранить
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </tr>
             </tbody>
         </table>

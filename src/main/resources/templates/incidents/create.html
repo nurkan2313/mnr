@@ -67,13 +67,19 @@
 
                                     <div class="col-md-6">
                                         <label class="form-label">Способ обнаружения</label>
-                                        <label>
-                                            <select class="form-select" name="discoveryMethodId" required>
-                                                <option value="">выберите</option>
-                                                <option th:each="m : ${discoveryMethods}" th:value="${m.id}" th:text="${m.method}"></option>
-                                            </select>
-                                        </label>
+                                        <select class="form-select" id="discoveryMethodSelect" name="discoveryMethodId" required>
+                                            <option value="">выберите</option>
+                                            <option th:each="m : ${discoveryMethods}" th:value="${m.id}" th:text="${m.method}"></option>
+                                            <option value="other">Другое</option>
+                                        </select>
+
+                                        <input type="text" id="customDiscoveryInput"
+                                               name="customDiscoveryMethod"
+                                               class="form-control mt-2"
+                                               placeholder="Введите способ обнаружения"
+                                               style="display: none;" />
                                     </div>
+
 
                                     <div class="col-md-6">
                                         <label class="form-label">Причина изъятия</label>

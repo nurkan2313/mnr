@@ -195,6 +195,7 @@ public class PermitController {
 
             List<BorderCheckpoint> checkpoints = borderCheckpointRepository.findAll();
 
+            model.addAttribute("pageName", "permit");
             model.addAttribute("checkpoints", checkpoints);
             model.addAttribute("permits", allPermits);
             model.addAttribute("totalPages", totalPages);

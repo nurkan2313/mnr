@@ -179,7 +179,51 @@
         setupDefinitionSearch('object');
     </script>
 
-    <script th:if="${pageName == 'incidentPage'}" >
+    <script th:if="${pageName == 'permit'}" >
+        function submitBorderCrossForm(id) {
+            console.log('permit clicker')
+            const form = document.getElementById(`borderCrossForm-${id}`);
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Отметка успешно сохранена");
+                        // Закрытие модального окна
+                        const modal = bootstrap.Modal.getInstance(document.getElementById(`exampleModal-${id}`));
+                        modal.hide();
+                    } else {
+                        alert("Ошибка при сохранении отметки");
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert("Ошибка при сохранении отметки");
+                });
+        }
+    </script>
+
+    <script th:if="${pageName == 'incidentPage'}">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const select = document.getElementById('discoveryMethodSelect');
+            const customInput = document.getElementById('customDiscoveryInput');
+
+            select.addEventListener('change', function () {
+                if (this.value === 'other') {
+                    customInput.style.display = 'block';
+                    customInput.required = true;
+                } else {
+                    customInput.style.display = 'none';
+                    customInput.required = false;
+                    customInput.value = '';
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             function setupCountrySearch(selectId) {
                 const element = document.getElementById(selectId);

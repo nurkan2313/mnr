@@ -28,7 +28,9 @@ public class IncidentFormRequest {
 
     private Long authorityId;
 
-    private Long discoveryMethodId;
+    private String discoveryMethodId; // раньше было Long
+
+    private String customDiscoveryMethod;
 
     private Long reasonForSeizureId;
 
