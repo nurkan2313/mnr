@@ -151,14 +151,24 @@
                                         <strong th:text="${permit.id}"></strong>:</p>
 
                                     <div class="mb-3">
-                                        <label for="checkpointSelect" class="form-label">Контрольный пункт</label>
-                                        <select name="checkpointId" class="form-select" required>
+                                        <label class="form-label">Контрольный пункт</label>
+                                        <select name="checkpointId" class="form-select" required
+                                                th:attr="id='checkpointSelect-' + ${permit.id}">
                                             <option value="">Выберите КПП</option>
                                             <option th:each="cp : ${checkpoints}"
                                                     th:value="${cp.id}"
                                                     th:text="${cp.name}"></option>
+                                            <option value="other">Другое</option>
                                         </select>
+
+                                        <input type="text"
+                                               class="form-control mt-2"
+                                               th:attr="id='customCheckpointInput-' + ${permit.id}"
+                                               name="customCheckpointName"
+                                               placeholder="Введите свой КПП"
+                                               style="display: none;" />
                                     </div>
+
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button"

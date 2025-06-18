@@ -179,10 +179,24 @@
         setupDefinitionSearch('object');
     </script>
 
-    <script th:if="${pageName == 'permit'}" >
+    <script th:if="${pageName == 'permit'}">
         function submitBorderCrossForm(id) {
-            console.log('permit clicker')
             const form = document.getElementById(`borderCrossForm-${id}`);
+            const checkpointSelect = document.getElementById(`checkpointSelect-${id}`);
+            const customInput = document.getElementById(`customCheckpointInput-${id}`);
+
+            // Проверка перед отправкой
+            if (checkpointSelect.value === 'other') {
+                if (!customInput.value.trim()) {
+                    alert('Введите название КПП');
+                    return;
+                }
+
+                // временно удалим name у select, добавим name у input
+                checkpointSelect.name = '';  // чтобы не отправлялся
+                customInput.name = 'checkpointName';  // сервер должен обработать это
+            }
+
             const formData = new FormData(form);
 
             fetch(form.action, {
@@ -192,7 +206,6 @@
                 .then(response => {
                     if (response.ok) {
                         alert("Отметка успешно сохранена");
-                        // Закрытие модального окна
                         const modal = bootstrap.Modal.getInstance(document.getElementById(`exampleModal-${id}`));
                         modal.hide();
                     } else {
@@ -204,6 +217,24 @@
                     alert("Ошибка при сохранении отметки");
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[id^="checkpointSelect-"]').forEach(select => {
+                const id = select.id.split('-')[1];
+                const input = document.getElementById(`customCheckpointInput-${id}`);
+
+                select.addEventListener('change', function () {
+                    if (select.value === 'other') {
+                        input.style.display = 'block';
+                        input.required = true;
+                    } else {
+                        input.style.display = 'none';
+                        input.required = false;
+                        input.value = '';
+                    }
+                });
+            });
+        });
     </script>
 
     <script th:if="${pageName == 'incidentPage'}">
