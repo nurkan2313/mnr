@@ -76,22 +76,23 @@
                             <nav aria-label="Пагинация" class="mt-4">
                                 <ul class="pagination justify-content-center">
                                     <li class="page-item" th:classappend="${previousDisabled} ? 'disabled'">
-                                        <a class="page-link" th:href="@{|?page=${previousPage}&size=10|}" aria-label="Previous">
+                                        <a class="page-link" th:href="@{|/incidents?page=${previousPage}&size=10|}" aria-label="Назад">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
 
                                     <li th:each="i : ${pageNumbers}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
-                                        <a class="page-link" th:href="@{|?page=${i}&size=10|}" th:text="${i}"></a>
+                                        <a class="page-link" th:text="${i}" th:href="@{|/incidents?page=${i - 1}&size=10|}"></a>
                                     </li>
 
                                     <li class="page-item" th:classappend="${nextDisabled} ? 'disabled'">
-                                        <a class="page-link" th:href="@{|?page=${nextPage}&size=10|}" aria-label="Next">
+                                        <a class="page-link" th:href="@{|/incidents?page=${nextPage}&size=10|}" aria-label="Вперёд">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
                                 </ul>
                             </nav>
+
                         </div>
                     </div>
                 </div>

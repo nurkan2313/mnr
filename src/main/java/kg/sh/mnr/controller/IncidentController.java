@@ -113,28 +113,17 @@ public class IncidentController {
                                   @RequestParam(defaultValue = "10") int size,
                                   Model model) {
 
-        // Преобразование строки в LocalDateTime
         LocalDate registeredAtDate = parseDate(registeredAt, model);
-
         Pageable pageable = PageRequest.of(page, size);
 
-        if (model.containsAttribute("error")) {
-            model.addAttribute("incidents", incidentService.getAllIncidents(pageable));
-            return "lists";
-        }
-
-        // Получение списков из сервисов
         List<Authority> allAuthorities = authorityService.getAllAuthorities();
         List<TransportMethod> transportMethods = dictionaryService.getTransportMethod();
 
         Page<Incident> incidentsRaw;
         int totalPages;
-        // Определяем начальную и конечную страницы для отображения
 
-        // Проверка: если все параметры пустые, возвращаем все инциденты
         if (isNullOrEmpty(species, authority, transportMethod, suspectedOriginCountry, finalDestination, registeredAt)) {
             incidentsRaw = incidentService.getAllIncidents(pageable);
-            totalPages = incidentsRaw.getTotalPages();
         } else {
             incidentsRaw = incidentService.filterIncidents(
                     emptyToNull(species),
@@ -145,7 +134,6 @@ public class IncidentController {
                     registeredAtDate,
                     pageable
             );
-            totalPages = incidentsRaw.getTotalPages();
         }
 
         Page<IncidentViewDto> incidents = incidentsRaw.map(incident -> {
@@ -155,34 +143,28 @@ public class IncidentController {
             return new IncidentViewDto(incident, latinName);
         });
 
-        int startPage = Math.max(1, page + 1 - 1);  // Начальная страница
-        int endPage = Math.min(totalPages, startPage + 2);  // Конечная страница (максимум 3)
-        List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
-                .boxed()
-                .collect(Collectors.toList());
+        totalPages = incidents.getTotalPages();
+        List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().toList();
 
-        // Хлебные крошки
-        List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("/dashboard", "дэшборд"));
-        breadcrumbs.add(new Breadcrumb("/incidents", "инциденты"));
-
-        // Добавление данных в модель
         model.addAttribute("pageName", "incidentPage");
-        model.addAttribute("breadcrumbs", breadcrumbs);
-        model.addAttribute("currentPage", "список");
+        model.addAttribute("breadcrumbs", List.of(
+                new Breadcrumb("/dashboard", "дэшборд"),
+                new Breadcrumb("/incidents", "инциденты")
+        ));
+        model.addAttribute("incidents", incidents);
         model.addAttribute("allAuthorities", allAuthorities);
         model.addAttribute("transportMethods", transportMethods);
-        model.addAttribute("incidents", incidents);
-        model.addAttribute("currentPage", "");
+        model.addAttribute("currentPage", page + 1);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("previousPage", (page > 0) ? page - 1 : 0);
+        model.addAttribute("previousPage", Math.max(0, page - 1));
         model.addAttribute("nextPage", (page < totalPages - 1) ? page + 1 : totalPages - 1);
         model.addAttribute("previousDisabled", (page == 0));
-        model.addAttribute("nextDisabled", (page == totalPages - 1));
+        model.addAttribute("nextDisabled", (page >= totalPages - 1));
         model.addAttribute("pageNumbers", pageNumbers);
 
         return "incidents/lists";
     }
+
 
     // Форма для создания нового инцидента
     @GetMapping("/create")

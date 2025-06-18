@@ -378,34 +378,55 @@
             });
         });
 
-        function setupDefinitionSearch(selectId) {
-            const element = document.getElementById(selectId);
-            const choices = new Choices(element, {
-                searchEnabled: true,
-                searchPlaceholderValue: 'Введите для поиска...',
-                noResultsText: 'Не найдено',
-                noChoicesText: 'Нет доступных вариантов',
-                shouldSort: false
-            });
 
-            element.addEventListener('search', function (event) {
-                const query = event.detail.value;
-                if (!query || query.length < 1) return;
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('speciesSelect');
+            const suggestions = document.getElementById('speciesSuggestions');
+
+            input.addEventListener('input', function () {
+                const query = input.value.trim();
+                if (query.length < 2) {
+                    suggestions.innerHTML = '';
+                    suggestions.style.display = 'none';
+                    return;
+                }
 
                 fetch(`/definitions/search?query=${encodeURIComponent(query)}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data)
-                        choices.clearChoices();
-                        choices.setChoices(data.map(obj => ({
-                            value: obj.name,
-                            label: obj.name
-                        })), 'value', 'label', false);
+                        suggestions.innerHTML = '';
+                        if (data.length === 0) {
+                            suggestions.style.display = 'none';
+                            return;
+                        }
+
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item list-group-item-action';
+                            li.textContent = item.name;
+                            li.addEventListener('click', () => {
+                                input.value = item.name;
+                                suggestions.style.display = 'none';
+                            });
+                            suggestions.appendChild(li);
+                        });
+
+                        suggestions.style.display = 'block';
                     })
-                    .catch(error => console.error('Ошибка при поиске объекта:', error));
+                    .catch(error => {
+                        console.error('Ошибка при загрузке видов:', error);
+                        suggestions.innerHTML = '';
+                        suggestions.style.display = 'none';
+                    });
             });
-        }
-        setupDefinitionSearch('speciesSelect');
+
+            // Скрываем подсказки, если клик вне блока
+            document.addEventListener('click', function (e) {
+                if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+                    suggestions.style.display = 'none';
+                }
+            });
+        });
 
         const transitInput = document.getElementById('transitCountries');
         const suggestionsList = document.getElementById('transitCountrySuggestions');

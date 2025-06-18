@@ -31,12 +31,20 @@
                                         <input required type="datetime-local" class="form-control" id="registeredAtString" name="registeredAtString">
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label for="speciesSelect" class="form-label">Виды</label>
-                                        <select required class="form-select" id="speciesSelect" name="species">
-                                            <option value="">Начните ввод для поиска</option>
-                                        </select>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="speciesSelect"
+                                               name="species"
+                                               placeholder="Начните ввод для поиска"
+                                               autocomplete="off"
+                                               required>
+                                        <ul class="list-group position-absolute w-100"
+                                            id="speciesSuggestions"
+                                            style="z-index: 1000; max-height: 200px; overflow-y: auto; display: none;"></ul>
                                     </div>
+
 
                                     <div class="col-md-6">
                                         <label for="description" class="form-label">Описание образца</label>
